@@ -41,7 +41,7 @@ public class Grid<TGridObject>
             {
                 for (int y = 0; y < gridArray.GetLength(1); y++)
                 {
-                    debugArray[x, y] = CreateWorldText(gridArray[x, y].ToString(), null, GetWorldPosition(x, y) + new Vector3(cellSize, cellSize) * 0.5f, 2, Color.white);
+                    debugArray[x, y] = CreateWorldText(gridArray[x, y].GetStatus() + "\n" + gridArray[x, y].ToString(), null, GetWorldPosition(x, y) + new Vector3(cellSize, cellSize) * 0.5f, 2, Color.white);
                     Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100f);
                     Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
                 }
@@ -56,7 +56,7 @@ public class Grid<TGridObject>
         return new Vector3(x, y, 0) * cellSize + originPosition;
     }
 
-    private void GetXY(Vector3 worldPosition, out int x, out int y)
+    public void GetXY(Vector3 worldPosition, out int x, out int y)
     {
        x = Mathf.FloorToInt(worldPosition.x - originPosition.x / cellSize);
        y = Mathf.FloorToInt(worldPosition.y - originPosition.y / cellSize);
@@ -84,35 +84,51 @@ public class Grid<TGridObject>
         return textMeshPro;
     }
 
-    public void SetNode(int x, int y)
+    public void SetNodeCosts(int x, int y, int gCost, int hCost, int fCost)
     {
-        if(x >= 0 && y >= 0 && x < height && y < width)
+        if (x >= 0 && y >= 0 && x < height && y < width)
         {
-            gridArray[x, y].isBlocked = !gridArray[x, y].isBlocked;
-            debugArray[x, y].text = gridArray[x, y].ToString();
-            if (gridArray[x, y].isBlocked == NODE_STATUS_BLOCKED)
-                debugArray[x, y].color = Color.black;
+            gridArray[x, y].GCost = gCost;
+            gridArray[x, y].HCost = hCost;
+            gridArray[x, y].FCost = fCost;
+            debugArray[x, y].text = gridArray[x, y].GetStatus() + "\n" + gridArray[x, y].ToString();
+            if(hCost > 0) //have checked this node
+                debugArray[x, y].color = Color.green;
         }
     }
 
-    public void SetNode(Vector3 worldPosition)
+    public void SetNodeStatus(int x, int y)
     {
-        int x, y;
-        GetXY(worldPosition, out x, out y);
-        SetNode(x, y);
+        if(x >= 0 && y >= 0 && x < height && y < width)
+        {
+            gridArray[x, y].IsBlocked = !gridArray[x, y].IsBlocked;
+            debugArray[x, y].text = gridArray[x, y].GetStatus() + "\n" + gridArray[x, y].ToString();
+            if (gridArray[x, y].IsBlocked == NODE_STATUS_BLOCKED)
+                debugArray[x, y].color = Color.black;
+            else
+                debugArray[x, y].color = Color.white;
+        }
+    }
+
+    public void SetNodeStatus(Vector3 worldPosition)
+    {
+        GetXY(worldPosition, out int x, out int y);
+        SetNodeStatus(x, y);
     }
 
     public PathNode GetNode(int x, int y)
     {
-        if (x >= 0 && y >= 0 && x < height && y < width)
+        if (x >= 0 && y >= 0 && x < width && y < height)
             return gridArray[x, y];
         else return default(PathNode);
     }
 
     public PathNode GetNode(Vector3 worldPosition)
     {
-        int x, y;
-        GetXY(worldPosition, out x, out y);
+        GetXY(worldPosition, out int x, out int y);
         return gridArray[x, y];
     }
+
+    public int GetWidth() { return width; }
+    public int GetHeight() { return height; }
 }

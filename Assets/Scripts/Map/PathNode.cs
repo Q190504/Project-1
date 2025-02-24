@@ -3,30 +3,41 @@ using UnityEngine;
 public class PathNode
 {
     private Grid<PathNode> grid;
-    private int x;
-    private int y;
+    public int X { get; set; }
+    public int Y { get; set; }
 
-    public int gCost;
-    public int fCost;
-    public int hCost;
+    public int GCost { get; set; }
+    public int FCost { get; set; }
+    public int HCost { get; set; }
 
-    public PathNode cameFromNode;
+    public PathNode CameFromNode { get; set; }
 
-    public bool isBlocked;
+    public bool IsBlocked { get; set; }
 
     public PathNode(Grid<PathNode> grid, int x, int y, bool isBlocked)
     {
         this.grid = grid;
-        this.x = x;
-        this.y = y;
-        this.isBlocked = isBlocked;
+        this.X = x;
+        this.Y = y;
+        this.IsBlocked = isBlocked;
+    }
+
+    public string GetStatus()
+    {
+        if (IsBlocked)
+            return "BLOCKED";
+        else
+            return $"g:{GCost}\nf:{FCost}\nh:{HCost}";
     }
 
     public override string ToString()
     {
-        if(isBlocked) 
-            return "BLOCKED";
-        else
-            return $"g:{gCost}\nf:{fCost}\nh:{hCost}";
+        return X + ", " + Y;
+    }
+
+    public int CaculateFCost()
+    {
+        FCost = GCost + HCost;
+        return FCost;
     }
 }

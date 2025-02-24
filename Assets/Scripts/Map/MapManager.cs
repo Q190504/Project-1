@@ -1,5 +1,8 @@
+using NUnit.Framework;
 using Unity.Cinemachine;
 using UnityEngine;
+using System.Collections.Generic;
+
 
 public class MapManager : MonoBehaviour
 {
@@ -9,33 +12,46 @@ public class MapManager : MonoBehaviour
     [SerializeField] private Vector3 originPosition = Vector3.zero;
     [SerializeField] private bool showDebug;
 
-    private Grid<PathNode> grid;
+    private Pathfinding pathfinding;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        Pathfinding pathfinding = new Pathfinding(width, height, cellSize, originPosition);
-        grid = pathfinding.grid;
+        pathfinding = new Pathfinding(width, height, cellSize, originPosition);
     }
 
     // Update is called once per frame
     void Update()
     {
-        //toggle node status
-        if(Input.GetMouseButtonDown(0))
+        if(showDebug)
         {
-            Vector3 position = GetMouseWorldPosition();
-            PathNode pathNode = grid.GetNode(position);
-            if(pathNode != null)
+            //select end node
+            if (Input.GetMouseButtonDown(0))
             {
-                grid.SetNode(GetMouseWorldPosition());
+                Vector3 mouseWorlPosition = GetMouseWorldPosition();
+
+                pathfinding.Grid.GetXY(mouseWorlPosition, out int x, out int y);
+                List<PathNode> path = pathfinding.FindPath(0, 0, x, y);
+
+                if (path != null)
+                {
+                    for (int i = 0; i < path.Count - 1; i++)
+                    {
+                        Debug.DrawLine(new Vector3(path[i].X, path[i].Y) + Vector3.one * 0.5f, new Vector3(path[i + 1].X, path[i + 1].Y) + Vector3.one * 0.5f, Color.red, 100f);
+                        //Debug.Log(path[i].ToString());
+                    }
+                }
             }
-        }
-        //get node
-        if (Input.GetMouseButtonDown(1))
-        {
-            Vector3 position = GetMouseWorldPosition();
-            PathNode pathNode = grid.GetNode(position);
+            //toggle node status
+            if (Input.GetMouseButtonDown(1))
+            {
+                Vector3 position = GetMouseWorldPosition();
+                PathNode pathNode = pathfinding.Grid.GetNode(position);
+                if (pathNode != null)
+                {
+                    pathfinding.Grid.SetNodeStatus(GetMouseWorldPosition());
+                }
+            }
         }
     }
 
