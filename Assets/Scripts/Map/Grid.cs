@@ -12,18 +12,18 @@ public class Grid<TGridObject>
     private int height;
     private float cellSize;
     private Vector3 originPosition;
-    private PathNode[,] gridArray;
+    private GridPathNode[,] gridArray;
 
     private TextMeshPro[,] debugArray;
 
-    public Grid(int width, int height, float cellSize, Vector3 originPosition, Func<Grid<TGridObject>, int, int, bool, PathNode> createPathNode, bool showDebug)
+    public Grid(int width, int height, float cellSize, Vector3 originPosition, Func<Grid<TGridObject>, int, int, bool, GridPathNode> createPathNode, bool showDebug)
     {
         this.width = width;
         this.height = height;
         this.cellSize = cellSize;
         this.originPosition = originPosition;
 
-        gridArray = new PathNode[width, height];
+        gridArray = new GridPathNode[width, height];
 
         for (int x = 0; x < gridArray.GetLength(0); x++)
         {
@@ -116,14 +116,14 @@ public class Grid<TGridObject>
         SetNodeStatus(x, y);
     }
 
-    public PathNode GetNode(int x, int y)
+    public GridPathNode GetNode(int x, int y)
     {
         if (x >= 0 && y >= 0 && x < width && y < height)
             return gridArray[x, y];
-        else return default(PathNode);
+        else return default(GridPathNode);
     }
 
-    public PathNode GetNode(Vector3 worldPosition)
+    public GridPathNode GetNode(Vector3 worldPosition)
     {
         GetXY(worldPosition, out int x, out int y);
         return gridArray[x, y];

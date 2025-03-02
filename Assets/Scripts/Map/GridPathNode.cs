@@ -1,8 +1,9 @@
 using UnityEngine;
 
-public class PathNode
+public class GridPathNode
 {
-    private Grid<PathNode> grid;
+    
+    private Grid<GridPathNode> grid;
     public int X { get; set; }
     public int Y { get; set; }
 
@@ -10,11 +11,11 @@ public class PathNode
     public int FCost { get; set; }
     public int HCost { get; set; }
 
-    public PathNode CameFromNode { get; set; }
+    public GridPathNode CameFromNode { get; set; }
 
     public bool IsBlocked { get; set; }
 
-    public PathNode(Grid<PathNode> grid, int x, int y, bool isBlocked)
+    public GridPathNode(Grid<GridPathNode> grid, int x, int y, bool isBlocked)
     {
         this.grid = grid;
         this.X = x;
