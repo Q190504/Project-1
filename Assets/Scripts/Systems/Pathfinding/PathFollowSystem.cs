@@ -15,9 +15,10 @@ public partial struct PathFollowSystem : ISystem
 
                 float3 targetPosition = new float3(pathPosition.x, pathPosition.y, 0);
                 float3 moveDirection = math.normalizesafe(targetPosition - localTransform.ValueRO.Position);
-                float moveSpeed = 3f;
-                localTransform.ValueRW.Position += moveDirection * moveSpeed * Time.deltaTime;
 
+                float moveSpeed = 3f;
+
+                localTransform.ValueRW.Position += moveDirection * moveSpeed * Time.deltaTime;
 
                 if (math.distance(localTransform.ValueRO.Position, targetPosition) < 0.1f)
                 {

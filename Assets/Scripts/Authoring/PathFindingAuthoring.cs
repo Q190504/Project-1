@@ -6,19 +6,19 @@ public class PathFindingAuthoring : MonoBehaviour
 {
     public int2 startPosition;
     public int2 endPosition;
-}
 
-public class PathFindingBaker : Baker<PathFindingAuthoring>
-{
-    public override void Bake(PathFindingAuthoring authoring)
+    public class PathFindingBaker : Baker<PathFindingAuthoring>
     {
-        Entity entity = GetEntity(TransformUsageFlags.Dynamic);
-
-        AddComponent(entity, new PathFindingComponent
+        public override void Bake(PathFindingAuthoring authoring)
         {
-            startPosition = authoring.startPosition,
-            endPosition = authoring.endPosition,
-        });
+            Entity entity = GetEntity(TransformUsageFlags.Dynamic);
+
+            AddComponent(entity, new PathFindingComponent
+            {
+                startPosition = authoring.startPosition,
+                endPosition = authoring.endPosition,
+            });
+        }
     }
 }
 

@@ -5,18 +5,18 @@ using UnityEngine;
 public class PathFollowAuthoring : MonoBehaviour
 {
     public int pathIndex;
-}
 
-public class PathFollowBaker : Baker<PathFollowAuthoring>
-{
-    public override void Bake(PathFollowAuthoring authoring)
+    public class PathFollowBaker : Baker<PathFollowAuthoring>
     {
-        Entity entity = GetEntity(TransformUsageFlags.Dynamic);
-
-        AddComponent(entity, new PathFollowComponent
+        public override void Bake(PathFollowAuthoring authoring)
         {
-            pathIndex = authoring.pathIndex,
-        });
+            Entity entity = GetEntity(TransformUsageFlags.Dynamic);
+
+            AddComponent(entity, new PathFollowComponent
+            {
+                pathIndex = authoring.pathIndex,
+            });
+        }
     }
 }
 

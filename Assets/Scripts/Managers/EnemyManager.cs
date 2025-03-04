@@ -22,16 +22,21 @@ public class EnemyManager : MonoBehaviour
         {
             Debug.LogError("Enemy prefab not found! Make sure it's baked correctly.");
         }
+
+
+
+        //for (int i = 0; i < 1000; i++)
+        //{
+        //    {
+        //        SpawnEnemy(new Vector3(Random.Range(0f, 500f), Random.Range(0f, 500f), 0));
+        //    }
+        //}
     }
 
     // Update is called once per frame
     void Update()
     {
-        //return;
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            SpawnEnemy(new Vector3(Random.Range(-10f, 10f), 0, 0));
-        }
+
     }
 
     public void SpawnEnemy(Vector3 position)

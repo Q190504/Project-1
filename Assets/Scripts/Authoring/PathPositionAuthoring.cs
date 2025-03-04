@@ -4,15 +4,13 @@ using UnityEngine;
 
 public class PathPositionAuthoring : MonoBehaviour
 {
-
-}
-
-public class PathPositionBaker : Baker<PathPositionAuthoring>
-{
-    public override void Bake(PathPositionAuthoring authoring)
+    public class PathPositionBaker : Baker<PathPositionAuthoring>
     {
-        Entity entity = GetEntity(TransformUsageFlags.Dynamic);
-        AddBuffer<PathPositionComponent>(entity);
+        public override void Bake(PathPositionAuthoring authoring)
+        {
+            Entity entity = GetEntity(TransformUsageFlags.Dynamic);
+            AddBuffer<PathPositionComponent>(entity);
+        }
     }
 }
 
