@@ -1,8 +1,9 @@
 using UnityEngine;
 
-public class PathNode
+public class GridPathNode
 {
-    private Grid<PathNode> grid;
+    
+    private Grid<GridPathNode> grid;
     public int X { get; set; }
     public int Y { get; set; }
 
@@ -10,24 +11,24 @@ public class PathNode
     public int FCost { get; set; }
     public int HCost { get; set; }
 
-    public PathNode CameFromNode { get; set; }
+    public GridPathNode CameFromNode { get; set; }
 
-    public bool IsBlocked { get; set; }
+    public bool IsWalkable { get; set; }
 
-    public PathNode(Grid<PathNode> grid, int x, int y, bool isBlocked)
+    public GridPathNode(Grid<GridPathNode> grid, int x, int y)
     {
         this.grid = grid;
-        this.X = x;
-        this.Y = y;
-        this.IsBlocked = isBlocked;
+        X = x;
+        Y = y;
+        IsWalkable = true;
     }
 
     public string GetStatus()
     {
-        if (IsBlocked)
-            return "BLOCKED";
-        else
+        if (IsWalkable)
             return $"g:{GCost}\nf:{FCost}\nh:{HCost}";
+        else
+            return "BLOCKED";
     }
 
     public override string ToString()
