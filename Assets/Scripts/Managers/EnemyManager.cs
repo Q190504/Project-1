@@ -53,5 +53,4 @@ public class EnemyManager : MonoBehaviour
             Scale = 1f
         });
     }
-
 }

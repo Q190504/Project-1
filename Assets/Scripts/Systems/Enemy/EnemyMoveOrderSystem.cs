@@ -13,7 +13,7 @@ public partial struct EnemyMoveOrderSystem : ISystem
             EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
             foreach (var (enemy, localTransform, entity) in
-                     SystemAPI.Query<RefRW<EnemyComponentTag>, RefRO<LocalTransform>>().WithEntityAccess())
+                     SystemAPI.Query<RefRW<EnemyTagComponent>, RefRO<LocalTransform>>().WithEntityAccess())
             {
                 MapManager.Instance.pathfindingGrid.GetXY(localTransform.ValueRO.Position, out int startX, out int startY);
 
