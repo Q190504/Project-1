@@ -18,6 +18,8 @@ public class SlimeBulletAuthoring : MonoBehaviour
         {
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
 
+            authoring.colliderSize = authoring.GetComponent<CapsuleCollider>().radius;
+
             AddComponent(entity, new SlimeBulletComponent
             {
                 isAbleToMove = authoring.isAbleToMove,

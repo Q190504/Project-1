@@ -64,6 +64,7 @@ public class ShootSlimeBullet : MonoBehaviour
             distanceTraveled = 0,
             maxDistance = slimeBulletComponent.maxDistance,
             damageAmount = slimeBulletComponent.damageAmount,
+            colliderSize = slimeBulletComponent.colliderSize,
         });
     }
 }
