@@ -174,15 +174,12 @@ public partial struct PathfindingSystem : ISystem
             int endNodeIndex = CalculateNodeIndex(endPosition.x, endPosition.y, gridSize.x);
             PathNode startNode = pathNodeArray[CalculateNodeIndex(startPosition.x, startPosition.y, gridSize.x)];
 
-            Debug.Log($"startNode: {startNode.x}, {startNode.y}");
-
             startNode.gCost = 0;
             startNode.CalculateFCost();
             pathNodeArray[startNode.index] = startNode;
 
             NativeList<int> openList = new NativeList<int>(Allocator.Temp);
             NativeList<int> closedHashMap = new NativeList<int>(Allocator.Temp);
-
 
             #region Finding Path
             openList.Add(startNode.index);

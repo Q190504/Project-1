@@ -8,6 +8,7 @@ using Unity.Physics.Systems;
 using Unity.Jobs;
 using Unity.Collections;
 
+[BurstCompile]
 public partial struct SlimeBulletMoverSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
@@ -25,24 +26,3 @@ public partial struct SlimeBulletMoverSystem : ISystem
         }
     }
 }
-
-//[BurstCompile]
-//public struct EnemyTriggerJob : ITriggerEventsJob
-//{
-//    [ReadOnly] public ComponentLookup<EnemyTagComponent> EnemyLookup;
-
-//    public void Execute(TriggerEvent triggerEvent)
-//    {
-//        Entity entityA = triggerEvent.EntityA;
-//        Entity entityB = triggerEvent.EntityB;
-
-//        bool isEntityAEnemy = EnemyLookup.HasComponent(entityA);
-//        bool isEntityBEnemy = EnemyLookup.HasComponent(entityB);
-
-//        if (isEntityAEnemy || isEntityBEnemy)
-//        {
-//            // One of the entities involved is an enemy
-//            UnityEngine.Debug.Log($"Trigger Enter with Enemy: {entityA}, {entityB}");
-//        }
-//    }
-//}

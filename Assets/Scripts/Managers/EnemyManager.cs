@@ -1,11 +1,33 @@
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
 
 public class EnemyManager : MonoBehaviour
 {
+    private static EnemyManager _instance;
+
     private EntityManager entityManager;
     private Entity enemyPrefab;
+
+    public static EnemyManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+                _instance = FindFirstObjectByType<EnemyManager>();
+            return _instance;
+        }
+    }
+
+    private void Awake()
+    {
+        if (_instance == null)
+            _instance = this;
+        else
+            Destroy(this.gameObject);
+    }
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

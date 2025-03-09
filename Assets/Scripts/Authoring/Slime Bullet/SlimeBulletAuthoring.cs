@@ -9,6 +9,7 @@ public class SlimeBulletAuthoring : MonoBehaviour
     public float moveSpeed;
     public float distanceTraveled;
     public float maxDistance;
+    public float colliderSize;
     public float damageAmount;
 
     public class SlimeBulletBaker : Baker<SlimeBulletAuthoring>
@@ -24,6 +25,7 @@ public class SlimeBulletAuthoring : MonoBehaviour
                 moveSpeed = authoring.moveSpeed,
                 distanceTraveled = authoring.distanceTraveled,
                 maxDistance = authoring.maxDistance,
+                colliderSize = authoring.colliderSize,
                 damageAmount = authoring.damageAmount,
             });
         }
@@ -37,5 +39,6 @@ public struct SlimeBulletComponent : IComponentData
     public float moveSpeed;
     public float distanceTraveled;
     public float maxDistance;
+    public float colliderSize;
     public float damageAmount;
 }
