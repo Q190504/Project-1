@@ -8,7 +8,7 @@ public class BulletManager : MonoBehaviour
 {
     private static BulletManager _instance;
 
-    private int slimeBulletPrepare;
+    [SerializeField] private int slimeBulletPrepare;
 
     private EntityManager entityManager;
     private Entity slimeBulletPrefab;
