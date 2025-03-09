@@ -9,12 +9,12 @@ public class EnemyTagAuthoring : MonoBehaviour
         public override void Bake(EnemyTagAuthoring authoring)
         {
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
-            AddComponent(entity, new EnemyComponentTag());
+            AddComponent(entity, new EnemyTagComponent());
         }
     }
 }
 
-public struct EnemyComponentTag : IComponentData
+public struct EnemyTagComponent : IComponentData
 {
 
 }
