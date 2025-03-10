@@ -4,21 +4,26 @@ using Unity.Collections;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine.UIElements;
+using Unity.Burst;
 
-public partial struct EnemyMoveOrderSystem : ISystem
+[BurstCompile]
+public partial struct EnemyMoveSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+        EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
-        foreach (var (enemy, localTransform, entity) in
-                 SystemAPI.Query<RefRW<EnemyTagComponent>, RefRO<LocalTransform>>().WithEntityAccess())
+        foreach (var (enemyTag, localTransform, target, entity) in
+                 SystemAPI.Query<RefRW<EnemyTagComponent>, RefRO<LocalTransform>, RefRO<EnemyTargetComponent>>().WithEntityAccess())
         {
             MapManager.Instance.pathfindingGrid.GetXY(localTransform.ValueRO.Position, out int startX, out int startY);
             ValidatePosition(ref startX, ref startY);
 
-            int playerXPosition = (int)GameManager.Instance.player.GetComponent<Transform>().position.x;
-            int playerYPosition = (int)GameManager.Instance.player.GetComponent<Transform>().position.y;
+            float3 playerPosition = SystemAPI.GetComponent<LocalTransform>(target.ValueRO.targetEntity).Position;
+
+            int playerXPosition = (int)playerPosition.x;
+            int playerYPosition = (int)playerPosition.y;
             ValidatePosition(ref playerXPosition, ref playerYPosition);
 
             ecb.AddComponent(entity, new PathFindingComponent

@@ -12,6 +12,7 @@ public class BulletManager : MonoBehaviour
 
     private EntityManager entityManager;
     private Entity slimeBulletPrefab;
+
     private NativeQueue<Entity> inactiveSlimeBullets;
     private int slimeBulletCount = 0;
 
@@ -68,24 +69,32 @@ public class BulletManager : MonoBehaviour
 
     private void PrepareBullet()
     {
+        if (slimeBulletPrefab == Entity.Null) return;
+
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+
         for (int i = 0; i < slimeBulletPrepare; i++)
         {
             Entity slimeBulletInstance = entityManager.Instantiate(slimeBulletPrefab);
-            entityManager.AddComponent<Disabled>(slimeBulletInstance);
+            ecb.AddComponent<Disabled>(slimeBulletInstance);
             inactiveSlimeBullets.Enqueue(slimeBulletInstance);
             slimeBulletCount++;
         }
+
+        ecb.Playback(entityManager);
+        ecb.Dispose();
     }
-    public Entity Take()
+    public Entity Take(EntityCommandBuffer ecb)
     {
         if (inactiveSlimeBullets.IsEmpty())
             PrepareBullet();
 
         Entity slimeBulletInstance = inactiveSlimeBullets.Dequeue();
         slimeBulletCount--;
-        entityManager.RemoveComponent<Disabled>(slimeBulletInstance);
+        ecb.RemoveComponent<Disabled>(slimeBulletInstance);
         return slimeBulletInstance;
     }
+
     public void Return(Entity bullet)
     {
         if (!entityManager.Exists(bullet)) return;
