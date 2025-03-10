@@ -4,6 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 [BurstCompile]
 public partial struct ShootSlimeBulletSystem : ISystem
@@ -38,6 +39,16 @@ public partial struct ShootSlimeBulletSystem : ISystem
     {
         Entity bullet = BulletManager.Instance.Take(ecb);
         SetBulletPositionAndDirection(ecb, bullet);
+
+        SlimeBulletComponent slimeBulletComponent = entityManager.GetComponentData<SlimeBulletComponent>(bullet);
+
+        if (entityManager.HasComponent<PlayerHealthComponent>(player))
+        {
+            ecb.AddComponent(player, new DamageEventComponent
+            {
+                damageAmount = slimeBulletComponent.damagePlayerAmount,
+            });
+        }
     }
 
     private void SetBulletPositionAndDirection(EntityCommandBuffer ecb, Entity bullet)
@@ -64,7 +75,9 @@ public partial struct ShootSlimeBulletSystem : ISystem
             moveSpeed = slimeBulletComponent.moveSpeed,
             distanceTraveled = 0,
             maxDistance = slimeBulletComponent.maxDistance,
-            damageAmount = slimeBulletComponent.damageAmount,
+            damageEnemyAmount = slimeBulletComponent.damageEnemyAmount,
+            damagePlayerAmount = slimeBulletComponent.damagePlayerAmount,
+            healPlayerAmount = slimeBulletComponent.healPlayerAmount,
             colliderSize = slimeBulletComponent.colliderSize,
         });
     }

@@ -5,28 +5,43 @@ using Unity.Entities;
 [BurstCompile]
 public partial struct EnemyHealthSystem : ISystem
 {
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<EnemyHealthComponent>();
+    }
+
+
     public void OnUpdate(ref SystemState state)
     {
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
         var enemyEntitiesToReturn = new NativeList<Entity>(Allocator.Temp);
 
-        foreach (var (enemyHealth, entity) in SystemAPI.Query<RefRO<EnemyHealthComponent>>().WithEntityAccess())
+        foreach (var (enemyHealth, enemyEntity) in SystemAPI.Query<RefRW<EnemyHealthComponent>>().WithEntityAccess())
         {
-            if (enemyHealth.ValueRO.currentHealth <= 0)
+            //Take Damage
+            if (state.EntityManager.HasComponent<DamageEventComponent>(enemyEntity))
             {
-                // Queue structural changes with ECB.
-                ecb.AddComponent<Disabled>(entity);
-                ecb.SetComponent(entity, new EnemyHealthComponent
+                var damage = state.EntityManager.GetComponentData<DamageEventComponent>(enemyEntity);
+                enemyHealth.ValueRW.currentHealth -= damage.damageAmount;
+
+                if (enemyHealth.ValueRO.currentHealth <= 0)
                 {
-                    currentHealth = enemyHealth.ValueRO.maxHealth,
-                    maxHealth = enemyHealth.ValueRO.maxHealth,
-                });
-                // Collect the entity to return later.
-                enemyEntitiesToReturn.Add(entity);
+                    // Queue structural changes with ECB.
+                    ecb.AddComponent<Disabled>(enemyEntity);
+                    ecb.SetComponent(enemyEntity, new EnemyHealthComponent
+                    {
+                        currentHealth = enemyHealth.ValueRO.maxHealth,
+                        maxHealth = enemyHealth.ValueRO.maxHealth,
+                    });
+
+                    // Collect the entity to return later.
+                    enemyEntitiesToReturn.Add(enemyEntity);
+                }
+
+                ecb.RemoveComponent<DamageEventComponent>(enemyEntity);
             }
         }
-
 
         ecb.Playback(state.EntityManager);
         ecb.Dispose();

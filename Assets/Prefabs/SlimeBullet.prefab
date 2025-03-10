@@ -124,7 +124,9 @@ MonoBehaviour:
   distanceTraveled: 0
   maxDistance: 5
   colliderSize: 0.13
-  damageAmount: 1
+  damageEnemyAmount: 1
+  damagePlayerAmount: 1
+  healPlayerAmount: 1
 --- !u!54 &-6289036228961754803
 Rigidbody:
   m_ObjectHideFlags: 0

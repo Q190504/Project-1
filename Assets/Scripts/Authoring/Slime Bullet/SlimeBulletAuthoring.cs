@@ -10,7 +10,9 @@ public class SlimeBulletAuthoring : MonoBehaviour
     public float distanceTraveled;
     public float maxDistance;
     public float colliderSize;
-    public float damageAmount;
+    public int damageEnemyAmount;
+    public int damagePlayerAmount;
+    public int healPlayerAmount;
 
     public class SlimeBulletBaker : Baker<SlimeBulletAuthoring>
     {
@@ -28,7 +30,9 @@ public class SlimeBulletAuthoring : MonoBehaviour
                 distanceTraveled = authoring.distanceTraveled,
                 maxDistance = authoring.maxDistance,
                 colliderSize = authoring.colliderSize,
-                damageAmount = authoring.damageAmount,
+                damageEnemyAmount = authoring.damageEnemyAmount,
+                damagePlayerAmount = authoring.damagePlayerAmount,
+                healPlayerAmount = authoring.healPlayerAmount,
             });
         }
     }
@@ -42,5 +46,7 @@ public struct SlimeBulletComponent : IComponentData
     public float distanceTraveled;
     public float maxDistance;
     public float colliderSize;
-    public float damageAmount;
+    public int damageEnemyAmount;
+    public int damagePlayerAmount;
+    public int healPlayerAmount;
 }
