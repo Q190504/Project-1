@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] private int enemyPrepare;
     public List<EnemySpawner> SpawnerList = new List<EnemySpawner>();
 
+    private Entity player;
     private EntityManager entityManager;
     private Entity enemyPrefab;
 
@@ -18,6 +20,7 @@ public class EnemyManager : MonoBehaviour
     private int enemyCount = 0;
 
     public int enemiesPerWave; // Number of enemies per wave
+    private int enemiesToSpawnCounter;
 
     public float initialDelay; // Time before the first wave
     public float waveInterval; // Time between waves
@@ -56,11 +59,15 @@ public class EnemyManager : MonoBehaviour
     {
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
+        EntityQuery playerQuery = entityManager.CreateEntityQuery(typeof(PlayerTagComponent));
+        if (playerQuery.CalculateEntityCount() > 0)
+            player = playerQuery.GetSingletonEntity();
+
         // Get the baked entity prefab
-        EntityQuery query = entityManager.CreateEntityQuery(typeof(EnemyPrefabComponent));
-        if (query.CalculateEntityCount() > 0)
+        EntityQuery enemyPrefabQuery = entityManager.CreateEntityQuery(typeof(EnemyPrefabComponent));
+        if (enemyPrefabQuery.CalculateEntityCount() > 0)
         {
-            enemyPrefab = entityManager.GetComponentData<EnemyPrefabComponent>(query.GetSingletonEntity()).enemyPrefab;
+            enemyPrefab = entityManager.GetComponentData<EnemyPrefabComponent>(enemyPrefabQuery.GetSingletonEntity()).enemyPrefab;
         }
         else
         {
@@ -69,6 +76,7 @@ public class EnemyManager : MonoBehaviour
 
         waveTimer = initialDelay; 
         delayTimer = 0;
+        enemiesToSpawnCounter = enemiesPerWave;
         PrepareEnemy();
     }
 
@@ -77,25 +85,41 @@ public class EnemyManager : MonoBehaviour
     {
         if (waveTimer <= 0)
         {
-            if(delayTimer <= 0)
+            if (delayTimer <= 0 && enemiesToSpawnCounter > 0)
             {
                 foreach (EnemySpawner enemySpawner in SpawnerList)
                 {
                     if (enemySpawner.IsPlayerAround)
                     {
-                        SpawnEnemy(enemySpawner.transform.position);
+                        SpawnEnemy(new Vector3(Random.Range(enemySpawner.transform.position.x - 1, enemySpawner.transform.position.x + 1),
+                            Random.Range(enemySpawner.transform.position.y - 1, enemySpawner.transform.position.y + 1),
+                            0));
+
+                        enemiesToSpawnCounter--;
+
+                        if(enemiesToSpawnCounter == 0)
+                            break;
                     }
                 }
 
                 delayTimer = spawnDelay;
             }
             else
+            {
                 delayTimer -= Time.deltaTime;
+            }
 
-            waveTimer = waveInterval;
+            // Reset wave when all enemies have spawned
+            if (enemiesToSpawnCounter <= 0)
+            {
+                waveTimer = waveInterval;
+                enemiesToSpawnCounter = enemiesPerWave; 
+            }
         }
         else
+        {
             waveTimer -= Time.deltaTime;
+        }
     }
 
     public void SpawnEnemy(Vector3 position)
@@ -108,6 +132,11 @@ public class EnemyManager : MonoBehaviour
             Position = position,
             Rotation = Quaternion.identity,
             Scale = 1f
+        });
+
+        entityManager.SetComponentData(enemyInstance, new EnemyTargetComponent
+        {
+            targetEntity = player,
         });
     }
 
