@@ -95,11 +95,11 @@ public class BulletManager : MonoBehaviour
         return slimeBulletInstance;
     }
 
-    public void Return(Entity bullet)
+    public void Return(Entity bullet, EntityCommandBuffer ecb)
     {
         if (!entityManager.Exists(bullet)) return;
 
-        entityManager.AddComponent<Disabled>(bullet);
+        ecb.AddComponent<Disabled>(bullet);
         inactiveSlimeBullets.Enqueue(bullet);
         slimeBulletCount++;
     }

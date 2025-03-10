@@ -11,6 +11,9 @@ public partial struct SlimeBulletDamageEnemySystem : ISystem
         PhysicsWorldSingleton physicsWorldSingleton = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
         EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
+        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+
         NativeList<ColliderCastHit> hits = new NativeList<ColliderCastHit>(Allocator.Temp);
 
         foreach (var (localTransform, slimeBulletComponent, entity) in SystemAPI.Query<RefRO<LocalTransform>, RefRW<SlimeBulletComponent>>().WithEntityAccess())
@@ -29,11 +32,10 @@ public partial struct SlimeBulletDamageEnemySystem : ISystem
                     if (entityManager.HasComponent<EnemyHealthComponent>(hit.Entity))
                     {
                         slimeBulletComponent.ValueRW.isAbleToMove = false;
-
-                        var enemyHealth = entityManager.GetComponentData<EnemyHealthComponent>(hit.Entity);
-                        enemyHealth.currentHealth -= slimeBulletComponent.ValueRO.damageAmount;
-
-                        entityManager.SetComponentData(hit.Entity, enemyHealth);
+                        ecb.AddComponent(hit.Entity, new DamageEventComponent
+                        {
+                            damageAmount = slimeBulletComponent.ValueRO.damageEnemyAmount,
+                        });
                     }
                 }
             }
