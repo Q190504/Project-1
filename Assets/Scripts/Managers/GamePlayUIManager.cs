@@ -8,10 +8,29 @@ public class GamePlayUIManager : MonoBehaviour
 {
     private static GamePlayUIManager _instance;
 
+    [Header("Bars")]
     public Slider hpBar;
     public TMP_Text hpText;
     public Slider xpBar;
     public TMP_Text xpText;
+
+    [Header("Skills")]
+    public Image skill1Image;
+    public Image skill2Image;
+
+    [Header("Weapons")]
+    public Image basicWeaponImage;
+    public Image weapon1Image;
+    public Image weapon2Image;
+    public Image weapon3Image;
+    public Image weapon4Image;
+
+    [Header("Stats")]
+    public Image stats1;
+    public Image stats2;
+    public Image stats3;
+    public Image stats4;
+    public Image stats5;
 
     private Entity player;
     private EntityManager entityManager;
