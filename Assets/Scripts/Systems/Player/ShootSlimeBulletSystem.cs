@@ -11,6 +11,7 @@ public partial struct ShootSlimeBulletSystem : ISystem
 {
     private EntityManager entityManager;
     private Entity player;
+    private float shootTimer;
 
     public void OnUpdate(ref SystemState state)
     {
@@ -23,11 +24,16 @@ public partial struct ShootSlimeBulletSystem : ISystem
 
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        if (SystemAPI.TryGetSingleton<PlayerInputComponent>(out var playerInput))
+        if (SystemAPI.TryGetSingleton<PlayerInputComponent>(out var playerInput) && SystemAPI.TryGetSingleton<ShootSlimeBulletComponent>(out var shootSlimeBulletComponent))
         {
-            if (playerInput.isShootingPressed)
+            if (playerInput.isShootingPressed && shootTimer <= 0)
             {
                 Shoot(ecb);
+                shootTimer = shootSlimeBulletComponent.delayTime;
+            }
+            else
+            {
+                shootTimer -= SystemAPI.Time.DeltaTime;
             }
         }
 
