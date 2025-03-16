@@ -77,6 +77,7 @@ public partial struct ShootSlimeBulletSystem : ISystem
         ecb.SetComponent(bullet, new SlimeBulletComponent
         {
             isAbleToMove = true,
+            isBeingSummoned = false,
             moveDirection = moveDirection,
             moveSpeed = slimeBulletComponent.moveSpeed,
             distanceTraveled = 0,

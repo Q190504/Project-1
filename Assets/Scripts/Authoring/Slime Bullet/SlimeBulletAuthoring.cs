@@ -43,6 +43,7 @@ public class SlimeBulletAuthoring : MonoBehaviour
 public struct SlimeBulletComponent : IComponentData
 {
     public bool isAbleToMove;
+    public bool isBeingSummoned;
     public float3 moveDirection;
     public float moveSpeed;
     public float distanceTraveled;
