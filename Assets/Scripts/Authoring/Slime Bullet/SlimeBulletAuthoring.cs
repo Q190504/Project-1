@@ -13,6 +13,7 @@ public class SlimeBulletAuthoring : MonoBehaviour
     public int damageEnemyAmount;
     public int damagePlayerAmount;
     public int healPlayerAmount;
+    public float existDuration;
 
     public class SlimeBulletBaker : Baker<SlimeBulletAuthoring>
     {
@@ -33,6 +34,7 @@ public class SlimeBulletAuthoring : MonoBehaviour
                 damageEnemyAmount = authoring.damageEnemyAmount,
                 damagePlayerAmount = authoring.damagePlayerAmount,
                 healPlayerAmount = authoring.healPlayerAmount,
+                existDuration = authoring.existDuration,
             });
         }
     }
@@ -49,4 +51,5 @@ public struct SlimeBulletComponent : IComponentData
     public int damageEnemyAmount;
     public int damagePlayerAmount;
     public int healPlayerAmount;
+    public float existDuration;
 }
