@@ -81,23 +81,22 @@ public class GamePlayUIManager : MonoBehaviour
 
         if (fillImage != null)
         {
-            if (hpBar.value / hpBar.maxValue > GameManager.SKILL_1_THRESHOLD)
+            if (hpBar.value / hpBar.maxValue > GameManager.Instance.SKILL_1_THRESHOLD)
             {
                 fillImage.color = Color.green;
                 SetImageOpacity(skill1Image, 0.5f);
                 SetImageOpacity(skill2Image, 0.5f);
             }
-            else if(hpBar.value / hpBar.maxValue <= GameManager.SKILL_1_THRESHOLD && hpBar.value / hpBar.maxValue > GameManager.SKILL_2_THRESHOLD)
+            else if(hpBar.value / hpBar.maxValue <= GameManager.Instance.SKILL_1_THRESHOLD && hpBar.value / hpBar.maxValue > GameManager.Instance.SKILL_2_THRESHOLD)
             {
                 fillImage.color = Color.yellow;
                 SetImageOpacity(skill1Image, 1);
                 SetImageOpacity(skill2Image, 0.5f);
             }
-            else if(hpBar.value / hpBar.maxValue <= GameManager.SKILL_2_THRESHOLD)
+            else if(hpBar.value / hpBar.maxValue <= GameManager.Instance.SKILL_2_THRESHOLD)
             {
                 fillImage.color = Color.red;
                 SetImageOpacity(skill1Image, 0.5f);
-                SetImageOpacity(skill2Image, 1);
             }
         }
     }
@@ -116,5 +115,15 @@ public class GamePlayUIManager : MonoBehaviour
         Color color = image.color;
         color.a = Mathf.Clamp01(alpha);
         image.color = color;
+    }
+
+    public void SetSkill2ImageOpacityUp()
+    {
+        SetImageOpacity(skill2Image, 1);
+    }
+
+    public void SetSkill1ImageOpacityDown()
+    {
+        SetImageOpacity(skill1Image, 0.5f);
     }
 }

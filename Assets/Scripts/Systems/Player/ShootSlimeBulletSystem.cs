@@ -23,14 +23,19 @@ public partial struct ShootSlimeBulletSystem : ISystem
 
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        if (SystemAPI.TryGetSingleton<PlayerInputComponent>(out var playerInput) 
+        if (SystemAPI.TryGetSingleton<PlayerInputComponent>(out var playerInput)
             && SystemAPI.TryGetSingleton<ShootSlimeBulletComponent>(out var shootSlimeBulletComponent)
-            && SystemAPI.TryGetSingleton<PlayerTagComponent>(out var playerTagComponent))
+            && SystemAPI.TryGetSingleton<PlayerTagComponent>(out var playerTagComponent)
+            && SystemAPI.TryGetSingleton<SlimeFrenzyComponent>(out var slimeFrenzyComponent))
         {
             if (playerInput.isShootingPressed && !playerTagComponent.isStunned && shootTimer <= 0)
             {
-                Shoot(ecb);
-                shootTimer = shootSlimeBulletComponent.delayTime;
+                Shoot(ecb, playerTagComponent.isFrenzing, slimeFrenzyComponent.bonusDamagePercent, slimeFrenzyComponent.hpCostPerShotPercent);
+
+                if (playerTagComponent.isFrenzing)
+                    shootTimer = shootSlimeBulletComponent.delayTime * (1 - slimeFrenzyComponent.fireRateReductionPercent);
+                else
+                    shootTimer = shootSlimeBulletComponent.delayTime;
             }
             else
             {
@@ -42,23 +47,33 @@ public partial struct ShootSlimeBulletSystem : ISystem
         ecb.Dispose();
     }
 
-    private void Shoot(EntityCommandBuffer ecb)
+    private void Shoot(EntityCommandBuffer ecb, bool isSlimeFrenzyActive, float bonusDamagePercent, float hpCostPerShotPercent)
     {
         Entity bullet = BulletManager.Instance.Take(ecb);
-        SetBulletPositionAndDirection(ecb, bullet);
+        SetBulletPositionAndDirection(ecb, bullet, isSlimeFrenzyActive, bonusDamagePercent, hpCostPerShotPercent);
 
         SlimeBulletComponent slimeBulletComponent = entityManager.GetComponentData<SlimeBulletComponent>(bullet);
 
         if (entityManager.HasComponent<PlayerHealthComponent>(player))
         {
-            ecb.AddComponent(player, new DamageEventComponent
+            if(isSlimeFrenzyActive)
             {
-                damageAmount = slimeBulletComponent.damagePlayerAmount,
-            });
+                ecb.AddComponent(player, new DamageEventComponent
+                {
+                    damageAmount = (int)(slimeBulletComponent.damagePlayerAmount * hpCostPerShotPercent),
+                });
+            }
+            else
+            {
+                ecb.AddComponent(player, new DamageEventComponent
+                {
+                    damageAmount = slimeBulletComponent.damagePlayerAmount,
+                });
+            }
         }
     }
 
-    private void SetBulletPositionAndDirection(EntityCommandBuffer ecb, Entity bullet)
+    private void SetBulletPositionAndDirection(EntityCommandBuffer ecb, Entity bullet, bool isSlimeFrenzyActive, float bonusDamagePercent, float hpCostPerShotPercent)
     {
         float3 playerPosition = entityManager.GetComponentData<LocalTransform>(player).Position;
 

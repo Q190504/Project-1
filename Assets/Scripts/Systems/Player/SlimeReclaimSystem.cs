@@ -5,6 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [BurstCompile]
 public partial struct SlimeReclaimSystem : ISystem
@@ -12,6 +13,8 @@ public partial struct SlimeReclaimSystem : ISystem
     private EntityManager entityManager;
     private Entity player;
     private float cooldownTimer;
+
+    private bool hasWaitingSlimeBullet;
 
     public void OnUpdate(ref SystemState state)
     {
@@ -29,20 +32,40 @@ public partial struct SlimeReclaimSystem : ISystem
         {
             PlayerHealthComponent playerHealthComponent = entityManager.GetComponentData<PlayerHealthComponent>(player);
 
-            if (playerInput.isSkillPressed
-                && CheckPlayerHealth(playerHealthComponent.currentHealth, playerHealthComponent.maxHealth)
-                && cooldownTimer <= 0
-                && SystemAPI.Query<RefRW<SlimeBulletComponent>>().Any())
+            //Check any waiting slime bullet
+            hasWaitingSlimeBullet = false;
+            foreach (var (slimeBulletComponent, entity) in SystemAPI.Query<RefRO<SlimeBulletComponent>>().WithEntityAccess())
             {
-                // Apply stun effect
-                if (!entityManager.HasComponent<StunTimerComponent>(player))
-                    ecb.AddComponent(player, new StunTimerComponent { timeRemaining = slimeReclaimComponent.stunPlayerTime });
+                if (!slimeBulletComponent.ValueRO.isAbleToMove)
+                {
+                    hasWaitingSlimeBullet = true;
+                    break;
+                }
+            }
 
-                // Activate skill effects
-                foreach (var slimeBulletComponent in SystemAPI.Query<RefRW<SlimeBulletComponent>>())
-                    slimeBulletComponent.ValueRW.isBeingSummoned = true;
+            if (CheckPlayerHealth(playerHealthComponent.currentHealth, playerHealthComponent.maxHealth)
+                && cooldownTimer <= 0
+                && hasWaitingSlimeBullet)
+            {
+                //Update UI
+                GamePlayUIManager.Instance.SetSkill2ImageOpacityUp();
+                GamePlayUIManager.Instance.SetSkill1ImageOpacityDown();
 
-                cooldownTimer = slimeReclaimComponent.cooldownTime;
+                if (playerInput.isSkillPressed)
+                {
+                    // Apply stun effect
+                    if (!entityManager.HasComponent<StunTimerComponent>(player))
+                        ecb.AddComponent(player, new StunTimerComponent { timeRemaining = slimeReclaimComponent.stunPlayerTime });
+
+                    // Activate skill effects
+                    foreach (var slimeBulletComponent in SystemAPI.Query<RefRW<SlimeBulletComponent>>())
+                    {
+                        if (!slimeBulletComponent.ValueRO.isAbleToMove)
+                            slimeBulletComponent.ValueRW.isBeingSummoned = true;
+                    }
+
+                    cooldownTimer = slimeReclaimComponent.cooldownTime;
+                }
             }
             else
             {
@@ -56,6 +79,9 @@ public partial struct SlimeReclaimSystem : ISystem
 
     private bool CheckPlayerHealth(int currentHealth, int maxHealth)
     {
-        return (float)currentHealth / maxHealth <= GameManager.SKILL_2_THRESHOLD;
+        if (maxHealth <= 0) return false;
+        if (currentHealth <= 0) return false;
+
+        return (float)currentHealth / maxHealth <= GameManager.Instance.SKILL_2_THRESHOLD;
     }
 }
