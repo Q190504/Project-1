@@ -1,8 +1,6 @@
 using UnityEngine;
 using Unity.Entities;
 using Unity.Burst;
-using static UnityEngine.EventSystems.EventTrigger;
-using Unity.VisualScripting;
 
 [BurstCompile]
 public partial struct PlayerHealthSystem : ISystem
@@ -11,16 +9,38 @@ public partial struct PlayerHealthSystem : ISystem
     {
         state.RequireForUpdate<PlayerHealthComponent>();
 
-        if (!SystemAPI.TryGetSingleton<PlayerHealthComponent>(out PlayerHealthComponent playerHealthComponent))
-            return;
-
-        BulletManager.Instance.SetBulletPrepare(playerHealthComponent.currentHealth);
+        // Ensure InitializationTracker exists
+        if (!SystemAPI.HasSingleton<InitializationTrackerComponent>())
+        {
+            var trackerEntity = state.EntityManager.CreateEntity();
+            state.EntityManager.AddComponentData(trackerEntity, new InitializationTrackerComponent());
+        }
     }
 
     public void OnUpdate(ref SystemState state)
     {
         var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+
+        if (SystemAPI.TryGetSingletonEntity<PlayerHealthComponent>(out Entity player))
+        {
+            // Track Initialization Progress
+            if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker))
+            {
+                if (!tracker.healthSystemInitialized)
+                {
+                    var playerHealth = SystemAPI.GetComponent<PlayerHealthComponent>(player);
+
+                    UpdateHPBar(playerHealth.currentHealth, playerHealth.maxHealth);
+
+                    SetBulletPrepare(playerHealth.currentHealth);
+
+                    // Update tracker
+                    tracker.healthSystemInitialized = true;
+                    ecb.SetComponent(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), tracker);
+                }
+            }
+        }
 
         foreach (var (playerHealth, playerEntity) in SystemAPI.Query<RefRW<PlayerHealthComponent>>().WithEntityAccess())
         {
@@ -30,8 +50,8 @@ public partial struct PlayerHealthSystem : ISystem
                 var damage = state.EntityManager.GetComponentData<DamageEventComponent>(playerEntity);
                 playerHealth.ValueRW.currentHealth -= damage.damageAmount;
 
-                Debug.Log($"playerHealth.ValueRW.currentHealth: {playerHealth.ValueRW.currentHealth}");
-
+                //Update HP Bar
+                UpdateHPBar(playerHealth.ValueRO.currentHealth, playerHealth.ValueRO.maxHealth);
 
                 if (playerHealth.ValueRO.currentHealth <= 0)
                 {
@@ -53,8 +73,21 @@ public partial struct PlayerHealthSystem : ISystem
                     playerHealth.ValueRW.currentHealth = playerHealth.ValueRO.maxHealth;
                 }
 
+                //Update HP Bar
+                UpdateHPBar(playerHealth.ValueRO.currentHealth, playerHealth.ValueRO.maxHealth);
+
                 ecb.RemoveComponent<HealEventComponent>(playerEntity);
             }
         }
+    }
+
+    public void UpdateHPBar(int currentHP, int maxHP)
+    {
+        GamePlayUIManager.Instance.UpdateHPBar(currentHP, maxHP);
+    }
+
+    private void SetBulletPrepare(int bulletAmount)
+    {
+        BulletManager.Instance?.SetBulletPrepare(bulletAmount);
     }
 }
