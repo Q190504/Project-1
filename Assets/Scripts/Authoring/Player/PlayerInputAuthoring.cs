@@ -6,6 +6,7 @@ public class PlayerInputAuthoring : MonoBehaviour
 {
     public float2 moveInput;
     public bool isShootingPressed;
+    public bool isSkillPressed;
 
     class PlayerInputBaker : Baker<PlayerInputAuthoring>
     {
@@ -21,4 +22,5 @@ public struct PlayerInputComponent : IComponentData
 {
     public float2 moveInput;
     public bool isShootingPressed;
+    public bool isSkillPressed;
 }

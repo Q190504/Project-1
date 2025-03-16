@@ -9,10 +9,15 @@ public partial struct PlayerMovementSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
-        foreach (var (playerInput, playerMovement, physicsVelocity) in
-                 SystemAPI.Query<RefRO<PlayerInputComponent>, RefRW<PlayerMovementComponent>, RefRW<PhysicsVelocity>>())
+        foreach (var (playerInput, playerMovement, physicsVelocity, playerTagComponent) in
+                 SystemAPI.Query<RefRO<PlayerInputComponent>, RefRW<PlayerMovementComponent>, RefRW<PhysicsVelocity>, RefRW<PlayerTagComponent>>())
         {
-            float2 targetVelocity = playerInput.ValueRO.moveInput * playerMovement.ValueRO.speed;
+            float2 targetVelocity;
+            if (playerTagComponent.ValueRO.isStunned)
+                targetVelocity = new float2(0, 0);
+            else
+                targetVelocity = playerInput.ValueRO.moveInput * playerMovement.ValueRO.speed;
+
             physicsVelocity.ValueRW.Linear.xy = math.lerp(physicsVelocity.ValueRW.Linear.xy, targetVelocity, playerMovement.ValueRO.smoothTime);
         }
     }

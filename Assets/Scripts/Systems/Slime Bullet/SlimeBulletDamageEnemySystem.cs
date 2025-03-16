@@ -18,7 +18,7 @@ public partial struct SlimeBulletDamageEnemySystem : ISystem
 
         foreach (var (localTransform, slimeBulletComponent, entity) in SystemAPI.Query<RefRO<LocalTransform>, RefRW<SlimeBulletComponent>>().WithEntityAccess())
         {
-            if (slimeBulletComponent.ValueRO.isAbleToMove)
+            if (slimeBulletComponent.ValueRO.isAbleToMove || slimeBulletComponent.ValueRO.isBeingSummoned)
             {
                 hits.Clear();
 
@@ -32,6 +32,7 @@ public partial struct SlimeBulletDamageEnemySystem : ISystem
                     if (entityManager.HasComponent<EnemyHealthComponent>(hit.Entity))
                     {
                         slimeBulletComponent.ValueRW.isAbleToMove = false;
+
                         ecb.AddComponent(hit.Entity, new DamageEventComponent
                         {
                             damageAmount = slimeBulletComponent.ValueRO.damageEnemyAmount,

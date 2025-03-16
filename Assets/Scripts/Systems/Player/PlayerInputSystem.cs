@@ -18,11 +18,13 @@ public partial struct PlayerInputSystem : ISystem
         }
 
         bool isShooting = Mouse.current != null && Mouse.current.leftButton.wasReleasedThisFrame;
+        bool isPressingSkillButton = Keyboard.current.spaceKey.wasPressedThisFrame;
 
         foreach (var playerInput in SystemAPI.Query<RefRW<PlayerInputComponent>>())
         {
             playerInput.ValueRW.moveInput = movement;
             playerInput.ValueRW.isShootingPressed = isShooting;
+            playerInput.ValueRW.isSkillPressed = isPressingSkillButton;
         }
     }
 }

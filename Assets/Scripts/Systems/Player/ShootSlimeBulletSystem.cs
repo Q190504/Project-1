@@ -4,7 +4,6 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
 
 [BurstCompile]
 public partial struct ShootSlimeBulletSystem : ISystem
@@ -18,15 +17,17 @@ public partial struct ShootSlimeBulletSystem : ISystem
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
         {
-            Debug.Log($"Cant Found Player Entity!");
+            Debug.Log($"Cant Found Player Entity in ShootSlimeBulletSystem!");
             return;
         }
 
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        if (SystemAPI.TryGetSingleton<PlayerInputComponent>(out var playerInput) && SystemAPI.TryGetSingleton<ShootSlimeBulletComponent>(out var shootSlimeBulletComponent))
+        if (SystemAPI.TryGetSingleton<PlayerInputComponent>(out var playerInput) 
+            && SystemAPI.TryGetSingleton<ShootSlimeBulletComponent>(out var shootSlimeBulletComponent)
+            && SystemAPI.TryGetSingleton<PlayerTagComponent>(out var playerTagComponent))
         {
-            if (playerInput.isShootingPressed && shootTimer <= 0)
+            if (playerInput.isShootingPressed && !playerTagComponent.isStunned && shootTimer <= 0)
             {
                 Shoot(ecb);
                 shootTimer = shootSlimeBulletComponent.delayTime;

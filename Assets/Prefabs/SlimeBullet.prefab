@@ -127,7 +127,7 @@ MonoBehaviour:
   damageEnemyAmount: 1
   damagePlayerAmount: 1
   healPlayerAmount: 1
-  existDuration: 2
+  existDuration: 6
 --- !u!54 &-6289036228961754803
 Rigidbody:
   m_ObjectHideFlags: 0

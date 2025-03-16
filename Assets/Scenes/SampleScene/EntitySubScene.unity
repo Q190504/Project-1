@@ -355,6 +355,7 @@ GameObject:
   - component: {fileID: 1711749689}
   - component: {fileID: 1711749688}
   - component: {fileID: 1711749696}
+  - component: {fileID: 1711749697}
   m_Layer: 0
   m_Name: Player Container
   m_TagString: Player
@@ -390,6 +391,7 @@ MonoBehaviour:
     x: 0
     y: 0
   isShootingPressed: 0
+  isSkillPressed: 0
 --- !u!136 &1711749690
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -554,6 +556,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   delayTime: 0.2
+--- !u!114 &1711749697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711749687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ff9a3412fed753479ede4f0b371d8c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cooldownTime: 10
+  stunPlayerTime: 1.5
+  hpHealPrecentPerBullet: 1.25
+  bulletSpeedWhenSummoned: 20
 --- !u!1 &1750511603
 GameObject:
   m_ObjectHideFlags: 0
