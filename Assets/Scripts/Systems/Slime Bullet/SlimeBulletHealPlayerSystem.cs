@@ -7,11 +7,19 @@ using UnityEngine;
 
 public partial struct SlimeBulletHealPlayerSystem : ISystem
 {
+    private EntityManager entityManager;
+    private Entity player;
+
     public void OnUpdate(ref SystemState state)
     {
-        PhysicsWorldSingleton physicsWorldSingleton = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
-        EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+        if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
+        {
+            Debug.Log($"Cant Found Player Entity in SlimeBulletHealPlayerSystem!");
+            return;
+        }
 
+        PhysicsWorldSingleton physicsWorldSingleton = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
         NativeList<ColliderCastHit> hits = new NativeList<ColliderCastHit>(Allocator.Temp);
 
         var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
@@ -19,7 +27,7 @@ public partial struct SlimeBulletHealPlayerSystem : ISystem
 
         foreach (var (localTransform, slimeBulletComponent, entity) in SystemAPI.Query<RefRO<LocalTransform>, RefRW<SlimeBulletComponent>>().WithEntityAccess())
         {
-            if (!slimeBulletComponent.ValueRO.isAbleToMove)
+            if (!slimeBulletComponent.ValueRO.isAbleToMove || slimeBulletComponent.ValueRO.isBeingSummoned)
             {
                 hits.Clear();
 
@@ -32,10 +40,24 @@ public partial struct SlimeBulletHealPlayerSystem : ISystem
                 {
                     if (entityManager.HasComponent<PlayerHealthComponent>(hit.Entity))
                     {
-                        ecb.AddComponent(hit.Entity, new HealEventComponent
+                        //collecting
+                        if (!slimeBulletComponent.ValueRO.isBeingSummoned)
                         {
-                            healAmount = slimeBulletComponent.ValueRO.healPlayerAmount,
-                        });
+                            ecb.AddComponent(hit.Entity, new HealEventComponent
+                            {
+                                healAmount = slimeBulletComponent.ValueRO.healPlayerAmount,
+                            });
+                        }
+                        else //being summoned => bonus HP
+                        {
+                            SlimeReclaimComponent slimeReclaimComponent = entityManager.GetComponentData<SlimeReclaimComponent>(player);
+
+                            ecb.AddComponent(hit.Entity, new HealEventComponent
+                            {
+                                healAmount = (int)(slimeBulletComponent.ValueRO.healPlayerAmount * slimeReclaimComponent.hpHealPrecentPerBullet),
+                            });
+                        }
+
                         BulletManager.Instance.Return(entity, ecb);
                     }
                 }

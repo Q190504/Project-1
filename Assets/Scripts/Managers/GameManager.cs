@@ -6,9 +6,10 @@ public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
 
-    public static float SKILL_1_THRESHOLD = 0.5f;
-    public static float SKILL_2_THRESHOLD = 0.1f;
-
+    [Range(0f, 1f)]
+    public float SKILL_1_THRESHOLD;
+    [Range(0f, 1f)]
+    public float SKILL_2_THRESHOLD;
 
     public static GameManager Instance
     {

@@ -50,6 +50,9 @@ public partial struct PlayerHealthSystem : ISystem
                 var damage = state.EntityManager.GetComponentData<DamageEventComponent>(playerEntity);
                 playerHealth.ValueRW.currentHealth -= damage.damageAmount;
 
+                if (playerHealth.ValueRO.currentHealth < 0)
+                    playerHealth.ValueRW.currentHealth = 0;
+
                 //Update HP Bar
                 UpdateHPBar(playerHealth.ValueRO.currentHealth, playerHealth.ValueRO.maxHealth);
 
