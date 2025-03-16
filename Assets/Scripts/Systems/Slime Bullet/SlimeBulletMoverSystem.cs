@@ -13,7 +13,10 @@ public partial struct SlimeBulletMoverSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
-        foreach (var (localTransform, slimeBulletComponent) in SystemAPI.Query<RefRW<LocalTransform>, RefRW<SlimeBulletComponent>>().WithAbsent<Disabled>())
+        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+
+        foreach (var (localTransform, slimeBulletComponent, entity) in SystemAPI.Query<RefRW<LocalTransform>, RefRW<SlimeBulletComponent>>().WithEntityAccess())
         {
             if (slimeBulletComponent.ValueRO.isAbleToMove)
             {
@@ -22,6 +25,13 @@ public partial struct SlimeBulletMoverSystem : ISystem
 
                 if (slimeBulletComponent.ValueRO.distanceTraveled >= slimeBulletComponent.ValueRO.maxDistance)
                     slimeBulletComponent.ValueRW.isAbleToMove = false;
+            }
+            else
+            {
+                if (slimeBulletComponent.ValueRO.existDuration <= 0)
+                    BulletManager.Instance.Return(entity, ecb);
+                else
+                    slimeBulletComponent.ValueRW.existDuration -= SystemAPI.Time.DeltaTime;
             }
         }
     }

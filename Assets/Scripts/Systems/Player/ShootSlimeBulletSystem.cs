@@ -79,6 +79,7 @@ public partial struct ShootSlimeBulletSystem : ISystem
             damagePlayerAmount = slimeBulletComponent.damagePlayerAmount,
             healPlayerAmount = slimeBulletComponent.healPlayerAmount,
             colliderSize = slimeBulletComponent.colliderSize,
+            existDuration = slimeBulletComponent.existDuration,
         });
     }
 }
