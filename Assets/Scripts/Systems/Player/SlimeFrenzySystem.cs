@@ -8,7 +8,7 @@ public partial struct SlimeFrenzySystem : ISystem
     private EntityManager entityManager;
     private Entity player;
     private float cooldownTimer;
-    private bool isCooldownActive;
+    private bool isFrenzyActive;
 
     public void OnUpdate(ref SystemState state)
     {
@@ -27,23 +27,38 @@ public partial struct SlimeFrenzySystem : ISystem
             PlayerHealthComponent playerHealthComponent = entityManager.GetComponentData<PlayerHealthComponent>(player);
             var playerTagComponentRef = SystemAPI.GetSingletonRW<PlayerTagComponent>();
 
-            if (playerInput.isSkillPressed
-                && CheckPlayerHealth(playerHealthComponent.currentHealth, playerHealthComponent.maxHealth)
-                && cooldownTimer <= 0)
+            if (cooldownTimer <= 0)
             {
-                // Apply frenzy effect
-                if (!entityManager.HasComponent<SlimeFrenzyTimerComponent>(player))
-                    ecb.AddComponent(player, new SlimeFrenzyTimerComponent { timeRemaining = slimeFrenzyComponent.duration });
-                isCooldownActive = false;
-            }
-            else if (!entityManager.HasComponent<SlimeFrenzyTimerComponent>(player) && cooldownTimer < 0 && !isCooldownActive)
-            {
-                // Frenzy effect ended, start cooldown
-                cooldownTimer = slimeFrenzyComponent.cooldownTime;
-                isCooldownActive = true;
+                GamePlayUIManager.Instance.SetSkill1CooldownUI(false);
+
+                if (playerInput.isSkillPressed
+                && CheckPlayerHealth(playerHealthComponent.currentHealth, playerHealthComponent.maxHealth))
+                {
+                    // Apply frenzy effect
+                    if (!entityManager.HasComponent<SlimeFrenzyTimerComponent>(player))
+                        ecb.AddComponent(player, new SlimeFrenzyTimerComponent 
+                        { 
+                            timeRemaining = slimeFrenzyComponent.duration,
+                            initialDuration = slimeFrenzyComponent.duration
+                        });
+
+                    isFrenzyActive = true;
+                }
+                else if (!entityManager.HasComponent<SlimeFrenzyTimerComponent>(player) && isFrenzyActive) //Just ended slime frenzy
+                {
+                    // Frenzy effect ended, start cooldown
+                    cooldownTimer = slimeFrenzyComponent.cooldownTime;
+                    isFrenzyActive = false;
+                }
             }
             else
+            {
                 cooldownTimer -= SystemAPI.Time.DeltaTime;
+
+                //update UI cooldown
+                GamePlayUIManager.Instance.SetSkill1CooldownUI(true);
+                GamePlayUIManager.Instance.UpdateSkill1CooldownUI(cooldownTimer, slimeFrenzyComponent.cooldownTime);
+            }
         }
 
         ecb.Playback(state.EntityManager);

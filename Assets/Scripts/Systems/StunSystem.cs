@@ -23,6 +23,9 @@ public partial struct StunSystem : ISystem
                     var playerTag = SystemAPI.GetComponent<PlayerTagComponent>(entity);
                     playerTag.isStunned = false;
                     ecb.SetComponent(entity, playerTag);
+
+                    // Remove the stun effect UI when stun expires
+                    GamePlayUIManager.Instance.RemoveEffectImage(ref GamePlayUIManager.Instance.stunEffectIndex);
                 }
             }
             else
@@ -32,6 +35,13 @@ public partial struct StunSystem : ISystem
                     var playerTag = SystemAPI.GetComponent<PlayerTagComponent>(entity);
                     playerTag.isStunned = true;
                     ecb.SetComponent(entity, playerTag);
+
+                    //if hasn't Stun Effect Image yet
+                    if (GamePlayUIManager.Instance.stunEffectIndex == -1)
+                        GamePlayUIManager.Instance.AddStunEffectImage();
+
+                    // Update stun duration UI
+                    GamePlayUIManager.Instance.UpdateEffectDurationUI(GamePlayUIManager.Instance.stunEffectIndex, stunTimer.ValueRO.timeRemaining, stunTimer.ValueRO.initialDuration);
                 }
             }
         }

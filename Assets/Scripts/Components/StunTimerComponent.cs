@@ -4,4 +4,5 @@ using UnityEngine;
 public struct StunTimerComponent : IComponentData
 {
     public float timeRemaining;
+    public float initialDuration;
 }

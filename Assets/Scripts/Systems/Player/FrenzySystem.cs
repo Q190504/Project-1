@@ -22,11 +22,21 @@ public partial struct FrenzySystem : ISystem
 
                 if (SystemAPI.HasComponent<PlayerTagComponent>(entity))
                     playerTag.ValueRW.isFrenzing = false;
+
+                // Remove the frenzy effect UI when frenzy expires
+                GamePlayUIManager.Instance.RemoveEffectImage(ref GamePlayUIManager.Instance.frenzyEffectIndex);
             }
             else
             {
                 if (SystemAPI.HasComponent<PlayerTagComponent>(entity))
                     playerTag.ValueRW.isFrenzing = true;
+
+                //if hasn't Frenzy Effect Image yet
+                if (GamePlayUIManager.Instance.frenzyEffectIndex == -1)
+                    GamePlayUIManager.Instance.AddFrenzyEffectImage();
+
+                // Update frenzy duration UI
+                GamePlayUIManager.Instance.UpdateEffectDurationUI(GamePlayUIManager.Instance.frenzyEffectIndex, frenzyTimer.ValueRO.timeRemaining, frenzyTimer.ValueRO.initialDuration);
             }
         }
 

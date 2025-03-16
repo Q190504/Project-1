@@ -32,44 +32,55 @@ public partial struct SlimeReclaimSystem : ISystem
         {
             PlayerHealthComponent playerHealthComponent = entityManager.GetComponentData<PlayerHealthComponent>(player);
 
-            //Check any waiting slime bullet
-            hasWaitingSlimeBullet = false;
-            foreach (var (slimeBulletComponent, entity) in SystemAPI.Query<RefRO<SlimeBulletComponent>>().WithEntityAccess())
+            if (cooldownTimer <= 0)
             {
-                if (!slimeBulletComponent.ValueRO.isAbleToMove)
+                GamePlayUIManager.Instance.SetSkill2CooldownUI(false);
+
+                //Check any waiting slime bullet
+                hasWaitingSlimeBullet = false;
+                foreach (var (slimeBulletComponent, entity) in SystemAPI.Query<RefRO<SlimeBulletComponent>>().WithEntityAccess())
                 {
-                    hasWaitingSlimeBullet = true;
-                    break;
-                }
-            }
-
-            if (CheckPlayerHealth(playerHealthComponent.currentHealth, playerHealthComponent.maxHealth)
-                && cooldownTimer <= 0
-                && hasWaitingSlimeBullet)
-            {
-                //Update UI
-                GamePlayUIManager.Instance.SetSkill2ImageOpacityUp();
-                GamePlayUIManager.Instance.SetSkill1ImageOpacityDown();
-
-                if (playerInput.isSkillPressed)
-                {
-                    // Apply stun effect
-                    if (!entityManager.HasComponent<StunTimerComponent>(player))
-                        ecb.AddComponent(player, new StunTimerComponent { timeRemaining = slimeReclaimComponent.stunPlayerTime });
-
-                    // Activate skill effects
-                    foreach (var slimeBulletComponent in SystemAPI.Query<RefRW<SlimeBulletComponent>>())
+                    if (!slimeBulletComponent.ValueRO.isAbleToMove)
                     {
-                        if (!slimeBulletComponent.ValueRO.isAbleToMove)
-                            slimeBulletComponent.ValueRW.isBeingSummoned = true;
+                        hasWaitingSlimeBullet = true;
+                        break;
                     }
+                }
 
-                    cooldownTimer = slimeReclaimComponent.cooldownTime;
+                if (CheckPlayerHealth(playerHealthComponent.currentHealth, playerHealthComponent.maxHealth)
+                && hasWaitingSlimeBullet)
+                {
+                    //Update UI
+                    GamePlayUIManager.Instance.SetSkill2ImageOpacityUp();
+                    GamePlayUIManager.Instance.SetSkill1ImageOpacityDown();
+
+                    if (playerInput.isSkillPressed)
+                    {
+                        // Apply stun effect
+                        if (!entityManager.HasComponent<StunTimerComponent>(player))
+                            ecb.AddComponent(player, new StunTimerComponent 
+                            { 
+                                timeRemaining = slimeReclaimComponent.stunPlayerTime ,
+                                initialDuration = slimeReclaimComponent.stunPlayerTime,
+                            });
+
+                        // Activate skill effects
+                        foreach (var slimeBulletComponent in SystemAPI.Query<RefRW<SlimeBulletComponent>>())
+                        {
+                            if (!slimeBulletComponent.ValueRO.isAbleToMove)
+                                slimeBulletComponent.ValueRW.isBeingSummoned = true;
+                        }
+
+                        cooldownTimer = slimeReclaimComponent.cooldownTime;
+                    }
                 }
             }
             else
             {
                 cooldownTimer -= SystemAPI.Time.DeltaTime;
+                //update UI cooldown
+                GamePlayUIManager.Instance.SetSkill2CooldownUI(true);
+                GamePlayUIManager.Instance.UpdateSkill2CooldownUI(cooldownTimer, slimeReclaimComponent.cooldownTime);
             }
         }
 

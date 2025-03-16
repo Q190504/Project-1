@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using Unity.Collections;
 using Unity.Entities;
@@ -16,7 +17,11 @@ public class GamePlayUIManager : MonoBehaviour
 
     [Header("Skills")]
     public Image skill1Image;
+    public Image skill1CoodownImage;
+    public TMP_Text skill1CoodownText;
     public Image skill2Image;
+    public Image skill2CoodownImage;
+    public TMP_Text skill2CoodownText;
 
     [Header("Weapons")]
     public Image basicWeaponImage;
@@ -32,9 +37,18 @@ public class GamePlayUIManager : MonoBehaviour
     public Image stats4;
     public Image stats5;
 
+
+    [Header("Effects")]
+    public GameObject effectImagePrefab;
+    public int stunEffectIndex = -1;
+    public Sprite stunEffectSprite;
+    public int frenzyEffectIndex = -1;
+    public Sprite frenzyEffectSprite;
+    public Transform effectsLayout;
+    private List<GameObject> effectImageList = new List<GameObject>();
+
     private Entity player;
     private EntityManager entityManager;
-
 
     public static GamePlayUIManager Instance
     {
@@ -67,7 +81,7 @@ public class GamePlayUIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void UpdateHPBar(int currentHP, int maxHP)
@@ -87,13 +101,13 @@ public class GamePlayUIManager : MonoBehaviour
                 SetImageOpacity(skill1Image, 0.5f);
                 SetImageOpacity(skill2Image, 0.5f);
             }
-            else if(hpBar.value / hpBar.maxValue <= GameManager.Instance.SKILL_1_THRESHOLD && hpBar.value / hpBar.maxValue > GameManager.Instance.SKILL_2_THRESHOLD)
+            else if (hpBar.value / hpBar.maxValue <= GameManager.Instance.SKILL_1_THRESHOLD && hpBar.value / hpBar.maxValue > GameManager.Instance.SKILL_2_THRESHOLD)
             {
                 fillImage.color = Color.yellow;
                 SetImageOpacity(skill1Image, 1);
                 SetImageOpacity(skill2Image, 0.5f);
             }
-            else if(hpBar.value / hpBar.maxValue <= GameManager.Instance.SKILL_2_THRESHOLD)
+            else if (hpBar.value / hpBar.maxValue <= GameManager.Instance.SKILL_2_THRESHOLD)
             {
                 fillImage.color = Color.red;
                 SetImageOpacity(skill1Image, 0.5f);
@@ -110,7 +124,7 @@ public class GamePlayUIManager : MonoBehaviour
     }
 
     // Set opacity (0 = fully transparent, 1 = fully opaque)
-    public void SetImageOpacity(Image image,float alpha)
+    public void SetImageOpacity(Image image, float alpha)
     {
         Color color = image.color;
         color.a = Mathf.Clamp01(alpha);
@@ -125,5 +139,68 @@ public class GamePlayUIManager : MonoBehaviour
     public void SetSkill1ImageOpacityDown()
     {
         SetImageOpacity(skill1Image, 0.5f);
+    }
+
+    public void SetSkill1CooldownUI(bool status)
+    {
+        skill1CoodownImage.gameObject.SetActive(status);
+        skill1CoodownText.gameObject.SetActive(status);
+    }
+
+    public void SetSkill2CooldownUI(bool status)
+    {
+        skill2CoodownImage.gameObject.SetActive(status);
+        skill2CoodownText.gameObject.SetActive(status);
+    }
+
+    public void UpdateSkill1CooldownUI(float timeRemaining, float cooldownTime)
+    {
+        skill1CoodownImage.fillAmount = timeRemaining / cooldownTime;
+        skill1CoodownText.text = ((int)timeRemaining).ToString();
+    }
+
+    public void UpdateSkill2CooldownUI(float timeRemaining, float cooldownTime)
+    {
+        skill2CoodownImage.fillAmount = timeRemaining / cooldownTime;
+        skill2CoodownText.text = ((int)timeRemaining).ToString();
+    }
+
+    public void AddStunEffectImage()
+    {
+        Image[] images = effectImagePrefab.GetComponentsInChildren<Image>();
+        if (images.Length > 1)
+            images[0].sprite = stunEffectSprite;
+
+        GameObject stunEffectImage = GameObject.Instantiate<GameObject>(effectImagePrefab, effectsLayout);
+        effectImageList.Add(stunEffectImage);
+
+        if (stunEffectIndex == -1)
+            stunEffectIndex = effectImageList.Count - 1;
+    }
+
+    public void AddFrenzyEffectImage()
+    {
+        Image[] images = effectImagePrefab.GetComponentsInChildren<Image>();
+        if (images.Length > 1)
+            images[0].sprite = frenzyEffectSprite;
+
+        GameObject frenzyEffectImage = GameObject.Instantiate<GameObject>(effectImagePrefab, effectsLayout);
+        effectImageList.Add(frenzyEffectImage);
+
+        if (frenzyEffectIndex == -1)
+            frenzyEffectIndex = effectImageList.Count - 1;
+    }
+
+    public void UpdateEffectDurationUI(int imageIndex, float timeRemaining, float cooldownTime)
+    {
+        Image[] images = effectImageList[imageIndex].GetComponentsInChildren<Image>();
+        if (images.Length > 1)
+            images[1].fillAmount = timeRemaining / cooldownTime;
+    }
+
+    public void RemoveEffectImage(ref int imageIndex)
+    {
+        Destroy(effectImageList[imageIndex].gameObject);
+        imageIndex = -1;
     }
 }
