@@ -16,8 +16,9 @@ GameObject:
   - component: {fileID: 5163833384952741017}
   - component: {fileID: 2752749230421751900}
   - component: {fileID: 1033001227133458703}
-  - component: {fileID: 8519876844900337910}
   - component: {fileID: 4408291309881511056}
+  - component: {fileID: 682248334644008956}
+  - component: {fileID: 6048368368078458872}
   m_Layer: 7
   m_Name: Enemy
   m_TagString: Untagged
@@ -150,6 +151,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8d0d21c1f23b8b46ab7974c73743dd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 1
+  speed: 2
 --- !u!114 &2752749230421751900
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,29 +180,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetGameObject: {fileID: 5047382255737228323, guid: ff297634ff9812d4cac3b0f62753cd24, type: 3}
---- !u!136 &8519876844900337910
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2885116409787558276}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 1
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &4408291309881511056
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -227,3 +207,37 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 120
   m_CollisionDetection: 0
+--- !u!135 &682248334644008956
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2885116409787558276}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.47
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6048368368078458872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2885116409787558276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 022282c0e6958d741b30423cff1be7b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cooldownTime: 1

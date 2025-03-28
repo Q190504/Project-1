@@ -3,7 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 
 [BurstCompile]
-public partial struct StunSystem : ISystem
+public partial struct PlayerStunSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
