@@ -123,7 +123,6 @@ MonoBehaviour:
   moveSpeed: 10
   distanceTraveled: 0
   maxDistance: 5
-  colliderSize: 0.13
   damageEnemyAmount: 1
   damagePlayerAmount: 1
   healPlayerAmount: 1
