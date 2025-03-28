@@ -7,7 +7,7 @@ public partial struct PathFollowSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
-        foreach (var (localTransform, pathFollowComponent, pathPositionBuffer) in SystemAPI.Query<RefRW<LocalTransform>, RefRW<PathFollowComponent>, DynamicBuffer<PathPositionComponent>>())
+        foreach (var (localTransform, pathFollowComponent, enemyTagComponent, pathPositionBuffer) in SystemAPI.Query<RefRW<LocalTransform>, RefRW<PathFollowComponent>, RefRO<EnemyTagComponent>, DynamicBuffer<PathPositionComponent>>())
         {
             if (pathFollowComponent.ValueRO.pathIndex >= 0)
             {
@@ -16,9 +16,7 @@ public partial struct PathFollowSystem : ISystem
                 float3 targetPosition = new float3(pathPosition.x, pathPosition.y, 0);
                 float3 moveDirection = math.normalizesafe(targetPosition - localTransform.ValueRO.Position);
 
-                float moveSpeed = 3f;
-
-                localTransform.ValueRW.Position += moveDirection * moveSpeed * Time.deltaTime;
+                localTransform.ValueRW.Position += moveDirection * enemyTagComponent.ValueRO.speed * Time.deltaTime;
 
                 if (math.distance(localTransform.ValueRO.Position, targetPosition) < 0.1f)
                 {
