@@ -1,8 +1,7 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Mathematics;
 using Unity.Physics;
-using Unity.Transforms;
 using UnityEngine;
 
 public partial struct SlimeBulletHealPlayerSystem : ISystem
@@ -12,59 +11,109 @@ public partial struct SlimeBulletHealPlayerSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-        if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
-        {
-            Debug.Log($"Cant Found Player Entity in SlimeBulletHealPlayerSystem!");
-            return;
-        }
-
-        PhysicsWorldSingleton physicsWorldSingleton = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
-        NativeList<ColliderCastHit> hits = new NativeList<ColliderCastHit>(Allocator.Temp);
-
         var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+        NativeList<Entity> bulletsToReturn = new NativeList<Entity>(Allocator.TempJob);
 
-        foreach (var (localTransform, slimeBulletComponent, entity) in SystemAPI.Query<RefRO<LocalTransform>, RefRW<SlimeBulletComponent>>().WithEntityAccess())
+        var job = new SlimeBulletHealPlayerJob
         {
-            if (!slimeBulletComponent.ValueRO.isAbleToMove || slimeBulletComponent.ValueRO.isBeingSummoned)
+            slimeBulletLookup = SystemAPI.GetComponentLookup<SlimeBulletComponent>(true),
+            slimeReclaimComponentLookup = SystemAPI.GetComponentLookup<SlimeReclaimComponent>(true),
+            playerLookup = SystemAPI.GetComponentLookup<PlayerHealthComponent>(true),
+            ecb = ecb,
+            bulletsToReturn = bulletsToReturn,
+        };
+
+        state.Dependency = job.Schedule(SystemAPI.GetSingleton<SimulationSingleton>(), state.Dependency);
+        state.Dependency.Complete();
+
+        foreach (var bullet in bulletsToReturn)
+        {
+            BulletManager.Instance.Return(bullet, ecb);
+        }
+
+        bulletsToReturn.Dispose();
+    }
+}
+
+[BurstCompile]
+struct SlimeBulletHealPlayerJob : ITriggerEventsJob
+{
+    [ReadOnly] public ComponentLookup<SlimeBulletComponent> slimeBulletLookup;
+    [ReadOnly] public ComponentLookup<SlimeReclaimComponent> slimeReclaimComponentLookup;
+    [ReadOnly] public ComponentLookup<PlayerHealthComponent> playerLookup;
+    public EntityCommandBuffer ecb;
+    public NativeList<Entity> bulletsToReturn; 
+
+    public void Execute(TriggerEvent triggerEvent)
+    {
+        Entity entityA = triggerEvent.EntityA;
+        Entity entityB = triggerEvent.EntityB;
+
+        bool entityAIsPlayer = playerLookup.HasComponent(entityA);
+        bool entityBIsPlayer = playerLookup.HasComponent(entityB);
+
+        if (entityAIsPlayer || entityBIsPlayer)
+        {
+            Entity slimeBulletEntity = entityAIsPlayer ? entityB : entityA;
+
+            if (slimeBulletLookup.HasComponent(slimeBulletEntity))
             {
-                hits.Clear();
+                var slimeBulletComponent = slimeBulletLookup[slimeBulletEntity];
+                int healAmount = 0;
 
-                float3 point1 = new float3(localTransform.ValueRO.Position - slimeBulletComponent.ValueRO.colliderSize);
-                float3 point2 = new float3(localTransform.ValueRO.Position + slimeBulletComponent.ValueRO.colliderSize);
-
-                physicsWorldSingleton.CapsuleCastAll(point1, point2, slimeBulletComponent.ValueRO.colliderSize / 2, float3.zero, 1, ref hits, CollisionFilter.Default);
-
-                foreach (ColliderCastHit hit in hits)
+                if(!slimeBulletComponent.hasHealPlayer && (!slimeBulletComponent.isAbleToMove || slimeBulletComponent.isBeingSummoned))
                 {
-                    if (entityManager.HasComponent<PlayerHealthComponent>(hit.Entity))
+                    //collecting
+                    if (!slimeBulletComponent.isAbleToMove)
                     {
-                        //collecting
-                        if (!slimeBulletComponent.ValueRO.isBeingSummoned)
-                        {
-                            ecb.AddComponent(hit.Entity, new HealEventComponent
-                            {
-                                healAmount = slimeBulletComponent.ValueRO.healPlayerAmount,
-                            });
-                        }
-                        else //being summoned => bonus HP
-                        {
-                            SlimeReclaimComponent slimeReclaimComponent = entityManager.GetComponentData<SlimeReclaimComponent>(player);
-
-                            ecb.AddComponent(hit.Entity, new HealEventComponent
-                            {
-                                healAmount = (int)(slimeBulletComponent.ValueRO.healPlayerAmount * slimeReclaimComponent.hpHealPrecentPerBullet),
-                            });
-                        }
-
-                        BulletManager.Instance.Return(entity, ecb);
+                        healAmount = slimeBulletComponent.healPlayerAmount;
                     }
+                    //being summoned => bonus HP
+                    else if (slimeBulletComponent.isBeingSummoned)
+                    {
+                        var slimeReclaimComponent = slimeReclaimComponentLookup[slimeBulletEntity];
+                        healAmount = (int)(slimeBulletComponent.healPlayerAmount * slimeReclaimComponent.hpHealPrecentPerBullet);
+                    }
+
+                    //Heal player
+                    HealPlayer(entityAIsPlayer, entityA, entityB, healAmount);
+
+                    //Set hasHealPlayer = true
+                    ecb.SetComponent(slimeBulletEntity, new SlimeBulletComponent
+                    {
+                        hasHealPlayer = true,
+                        isAbleToMove = slimeBulletComponent.isAbleToMove,
+                        isBeingSummoned = slimeBulletComponent.isBeingSummoned,
+                        damageEnemyAmount = slimeBulletComponent.damageEnemyAmount,
+                        damagePlayerAmount = slimeBulletComponent.damagePlayerAmount,
+                        distanceTraveled = slimeBulletComponent.distanceTraveled,
+                        existDuration = slimeBulletComponent.existDuration,
+                        maxDistance = slimeBulletComponent.maxDistance,
+                        moveDirection = slimeBulletComponent.moveDirection,
+                        healPlayerAmount = slimeBulletComponent.healPlayerAmount,
+                        moveSpeed = slimeBulletComponent.moveSpeed,
+                        hasDamagedEnemy = slimeBulletComponent.hasDamagedEnemy,
+                    });
+
+                    // Add bullet to return list
+                    bulletsToReturn.Add(slimeBulletEntity);
                 }
             }
         }
+    }
 
-        hits.Dispose();
+    private void HealPlayer(bool isEntityAPlayer, Entity entityA, Entity entityB, int healAmount)
+    {
+        if (isEntityAPlayer)
+        {
+            ecb.AddComponent(entityA, new HealEventComponent { healAmount = healAmount });
+        }
+        else
+        {
+            ecb.AddComponent(entityB, new HealEventComponent { healAmount = healAmount });
+        }
     }
 }
+
 

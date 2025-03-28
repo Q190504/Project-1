@@ -56,7 +56,7 @@ public partial struct ShootSlimeBulletSystem : ISystem
 
         if (entityManager.HasComponent<PlayerHealthComponent>(player))
         {
-            if(isSlimeFrenzyActive)
+            if (isSlimeFrenzyActive)
             {
                 ecb.AddComponent(player, new DamageEventComponent
                 {
@@ -101,8 +101,9 @@ public partial struct ShootSlimeBulletSystem : ISystem
             damageEnemyAmount = slimeBulletComponent.damageEnemyAmount,
             damagePlayerAmount = slimeBulletComponent.damagePlayerAmount,
             healPlayerAmount = slimeBulletComponent.healPlayerAmount,
-            colliderSize = slimeBulletComponent.colliderSize,
             existDuration = slimeBulletComponent.existDuration,
+            hasDamagedEnemy = false,
+            hasHealPlayer = false,
         });
     }
 }

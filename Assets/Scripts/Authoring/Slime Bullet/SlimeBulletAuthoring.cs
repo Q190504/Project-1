@@ -9,7 +9,6 @@ public class SlimeBulletAuthoring : MonoBehaviour
     public float moveSpeed;
     public float distanceTraveled;
     public float maxDistance;
-    public float colliderSize;
     public int damageEnemyAmount;
     public int damagePlayerAmount;
     public int healPlayerAmount;
@@ -21,8 +20,6 @@ public class SlimeBulletAuthoring : MonoBehaviour
         {
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
 
-            authoring.colliderSize = authoring.GetComponent<CapsuleCollider>().radius;
-
             AddComponent(entity, new SlimeBulletComponent
             {
                 isAbleToMove = authoring.isAbleToMove,
@@ -30,11 +27,13 @@ public class SlimeBulletAuthoring : MonoBehaviour
                 moveSpeed = authoring.moveSpeed,
                 distanceTraveled = authoring.distanceTraveled,
                 maxDistance = authoring.maxDistance,
-                colliderSize = authoring.colliderSize,
                 damageEnemyAmount = authoring.damageEnemyAmount,
                 damagePlayerAmount = authoring.damagePlayerAmount,
                 healPlayerAmount = authoring.healPlayerAmount,
                 existDuration = authoring.existDuration,
+                hasDamagedEnemy = false,
+                hasHealPlayer = false,
+                isBeingSummoned = false,
             });
         }
     }
@@ -48,9 +47,10 @@ public struct SlimeBulletComponent : IComponentData
     public float moveSpeed;
     public float distanceTraveled;
     public float maxDistance;
-    public float colliderSize;
     public int damageEnemyAmount;
     public int damagePlayerAmount;
     public int healPlayerAmount;
     public float existDuration;
+    public bool hasHealPlayer;
+    public bool hasDamagedEnemy;
 }
