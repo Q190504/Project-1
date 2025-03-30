@@ -31,13 +31,16 @@ public class WeaponDatabaseAuthoring : MonoBehaviour
             }
 
             // Create Blob Asset Reference
-            var blobAsset = builder.CreateBlobAssetReference<WeaponDatabase>(Allocator.Persistent);
+            var blobReference = builder.CreateBlobAssetReference<WeaponDatabase>(Allocator.Persistent);
+
+            builder.Dispose();
+
+            // Register the Blob Asset to the Baker for de-duplication and reverting.
+            AddBlobAsset<WeaponDatabase>(ref blobReference, out var hash);
 
             // Create Entity and attach WeaponDatabaseComponent
             var entity = GetEntity(TransformUsageFlags.None);
-            AddComponent(entity, new WeaponDatabaseComponent { weaponDatabase = blobAsset });
-
-            builder.Dispose();
+            AddComponent(entity, new WeaponDatabaseComponent { weaponDatabase = blobReference });
         }
     }
 }
