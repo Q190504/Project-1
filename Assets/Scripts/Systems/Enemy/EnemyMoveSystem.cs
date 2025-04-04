@@ -1,45 +1,52 @@
 using UnityEngine;
 using Unity.Entities;
-using Unity.Collections;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine.UIElements;
 using Unity.Burst;
+using Unity.Physics;
 
 [BurstCompile]
+[UpdateAfter(typeof(FlowFieldComputationSystem))]
+
 public partial struct EnemyMoveSystem : ISystem
 {
-    public void OnUpdate(ref SystemState state)
+    Entity grid;
+    EntityManager entityManager;
+    EntityQuery gridQuery;
+
+    public void OnCreate(ref SystemState state)
     {
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
-        EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-
-        foreach (var (enemyTag, localTransform, target, entity) in
-                 SystemAPI.Query<RefRW<EnemyTagComponent>, RefRO<LocalTransform>, RefRO<EnemyTargetComponent>>().WithEntityAccess())
-        {
-            MapManager.Instance.pathfindingGrid.GetXY(localTransform.ValueRO.Position, out int startX, out int startY);
-            ValidatePosition(ref startX, ref startY);
-
-            float3 playerPosition = SystemAPI.GetComponent<LocalTransform>(target.ValueRO.targetEntity).Position;
-
-            int playerXPosition = (int)playerPosition.x;
-            int playerYPosition = (int)playerPosition.y;
-            ValidatePosition(ref playerXPosition, ref playerYPosition);
-
-            ecb.AddComponent(entity, new PathFindingComponent
-            {
-                startPosition = new int2(startX, startY),
-                endPosition = new int2(playerXPosition, playerYPosition),
-            });
-        }
-
-        ecb.Playback(state.EntityManager);
-        ecb.Dispose();
+        gridQuery = state.EntityManager.CreateEntityQuery(typeof(FlowFieldGridDataComponent), typeof(GridNode));
     }
 
-    private void ValidatePosition(ref int x, ref int y)
+    public void OnUpdate(ref SystemState state)
     {
-        x = math.clamp(x, 0, MapManager.Instance.pathfindingGrid.GetWidth() - 1);
-        y = math.clamp(y, 0, MapManager.Instance.pathfindingGrid.GetHeight() - 1);
+        if (gridQuery.IsEmpty)
+        {
+            Debug.Log("Can't find grid in EnemyMoveSystem!");
+            return;
+        }
+
+        grid = gridQuery.GetSingletonEntity();
+        FlowFieldGridDataComponent flowFieldGridDataComponent = state.EntityManager.GetComponentData<FlowFieldGridDataComponent>(grid);
+        DynamicBuffer<GridNode> pathBuffer = state.EntityManager.GetBuffer<GridNode>(grid);
+        int width = flowFieldGridDataComponent.width;
+        float cellSize = flowFieldGridDataComponent.cellSize;
+
+        foreach (var (localTransform, enemyTag, physicsVelocity) in SystemAPI.Query<RefRW<LocalTransform>, RefRO<EnemyTagComponent>, RefRW<PhysicsVelocity>>())
+        {
+            int x = (int)(localTransform.ValueRO.Position.x / cellSize);
+            int y = (int)(localTransform.ValueRO.Position.y / cellSize);
+            int index = x + y * width;
+
+            if (index >= 0 && index < pathBuffer.Length)
+            {
+                float2 flowDirection = pathBuffer[index].vector;
+
+                float3 movement = new float3(flowDirection.x, flowDirection.y, 0) * 2f;
+
+                physicsVelocity.ValueRW.Linear = movement;
+            }
+        }
     }
 }
