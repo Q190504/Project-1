@@ -51,20 +51,16 @@ public partial struct IntegrationFieldSystem : ISystem
                 int y = current / grid.ValueRO.width;
                 byte currentCost = pathBuffer[current].bestCost;
 
-                // 8 directions: Left, Right, Up, Down, and Diagonals
+                // 4 directions: Left, Right, Up, Down
                 int2[] neighborOffsets = new int2[]
                 {
                     new int2(-1,  0), // Left
                     new int2( 1,  0), // Right
                     new int2( 0, -1), // Down
                     new int2( 0,  1), // Up
-                    new int2(-1, -1), // Bottom-left
-                    new int2( 1, -1), // Bottom-right
-                    new int2(-1,  1), // Top-left
-                    new int2( 1,  1)  // Top-right
                 };
 
-                for (int i = 0; i < 8; i++) // Loop through 8 directions
+                for (int i = 0; i < 4; i++) // Loop through 4 directions
                 {
                     int2 neighbor = new int2(x, y) + neighborOffsets[i];
                 
