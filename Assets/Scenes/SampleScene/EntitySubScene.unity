@@ -329,7 +329,7 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 0
-  showDebug: 0
+  showDebug: 1
 --- !u!4 &786503823
 Transform:
   m_ObjectHideFlags: 0
