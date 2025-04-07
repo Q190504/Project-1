@@ -72,23 +72,6 @@ struct SlimeBulletDamageEnemyJob : ITriggerEventsJob
                     {
                         ecb.AddComponent(entityB, new DamageEventComponent { damageAmount = damage });
                     }
-
-                    // Set slimeBulletComponent.isAbleToMove to false & hasDamagedEnemy = true
-                    ecb.SetComponent(slimeBulletEntity, new SlimeBulletComponent
-                    {
-                        isAbleToMove = false,
-                        hasDamagedEnemy = true,
-                        isBeingSummoned = slimeBulletComponent.isBeingSummoned,
-                        damageEnemyAmount = slimeBulletComponent.damageEnemyAmount,
-                        damagePlayerAmount = slimeBulletComponent.damagePlayerAmount,
-                        distanceTraveled = slimeBulletComponent.distanceTraveled,
-                        existDuration = slimeBulletComponent.existDuration,
-                        maxDistance = slimeBulletComponent.maxDistance,
-                        moveDirection = slimeBulletComponent.moveDirection,
-                        healPlayerAmount = slimeBulletComponent.healPlayerAmount,
-                        moveSpeed = slimeBulletComponent.moveSpeed,
-                        hasHealPlayer = slimeBulletComponent.hasHealPlayer,
-                    });
                 }
             }
         }

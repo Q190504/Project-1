@@ -11,6 +11,8 @@ public partial struct SlimeBulletHealPlayerSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
+        return;
+
         var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
         NativeList<Entity> bulletsToReturn = new NativeList<Entity>(Allocator.TempJob);
