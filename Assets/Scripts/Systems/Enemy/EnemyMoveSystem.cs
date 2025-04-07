@@ -31,7 +31,7 @@ public partial struct EnemyMoveSystem : ISystem
         FlowFieldGridDataComponent flowFieldGridDataComponent = state.EntityManager.GetComponentData<FlowFieldGridDataComponent>(grid);
         DynamicBuffer<GridNode> pathBuffer = state.EntityManager.GetBuffer<GridNode>(grid);
         int width = flowFieldGridDataComponent.width;
-        float cellSize = flowFieldGridDataComponent.cellSize;
+        float cellSize = flowFieldGridDataComponent.nodeSize;
 
         foreach (var (localTransform, enemyTag, physicsVelocity) in SystemAPI.Query<RefRW<LocalTransform>, RefRO<EnemyTagComponent>, RefRW<PhysicsVelocity>>())
         {

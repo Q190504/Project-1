@@ -96,8 +96,8 @@ public partial struct IntegrationFieldSystem : ISystem
 
     private int GetPlayerPositionNodeIndex(float2 playerPosition, RefRO<FlowFieldGridDataComponent> grid)
     {
-        int x = (int)((playerPosition.x - grid.ValueRO.originPosition.x) / grid.ValueRO.cellSize);
-        int y = (int)((playerPosition.y - grid.ValueRO.originPosition.y) / grid.ValueRO.cellSize);
+        int x = (int)((playerPosition.x - grid.ValueRO.originPosition.x) / grid.ValueRO.nodeSize);
+        int y = (int)((playerPosition.y - grid.ValueRO.originPosition.y) / grid.ValueRO.nodeSize);
 
         // Clamp values to prevent out-of-bounds errors
         x = math.clamp(x, 0, grid.ValueRO.width - 1);
