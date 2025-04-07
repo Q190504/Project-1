@@ -54,23 +54,24 @@ public partial struct ShootSlimeBulletSystem : ISystem
 
         SlimeBulletComponent slimeBulletComponent = entityManager.GetComponentData<SlimeBulletComponent>(bullet);
 
-        if (entityManager.HasComponent<PlayerHealthComponent>(player))
-        {
-            if (isSlimeFrenzyActive)
-            {
-                ecb.AddComponent(player, new DamageEventComponent
-                {
-                    damageAmount = (int)(slimeBulletComponent.damagePlayerAmount * hpCostPerShotPercent),
-                });
-            }
-            else
-            {
-                ecb.AddComponent(player, new DamageEventComponent
-                {
-                    damageAmount = slimeBulletComponent.damagePlayerAmount,
-                });
-            }
-        }
+        ////Damages player
+        //if (entityManager.HasComponent<PlayerHealthComponent>(player))
+        //{
+        //    if (isSlimeFrenzyActive)
+        //    {
+        //        ecb.AddComponent(player, new DamageEventComponent
+        //        {
+        //            damageAmount = (int)(slimeBulletComponent.damagePlayerAmount * hpCostPerShotPercent),
+        //        });
+        //    }
+        //    else
+        //    {
+        //        ecb.AddComponent(player, new DamageEventComponent
+        //        {
+        //            damageAmount = slimeBulletComponent.damagePlayerAmount,
+        //        });
+        //    }
+        //}
     }
 
     private void SetBulletPositionAndDirection(EntityCommandBuffer ecb, Entity bullet, bool isSlimeFrenzyActive, float bonusDamagePercent, float hpCostPerShotPercent)
