@@ -3,6 +3,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using static UnityEngine.UI.Image;
 
 [BurstCompile]
 [UpdateInGroup(typeof(SimulationSystemGroup))]
@@ -24,7 +25,7 @@ public partial struct FlowFieldDebugSystem : ISystem
 
         DynamicBuffer<GridNode> pathBuffer = state.EntityManager.GetBuffer<GridNode>(gridEntity);
 
-        float cellSize = gridData.cellSize;
+        float cellSize = gridData.nodeSize;
         float3 gridOrigin = gridData.originPosition;
 
         for (int i = 0; i < pathBuffer.Length; i++)
@@ -34,14 +35,26 @@ public partial struct FlowFieldDebugSystem : ISystem
             int x = i % gridData.width;
             int y = i / gridData.width;
 
+            float3 bottomLeft = new float3(gridOrigin.x + x * cellSize, gridOrigin.y + y * cellSize, 0);
+            float3 bottomRight = bottomLeft + new float3(cellSize, 0, 0);
+            float3 topRight = bottomRight + new float3(0, cellSize, 0);
+            float3 topLeft = bottomLeft + new float3(0, cellSize, 0);
+
+            // Draw the 4 borders of the cell
+            Debug.DrawLine(bottomLeft, bottomRight, Color.white);
+            Debug.DrawLine(bottomRight, topRight, Color.white);
+            Debug.DrawLine(topRight, topLeft, Color.white);
+            Debug.DrawLine(topLeft, bottomLeft, Color.white);
+
             // Calculate the center position of the cell
-            float3 cellCenter = new float3(gridOrigin.x + (x + 0.5f) * cellSize, gridOrigin.y + (y + 0.5f) * cellSize, 0);
+            float3 nodeCenter = new float3(gridOrigin.x + (x + 0.5f) * cellSize, gridOrigin.y + (y + 0.5f) * cellSize, 0);
 
             // Main arrow direction
             float3 direction = math.normalize(new float3(node.vector.x, node.vector.y, 0)) * (cellSize * 0.4f);
-            float3 arrowEnd = cellCenter + direction;
 
-            Debug.DrawLine(cellCenter, arrowEnd, Color.green);
+            float3 arrowEnd = nodeCenter + direction;
+
+            Debug.DrawLine(nodeCenter, arrowEnd, Color.green);
 
             // Draw arrowhead only if there is a valid direction
             if (!math.all(node.vector == float2.zero))

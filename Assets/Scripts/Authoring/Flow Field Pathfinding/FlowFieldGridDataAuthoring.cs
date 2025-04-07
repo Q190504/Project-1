@@ -6,7 +6,7 @@ public class FlowFieldGridDataAuthoring : MonoBehaviour
 {
     public int width;
     public int height;
-    public float cellSize;
+    public float nodeSize;
     public float3 originPosition;
     public bool showDebug;
 
@@ -19,7 +19,7 @@ public class FlowFieldGridDataAuthoring : MonoBehaviour
             {
                 width = authoring.width,
                 height = authoring.height,
-                cellSize = authoring.cellSize,
+                nodeSize = authoring.nodeSize,
                 originPosition = authoring.originPosition,
                 showDebug = authoring.showDebug,
             });
@@ -31,7 +31,7 @@ public struct FlowFieldGridDataComponent : IComponentData
 {
     public int width;
     public int height;
-    public float cellSize;
+    public float nodeSize;
     public float3 originPosition;
     public bool showDebug;
 }

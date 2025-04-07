@@ -324,7 +324,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 61
   height: 40
-  cellSize: 1
+  nodeSize: 1
   originPosition:
     x: 0
     y: 0
