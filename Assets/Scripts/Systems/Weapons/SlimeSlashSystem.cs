@@ -4,7 +4,9 @@ using UnityEngine;
 using Unity.Mathematics;
 using Unity.Collections;
 using Unity.Physics;
+using Unity.Burst;
 
+[BurstCompile]
 public partial struct SlimeSlashSystem : ISystem
 {
     private EntityQuery weaponDatabaseQuery;
@@ -27,6 +29,9 @@ public partial struct SlimeSlashSystem : ISystem
 
         foreach (var (weapon, transform, entity) in SystemAPI.Query<WeaponComponent, LocalTransform>().WithEntityAccess())
         {
+            if (weapon.type != WeaponType.SlimeSlash)
+                continue;
+
             if (weapon.currentLevel > 0) // is active
             {
                 float range = GetWeaponRange(ref weaponDatabase, WeaponType.SlimeSlash, weapon.currentLevel);
@@ -75,7 +80,7 @@ public partial struct SlimeSlashSystem : ISystem
             if (weaponDatabase.weapons[i].type == type)
             {
                 int levelIndex = math.clamp(level, 0, 5);
-                return weaponDatabase.weapons[i].levels[levelIndex].range;
+                return weaponDatabase.weapons[i].levels[levelIndex].radius;
             }
         }
         return 0f;

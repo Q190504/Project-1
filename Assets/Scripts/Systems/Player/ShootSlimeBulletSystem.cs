@@ -1,5 +1,4 @@
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -8,103 +7,152 @@ using UnityEngine;
 [BurstCompile]
 public partial struct ShootSlimeBulletSystem : ISystem
 {
-    private EntityManager entityManager;
-    private Entity player;
-    private float shootTimer;
+    private EntityQuery weaponDatabaseQuery;
+
+    public void OnCreate(ref SystemState state)
+    {
+        weaponDatabaseQuery = state.GetEntityQuery(ComponentType.ReadOnly<WeaponDatabaseComponent>());
+    }
 
     public void OnUpdate(ref SystemState state)
     {
-        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-        if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
+        if (weaponDatabaseQuery.IsEmpty) return;
+
+        var weaponDatabaseComponent = SystemAPI.GetSingleton<WeaponDatabaseComponent>();
+        ref var weaponDatabase = ref weaponDatabaseComponent.weaponDatabase.Value;
+        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+
+        float deltaTime = SystemAPI.Time.DeltaTime;
+
+        Entity activeWeaponEntity = Entity.Null;
+        WeaponComponent activeWeapon = default;
+        bool foundActiveWeapon = false;
+
+
+        foreach (var (weapon, entity) in SystemAPI.Query<WeaponComponent>().WithEntityAccess())
         {
-            Debug.Log($"Cant Found Player Entity in ShootSlimeBulletSystem!");
-            return;
+            if (weapon.type != WeaponType.SlimeBullet)
+                continue;
+
+            if (weapon.currentLevel > 0)
+            {
+                activeWeaponEntity = entity;
+                activeWeapon = weapon;
+                foundActiveWeapon = true;
+                break; // Stop after finding the first active slime bullet weapon
+            }
         }
 
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        if (SystemAPI.TryGetSingleton<PlayerInputComponent>(out var playerInput)
-            && SystemAPI.TryGetSingleton<ShootSlimeBulletComponent>(out var shootSlimeBulletComponent)
-            && SystemAPI.TryGetSingleton<PlayerTagComponent>(out var playerTagComponent)
-            && SystemAPI.TryGetSingleton<SlimeFrenzyComponent>(out var slimeFrenzyComponent))
+        if (foundActiveWeapon)
         {
-            if (playerInput.isShootingPressed && !playerTagComponent.isStunned && shootTimer <= 0)
+            if (SystemAPI.HasComponent<CooldownComponent>(activeWeaponEntity))
             {
-                Shoot(ecb, playerTagComponent.isFrenzing, slimeFrenzyComponent.bonusDamagePercent, slimeFrenzyComponent.hpCostPerShotPercent);
+                ref var cooldownComponent = ref SystemAPI.GetComponentRW<CooldownComponent>(activeWeaponEntity).ValueRW;
+                cooldownComponent.remainingTime -= deltaTime;
 
-                if (playerTagComponent.isFrenzing)
-                    shootTimer = shootSlimeBulletComponent.delayTime * (1 - slimeFrenzyComponent.fireRateReductionPercent);
-                else
-                    shootTimer = shootSlimeBulletComponent.delayTime;
+                if (cooldownComponent.remainingTime > 0)
+                    return;
             }
-            else
+
+            if (SystemAPI.TryGetSingleton<PlayerTagComponent>(out var playerTagComponent)
+                && SystemAPI.TryGetSingleton<SlimeFrenzyComponent>(out var slimeFrenzyComponent))
             {
-                shootTimer -= SystemAPI.Time.DeltaTime;
+                if (!playerTagComponent.isStunned)
+                {
+                    GetStats(ref weaponDatabase, WeaponType.SlimeBullet, activeWeapon.currentLevel, out int damage,
+                        out float cooldown, out int bulletCount, out float distance, out float minimumDistanceBetweenBullets,
+                        out float maximumDistanceBetweenBullets, out float passthroughDamageModifier, out float moveSpeed,
+                        out float existDuration);
+
+                    Shoot(ecb, activeWeaponEntity, damage, cooldown, bulletCount, distance, minimumDistanceBetweenBullets,
+                        maximumDistanceBetweenBullets, passthroughDamageModifier, moveSpeed, existDuration,
+                        playerTagComponent.isFrenzing, slimeFrenzyComponent.bonusDamagePercent);
+
+                    float shootTimer = playerTagComponent.isFrenzing
+                        ? cooldown * (1 - slimeFrenzyComponent.fireRateReductionPercent)
+                        : cooldown;
+
+                    if (!SystemAPI.HasComponent<CooldownComponent>(activeWeaponEntity))
+                    {
+                        ecb.AddComponent(activeWeaponEntity, new CooldownComponent { remainingTime = shootTimer });
+
+                    }
+                    else
+                    {
+                        ecb.SetComponent(activeWeaponEntity, new CooldownComponent { remainingTime = shootTimer });
+                    }
+                }
             }
         }
 
-        ecb.Playback(entityManager);
-        ecb.Dispose();
+        //ecb.Playback(entityManager);
+        //ecb.Dispose();
     }
 
-    private void Shoot(EntityCommandBuffer ecb, bool isSlimeFrenzyActive, float bonusDamagePercent, float hpCostPerShotPercent)
+    private void Shoot(EntityCommandBuffer ecb, Entity shooterEntity, int damage, float cooldown, int bulletCount, float distance,
+        float minimumDistanceBetweenBullets, float maximumDistanceBetweenBullets, float passthroughDamageModifier, float moveSpeed,
+        float existDuration, bool isSlimeFrenzyActive, float bonusDamagePercent)
     {
-        Entity bullet = BulletManager.Instance.Take(ecb);
-        SetBulletPositionAndDirection(ecb, bullet, isSlimeFrenzyActive, bonusDamagePercent, hpCostPerShotPercent);
+        float delayBetweenShot = 0.1f;
 
-        SlimeBulletComponent slimeBulletComponent = entityManager.GetComponentData<SlimeBulletComponent>(bullet);
+        SlimeBulletShooterComponent shot = new SlimeBulletShooterComponent
+        {
+            delay = delayBetweenShot,         // delay between bullets
+            timer = 0,
+            //public EntityCommandBuffer ecb,
+            damage = damage,
+            previousDamage = damage,
+            cooldown = cooldown,
+            bulletCount = bulletCount,
+            bulletsRemaining = bulletCount,
+            minimumDistance = distance,
+            minimumDistanceBetweenBullets = minimumDistanceBetweenBullets,
+            maximumDistanceBetweenBullets = maximumDistanceBetweenBullets,
+            previousDistance = distance,
+            passthroughDamageModifier = passthroughDamageModifier,
+            moveSpeed = moveSpeed,
+            existDuration = existDuration,
+            isSlimeFrenzyActive = isSlimeFrenzyActive,
+            bonusDamagePercent = bonusDamagePercent,
+        };
 
-        ////Damages player
-        //if (entityManager.HasComponent<PlayerHealthComponent>(player))
-        //{
-        //    if (isSlimeFrenzyActive)
-        //    {
-        //        ecb.AddComponent(player, new DamageEventComponent
-        //        {
-        //            damageAmount = (int)(slimeBulletComponent.damagePlayerAmount * hpCostPerShotPercent),
-        //        });
-        //    }
-        //    else
-        //    {
-        //        ecb.AddComponent(player, new DamageEventComponent
-        //        {
-        //            damageAmount = slimeBulletComponent.damagePlayerAmount,
-        //        });
-        //    }
-        //}
+        ecb.AddComponent(shooterEntity, shot);
     }
 
-    private void SetBulletPositionAndDirection(EntityCommandBuffer ecb, Entity bullet, bool isSlimeFrenzyActive, float bonusDamagePercent, float hpCostPerShotPercent)
+    private void GetStats(ref WeaponDatabase weaponDatabase, WeaponType type, int level, out int damage,
+        out float cooldown, out int bulletCount, out float distance, out float minimumDistanceBetweenBullets,
+        out float maximumDistanceBetweenBullets, out float passthroughDamageModifier, out float moveSpeed, out float existDuration)
     {
-        float3 playerPosition = entityManager.GetComponentData<LocalTransform>(player).Position;
+        damage = 0;
+        cooldown = 0;
+        bulletCount = 0;
+        minimumDistanceBetweenBullets = 0;
+        maximumDistanceBetweenBullets = 0;
+        passthroughDamageModifier = 0;
+        moveSpeed = 0;
+        distance = 0;
+        existDuration = 0;
 
-        ecb.SetComponent(bullet, new LocalTransform
+        for (int i = 0; i < weaponDatabase.weapons.Length; i++)
         {
-            Position = playerPosition,
-            Rotation = Quaternion.identity,
-            Scale = 1f
-        });
+            if (weaponDatabase.weapons[i].type == type)
+            {
+                int levelIndex = math.clamp(level, 0, weaponDatabase.weapons[i].levels.Length - 1);
 
-        float3 mouseWorldPosition = MapManager.GetMouseWorldPosition();
+                damage = weaponDatabase.weapons[i].levels[levelIndex].damage;
+                cooldown = weaponDatabase.weapons[i].levels[levelIndex].cooldownTime;
+                bulletCount = weaponDatabase.weapons[i].levels[levelIndex].bulletCount;
+                minimumDistanceBetweenBullets = weaponDatabase.weapons[i].levels[levelIndex].minimumDistanceBetweenBullets;
+                maximumDistanceBetweenBullets = weaponDatabase.weapons[i].levels[levelIndex].maximumDistanceBetweenBullets;
+                passthroughDamageModifier = weaponDatabase.weapons[i].levels[levelIndex].passthroughDamageModifier;
+                moveSpeed = weaponDatabase.weapons[i].levels[levelIndex].moveSpeed;
+                distance = weaponDatabase.weapons[i].levels[levelIndex].distance;
+                existDuration = weaponDatabase.weapons[i].levels[levelIndex].existDuration;
 
-        float3 moveDirection = math.normalize(mouseWorldPosition - playerPosition);
-
-        SlimeBulletComponent slimeBulletComponent = entityManager.GetComponentData<SlimeBulletComponent>(bullet);
-
-        ecb.SetComponent(bullet, new SlimeBulletComponent
-        {
-            isAbleToMove = true,
-            isBeingSummoned = false,
-            moveDirection = moveDirection,
-            moveSpeed = slimeBulletComponent.moveSpeed,
-            distanceTraveled = 0,
-            maxDistance = slimeBulletComponent.maxDistance,
-            damageEnemyAmount = slimeBulletComponent.damageEnemyAmount,
-            damagePlayerAmount = slimeBulletComponent.damagePlayerAmount,
-            healPlayerAmount = slimeBulletComponent.healPlayerAmount,
-            existDuration = slimeBulletComponent.existDuration,
-            hasDamagedEnemy = false,
-            hasHealPlayer = false,
-        });
+                return;
+            }
+        }
     }
 }

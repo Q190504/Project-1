@@ -19,7 +19,19 @@ public struct WeaponStatsBlob
 
 public struct WeaponStatsLevel
 {
+    [Header("Basic")]
     public int damage;
     public float cooldownTime;
-    public float range;
+
+    [Header("Slime Bullet")]
+    public int bulletCount;
+    public float maximumDistanceBetweenBullets;
+    public float minimumDistanceBetweenBullets;
+    public float passthroughDamageModifier;
+    public float moveSpeed;
+    public float distance;
+    public float existDuration;
+
+    [Header("Slime Slash")]
+    public float radius;
 }

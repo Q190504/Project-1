@@ -95,7 +95,6 @@ struct SlimeBulletHealPlayerJob : ITriggerEventsJob
                         moveDirection = slimeBulletComponent.moveDirection,
                         healPlayerAmount = slimeBulletComponent.healPlayerAmount,
                         moveSpeed = slimeBulletComponent.moveSpeed,
-                        hasDamagedEnemy = slimeBulletComponent.hasDamagedEnemy,
                     });
 
                     // Add bullet to return list

@@ -1,14 +1,28 @@
 using System;
-using Unity.Entities;
+using UnityEngine;
 
-public enum WeaponType { SlimeSlash }
+public enum WeaponType { SlimeBullet, SlimeSlash }
 
 [Serializable]
 public class WeaponLevelData
 {
+    [Header("Basic")]
     public int damage;
-    public float range;
     public float cooldownTime;
+
+    //SlimeBullet
+    [Header("Slime Bullet")]
+    public int bulletCount;
+    public float maximumDistanceBetweenBullets;
+    public float minimumDistanceBetweenBullets;
+    public float passthroughDamageModifier;
+    public float moveSpeed;
+    public float distance;
+    public float existDuration;
+
+
+    [Header("Slime Slash")]
+    public float radius;
 }
 
 [Serializable]
