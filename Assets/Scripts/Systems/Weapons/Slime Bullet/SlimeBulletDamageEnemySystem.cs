@@ -60,7 +60,7 @@ struct SlimeBulletDamageEnemyJob : ITriggerEventsJob
             {
                 var slimeBulletComponent = slimeBulletLookup[slimeBulletEntity];
 
-                if (!slimeBulletComponent.hasDamagedEnemy && (slimeBulletComponent.isAbleToMove || slimeBulletComponent.isBeingSummoned))
+                if (slimeBulletComponent.isAbleToMove || slimeBulletComponent.isBeingSummoned)
                 {
                     int damage = slimeBulletComponent.damageEnemyAmount;
 

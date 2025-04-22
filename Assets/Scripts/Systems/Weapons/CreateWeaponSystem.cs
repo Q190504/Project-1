@@ -1,7 +1,10 @@
 using UnityEngine;
 using Unity.Entities;
-using Unity.Collections;
+using Unity.Mathematics;
+using Unity.Transforms;
+using Unity.Burst;
 
+[BurstCompile]
 public partial struct CreateWeaponSystem : ISystem
 {
     private EntityManager entityManager;
@@ -43,11 +46,27 @@ public partial struct CreateWeaponSystem : ISystem
 
                         Debug.Log($"Attach {weapon.type}");
 
-                        state.EntityManager.AddComponentData(player, new WeaponComponent
-                        {
-                            currentLevel = 0,
-                            type = weapon.type,
-                        });
+                        // Create child entity
+                        Entity childEntity = state.EntityManager.CreateEntity(typeof(LocalToWorld), typeof(LocalTransform), typeof(Parent));
+                        state.EntityManager.SetComponentData(childEntity, new Parent() { Value = player });
+                        state.EntityManager.SetComponentData(childEntity, new LocalToWorld() { Value = float4x4.identity });
+                        state.EntityManager.SetComponentData(childEntity, LocalTransform.Identity);
+
+                        // Attach child to player
+                        entityManager.AddComponentData(childEntity, new Parent { Value = player });
+
+                        if (weapon.type == WeaponType.SlimeBullet)
+                            state.EntityManager.AddComponentData(childEntity, new WeaponComponent
+                            {
+                                currentLevel = 1,
+                                type = weapon.type,
+                            });
+                        else
+                            state.EntityManager.AddComponentData(childEntity, new WeaponComponent
+                            {
+                                currentLevel = 0,
+                                type = weapon.type,
+                            });
                     }
 
                     // Update tracker

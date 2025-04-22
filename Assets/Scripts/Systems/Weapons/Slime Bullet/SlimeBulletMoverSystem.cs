@@ -23,7 +23,6 @@ public partial struct SlimeBulletMoverSystem : ISystem
                 physicsVelocity.ValueRW.Linear.xy = math.lerp(physicsVelocity.ValueRW.Linear.xy, targetVelocity, 0.1f);
 
                 slimeBulletComponent.ValueRW.distanceTraveled += slimeBulletComponent.ValueRO.moveSpeed * SystemAPI.Time.DeltaTime;
-
                 if (slimeBulletComponent.ValueRO.distanceTraveled >= slimeBulletComponent.ValueRO.maxDistance)
                     slimeBulletComponent.ValueRW.isAbleToMove = false;
             }

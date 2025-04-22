@@ -26,7 +26,18 @@ public class WeaponDatabaseAuthoring : MonoBehaviour
                 {
                     levels[j].damage = authoring.weapons[i].levels[j].damage;
                     levels[j].cooldownTime = authoring.weapons[i].levels[j].cooldownTime;
-                    levels[j].range = authoring.weapons[i].levels[j].range;
+
+                    //Slime Bullet
+                    levels[j].maximumDistanceBetweenBullets = weapons[i].type == WeaponType.SlimeBullet ? authoring.weapons[i].levels[j].maximumDistanceBetweenBullets : 0f;
+                    levels[j].minimumDistanceBetweenBullets = weapons[i].type == WeaponType.SlimeBullet ? authoring.weapons[i].levels[j].minimumDistanceBetweenBullets : 0f;
+                    levels[j].bulletCount = weapons[i].type == WeaponType.SlimeBullet ? authoring.weapons[i].levels[j].bulletCount : 0;
+                    levels[j].passthroughDamageModifier = weapons[i].type == WeaponType.SlimeBullet ? authoring.weapons[i].levels[j].passthroughDamageModifier : 0f;
+                    levels[j].moveSpeed = weapons[i].type == WeaponType.SlimeBullet ? authoring.weapons[i].levels[j].moveSpeed : 0f;
+                    levels[j].distance = weapons[i].type == WeaponType.SlimeBullet ? authoring.weapons[i].levels[j].distance : 0f;
+                    levels[j].existDuration = weapons[i].type == WeaponType.SlimeBullet ? authoring.weapons[i].levels[j].existDuration : 0f;
+
+                    //Slime Slash
+                    levels[j].radius = weapons[i].type == WeaponType.SlimeSlash ? authoring.weapons[i].levels[j].radius : 0f;
                 }
             }
 
