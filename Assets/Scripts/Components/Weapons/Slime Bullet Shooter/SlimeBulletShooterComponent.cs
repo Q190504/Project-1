@@ -17,4 +17,6 @@ public struct SlimeBulletShooterComponent : IComponentData
     public float existDuration;
     public bool isSlimeFrenzyActive;
     public float bonusDamagePercent;
+    public float slowModifier;
+    public float slowRadius;
 }

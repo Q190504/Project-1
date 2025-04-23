@@ -64,10 +64,10 @@ public partial struct ShootSlimeBulletSystem : ISystem
                     GetStats(ref weaponDatabase, WeaponType.SlimeBullet, activeWeapon.currentLevel, out int damage,
                         out float cooldown, out int bulletCount, out float distance, out float minimumDistanceBetweenBullets,
                         out float maximumDistanceBetweenBullets, out float passthroughDamageModifier, out float moveSpeed,
-                        out float existDuration);
+                        out float existDuration, out float slowModifier, out float slowRadius);
 
                     Shoot(ecb, activeWeaponEntity, damage, cooldown, bulletCount, distance, minimumDistanceBetweenBullets,
-                        maximumDistanceBetweenBullets, passthroughDamageModifier, moveSpeed, existDuration,
+                        maximumDistanceBetweenBullets, passthroughDamageModifier, moveSpeed, existDuration, slowModifier, slowRadius, 
                         playerTagComponent.isFrenzing, slimeFrenzyComponent.bonusDamagePercent);
 
                     float shootTimer = playerTagComponent.isFrenzing
@@ -90,7 +90,7 @@ public partial struct ShootSlimeBulletSystem : ISystem
 
     private void Shoot(EntityCommandBuffer ecb, Entity shooterEntity, int damage, float cooldown, int bulletCount, float distance,
         float minimumDistanceBetweenBullets, float maximumDistanceBetweenBullets, float passthroughDamageModifier, float moveSpeed,
-        float existDuration, bool isSlimeFrenzyActive, float bonusDamagePercent)
+        float existDuration, float slowModifier, float slowRadius, bool isSlimeFrenzyActive, float bonusDamagePercent)
     {
         float delayBetweenShot = 0.1f;
 
@@ -111,6 +111,8 @@ public partial struct ShootSlimeBulletSystem : ISystem
             existDuration = existDuration,
             isSlimeFrenzyActive = isSlimeFrenzyActive,
             bonusDamagePercent = bonusDamagePercent,
+            slowModifier = slowModifier,
+            slowRadius = slowRadius,
         };
 
         ecb.AddComponent(shooterEntity, shot);
@@ -118,7 +120,8 @@ public partial struct ShootSlimeBulletSystem : ISystem
 
     private void GetStats(ref WeaponDatabase weaponDatabase, WeaponType type, int level, out int damage,
         out float cooldown, out int bulletCount, out float distance, out float minimumDistanceBetweenBullets,
-        out float maximumDistanceBetweenBullets, out float passthroughDamageModifier, out float moveSpeed, out float existDuration)
+        out float maximumDistanceBetweenBullets, out float passthroughDamageModifier, out float moveSpeed, 
+        out float existDuration, out float slowModifier, out float slowRadius)
     {
         damage = 0;
         cooldown = 0;
@@ -129,6 +132,8 @@ public partial struct ShootSlimeBulletSystem : ISystem
         moveSpeed = 0;
         distance = 0;
         existDuration = 0;
+        slowModifier = 0;
+        slowRadius = 0;
 
         for (int i = 0; i < weaponDatabase.weapons.Length; i++)
         {
@@ -145,7 +150,9 @@ public partial struct ShootSlimeBulletSystem : ISystem
                 moveSpeed = weaponDatabase.weapons[i].levels[levelIndex].moveSpeed;
                 distance = weaponDatabase.weapons[i].levels[levelIndex].distance;
                 existDuration = weaponDatabase.weapons[i].levels[levelIndex].existDuration;
-
+                slowModifier = weaponDatabase.weapons[i].levels[levelIndex].slowModifier;
+                slowRadius = weaponDatabase.weapons[i].levels[levelIndex].slowRadius;
+                
                 return;
             }
         }

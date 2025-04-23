@@ -35,6 +35,8 @@ public class WeaponDatabaseAuthoring : MonoBehaviour
                     levels[j].moveSpeed = weapons[i].type == WeaponType.SlimeBullet ? authoring.weapons[i].levels[j].moveSpeed : 0f;
                     levels[j].distance = weapons[i].type == WeaponType.SlimeBullet ? authoring.weapons[i].levels[j].distance : 0f;
                     levels[j].existDuration = weapons[i].type == WeaponType.SlimeBullet ? authoring.weapons[i].levels[j].existDuration : 0f;
+                    levels[j].slowModifier = weapons[i].type == WeaponType.SlimeBullet ? authoring.weapons[i].levels[j].slowModifier : 0f;
+                    levels[j].slowRadius = weapons[i].type == WeaponType.SlimeBullet ? authoring.weapons[i].levels[j].slowRadius : 0f;
 
                     //Slime Slash
                     levels[j].radius = weapons[i].type == WeaponType.SlimeSlash ? authoring.weapons[i].levels[j].radius : 0f;
