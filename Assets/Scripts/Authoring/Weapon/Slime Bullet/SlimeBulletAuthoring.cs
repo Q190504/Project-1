@@ -4,16 +4,6 @@ using UnityEngine;
 
 public class SlimeBulletAuthoring : MonoBehaviour
 {
-    public bool isAbleToMove;
-    public float3 moveDirection;
-    public float moveSpeed;
-    public float distanceTraveled;
-    public float minimumDistance;
-    public int damageEnemyAmount;
-    public int damagePlayerAmount;
-    public int healPlayerAmount;
-    public float existDuration;
-
     public class SlimeBulletBaker : Baker<SlimeBulletAuthoring>
     {
         public override void Bake(SlimeBulletAuthoring authoring)
@@ -27,8 +17,9 @@ public class SlimeBulletAuthoring : MonoBehaviour
                 moveSpeed = 0,
                 distanceTraveled = 0,
                 maxDistance = 0,
-                damageEnemyAmount = 0,
-                damagePlayerAmount = 0,
+                remainingDamage = 0,
+                passthroughDamageModifier = 0,
+                lastHitEnemy = Entity.Null,
                 healPlayerAmount = 0,
                 existDuration = 0,
                 hasHealPlayer = false,
@@ -46,8 +37,9 @@ public struct SlimeBulletComponent : IComponentData
     public float moveSpeed;
     public float distanceTraveled;
     public float maxDistance;
-    public int damageEnemyAmount;
-    public int damagePlayerAmount;
+    public int remainingDamage;
+    public float passthroughDamageModifier;
+    public Entity lastHitEnemy;
     public int healPlayerAmount;
     public float existDuration;
     public bool hasHealPlayer;

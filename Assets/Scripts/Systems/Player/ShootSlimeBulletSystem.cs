@@ -86,9 +86,6 @@ public partial struct ShootSlimeBulletSystem : ISystem
                 }
             }
         }
-
-        //ecb.Playback(entityManager);
-        //ecb.Dispose();
     }
 
     private void Shoot(EntityCommandBuffer ecb, Entity shooterEntity, int damage, float cooldown, int bulletCount, float distance,
@@ -101,9 +98,7 @@ public partial struct ShootSlimeBulletSystem : ISystem
         {
             delay = delayBetweenShot,         // delay between bullets
             timer = 0,
-            //public EntityCommandBuffer ecb,
             damage = damage,
-            previousDamage = damage,
             cooldown = cooldown,
             bulletCount = bulletCount,
             bulletsRemaining = bulletCount,

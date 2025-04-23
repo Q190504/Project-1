@@ -2,10 +2,7 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 using Unity.Physics;
-using Unity.Jobs;
-using Unity.Collections;
 
 [BurstCompile]
 public partial struct SlimeBulletMoverSystem : ISystem
