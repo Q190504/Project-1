@@ -19,7 +19,8 @@ public class WeaponLevelData
     public float moveSpeed;
     public float distance;
     public float existDuration;
-
+    public float slowModifier;
+    public float slowRadius;
 
     [Header("Slime Slash")]
     public float radius;

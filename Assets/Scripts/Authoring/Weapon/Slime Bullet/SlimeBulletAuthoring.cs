@@ -24,6 +24,8 @@ public class SlimeBulletAuthoring : MonoBehaviour
                 existDuration = 0,
                 hasHealPlayer = false,
                 isBeingSummoned = false,
+                slowModifier = 0,
+                slowRadius = 0,
             });
         }
     }
@@ -43,4 +45,6 @@ public struct SlimeBulletComponent : IComponentData
     public int healPlayerAmount;
     public float existDuration;
     public bool hasHealPlayer;
+    public float slowModifier;
+    public float slowRadius;
 }

@@ -906,6 +906,8 @@ MonoBehaviour:
       moveSpeed: 0
       distance: 0
       existDuration: 0
+      slowModifier: 0
+      slowRadius: 0
       radius: 0
     - damage: 5
       cooldownTime: 2
@@ -916,6 +918,8 @@ MonoBehaviour:
       moveSpeed: 20
       distance: 7
       existDuration: 8
+      slowModifier: 0
+      slowRadius: 0
       radius: 0
     - damage: 7
       cooldownTime: 1.9
@@ -926,6 +930,8 @@ MonoBehaviour:
       moveSpeed: 20
       distance: 7
       existDuration: 8
+      slowModifier: 0
+      slowRadius: 0
       radius: 0
     - damage: 9
       cooldownTime: 1.8
@@ -936,6 +942,8 @@ MonoBehaviour:
       moveSpeed: 20
       distance: 7
       existDuration: 10
+      slowModifier: 0
+      slowRadius: 0
       radius: 0
     - damage: 10
       cooldownTime: 1.7
@@ -946,6 +954,8 @@ MonoBehaviour:
       moveSpeed: 20
       distance: 7
       existDuration: 10
+      slowModifier: 0
+      slowRadius: 0
       radius: 0
     - damage: 15
       cooldownTime: 1.6
@@ -956,6 +966,8 @@ MonoBehaviour:
       moveSpeed: 20
       distance: 7
       existDuration: 12
+      slowModifier: 0.5
+      slowRadius: 1.5
       radius: 0
   - type: 1
     levels:
@@ -968,6 +980,8 @@ MonoBehaviour:
       moveSpeed: 0
       distance: 0
       existDuration: 0
+      slowModifier: 0
+      slowRadius: 0
       radius: 0
     - damage: 5
       cooldownTime: 2
@@ -978,6 +992,8 @@ MonoBehaviour:
       moveSpeed: 0
       distance: 0
       existDuration: 0
+      slowModifier: 0
+      slowRadius: 0
       radius: 1
     - damage: 10
       cooldownTime: 1.9
@@ -988,6 +1004,8 @@ MonoBehaviour:
       moveSpeed: 0
       distance: 0
       existDuration: 0
+      slowModifier: 0
+      slowRadius: 0
       radius: 1
     - damage: 15
       cooldownTime: 1.8
@@ -998,6 +1016,8 @@ MonoBehaviour:
       moveSpeed: 0
       distance: 0
       existDuration: 0
+      slowModifier: 0
+      slowRadius: 0
       radius: 1
     - damage: 20
       cooldownTime: 1.7
@@ -1008,6 +1028,8 @@ MonoBehaviour:
       moveSpeed: 0
       distance: 0
       existDuration: 0
+      slowModifier: 0
+      slowRadius: 0
       radius: 1.25
     - damage: 25
       cooldownTime: 1.6
@@ -1018,6 +1040,8 @@ MonoBehaviour:
       moveSpeed: 0
       distance: 0
       existDuration: 0
+      slowModifier: 0
+      slowRadius: 0
       radius: 1.5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

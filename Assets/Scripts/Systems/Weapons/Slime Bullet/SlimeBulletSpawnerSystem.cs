@@ -36,8 +36,8 @@ public partial struct SlimeBulletSpawnerSystem : ISystem
 
                 float distance = shooter.ValueRO.previousDistance + bonusDistance;
 
-                SetBulletStats(ecb, bullet, shooter.ValueRO.damage, shooter.ValueRO.passthroughDamageModifier, shooter.ValueRO.cooldown, distance,
-                    shooter.ValueRO.moveSpeed, shooter.ValueRO.existDuration,
+                SetBulletStats(ecb, bullet, shooter.ValueRO.damage, shooter.ValueRO.passthroughDamageModifier, shooter.ValueRO.cooldown, 
+                    distance, shooter.ValueRO.moveSpeed, shooter.ValueRO.existDuration, shooter.ValueRO.slowModifier, shooter.ValueRO.slowRadius,
                     shooter.ValueRO.isSlimeFrenzyActive, shooter.ValueRO.bonusDamagePercent);
 
                 ////Damages player
@@ -76,7 +76,7 @@ public partial struct SlimeBulletSpawnerSystem : ISystem
     }
 
     private void SetBulletStats(EntityCommandBuffer ecb, Entity bullet, int damage, float passthroughDamageModifier, float cooldown, float maxDistance, float moveSpeed,
-    float existDuration, bool isSlimeFrenzyActive, float bonusDamagePercent)
+    float existDuration, float slowModifier, float slowRadius, bool isSlimeFrenzyActive, float bonusDamagePercent)
     {
         float3 playerPosition = entityManager.GetComponentData<LocalTransform>(player).Position;
 
@@ -107,6 +107,8 @@ public partial struct SlimeBulletSpawnerSystem : ISystem
                 healPlayerAmount = 0,
                 existDuration = existDuration,
                 hasHealPlayer = false,
+                slowModifier = slowModifier,
+                slowRadius = slowRadius,
             });
         }
         else
@@ -125,6 +127,8 @@ public partial struct SlimeBulletSpawnerSystem : ISystem
                 healPlayerAmount = 0,
                 existDuration = existDuration,
                 hasHealPlayer = false,
+                slowModifier = slowModifier,
+                slowRadius = slowRadius,
             });
         }
     }
