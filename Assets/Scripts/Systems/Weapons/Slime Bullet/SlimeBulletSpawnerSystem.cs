@@ -35,10 +35,8 @@ public partial struct SlimeBulletSpawnerSystem : ISystem
                 float bonusDistance = random.NextFloat(shooter.ValueRO.minimumDistanceBetweenBullets, shooter.ValueRO.maximumDistanceBetweenBullets);
 
                 float distance = shooter.ValueRO.previousDistance + bonusDistance;
-                int damage = (int)(shooter.ValueRO.previousDamage * shooter.ValueRO.passthroughDamageModifier);
 
-
-                SetBulletStats(ecb, bullet, damage, shooter.ValueRO.cooldown, distance,
+                SetBulletStats(ecb, bullet, shooter.ValueRO.damage, shooter.ValueRO.passthroughDamageModifier, shooter.ValueRO.cooldown, distance,
                     shooter.ValueRO.moveSpeed, shooter.ValueRO.existDuration,
                     shooter.ValueRO.isSlimeFrenzyActive, shooter.ValueRO.bonusDamagePercent);
 
@@ -64,7 +62,6 @@ public partial struct SlimeBulletSpawnerSystem : ISystem
                 shooter.ValueRW.bulletsRemaining--;
                 shooter.ValueRW.timer = shooter.ValueRW.delay;
 
-                shooter.ValueRW.previousDamage = damage;
                 shooter.ValueRW.previousDistance = distance;
                     
                 if (shooter.ValueRW.bulletsRemaining == 0)
@@ -78,7 +75,7 @@ public partial struct SlimeBulletSpawnerSystem : ISystem
         ecb.Dispose();
     }
 
-    private void SetBulletStats(EntityCommandBuffer ecb, Entity bullet, int damage, float cooldown, float maxDistance, float moveSpeed,
+    private void SetBulletStats(EntityCommandBuffer ecb, Entity bullet, int damage, float passthroughDamageModifier, float cooldown, float maxDistance, float moveSpeed,
     float existDuration, bool isSlimeFrenzyActive, float bonusDamagePercent)
     {
         float3 playerPosition = entityManager.GetComponentData<LocalTransform>(player).Position;
@@ -104,7 +101,9 @@ public partial struct SlimeBulletSpawnerSystem : ISystem
                 moveSpeed = moveSpeed,
                 distanceTraveled = 0,
                 maxDistance = maxDistance,
-                damageEnemyAmount = damage,
+                remainingDamage = damage,
+                passthroughDamageModifier = passthroughDamageModifier,
+                lastHitEnemy = Entity.Null,
                 healPlayerAmount = 0,
                 existDuration = existDuration,
                 hasHealPlayer = false,
@@ -120,7 +119,9 @@ public partial struct SlimeBulletSpawnerSystem : ISystem
                 moveSpeed = moveSpeed,
                 distanceTraveled = 0,
                 maxDistance = maxDistance,
-                damageEnemyAmount = damage,
+                remainingDamage = damage,
+                passthroughDamageModifier = passthroughDamageModifier,
+                lastHitEnemy = Entity.Null,
                 healPlayerAmount = 0,
                 existDuration = existDuration,
                 hasHealPlayer = false,

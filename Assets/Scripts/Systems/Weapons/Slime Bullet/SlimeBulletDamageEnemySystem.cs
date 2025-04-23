@@ -1,10 +1,7 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Mathematics;
 using Unity.Physics;
-using Unity.Transforms;
-using UnityEngine;
 
 public partial struct SlimeBulletDamageEnemySystem : ISystem
 {
@@ -51,29 +48,33 @@ struct SlimeBulletDamageEnemyJob : ITriggerEventsJob
         bool entityAIsEnemy = enemyLookup.HasComponent(entityA);
         bool entityBIsEnemy = enemyLookup.HasComponent(entityB);
 
-
         if (entityAIsEnemy || entityBIsEnemy)
         {
-            Entity slimeBulletEntity = entityAIsEnemy ? entityB : entityA;
+            Entity enemyEntity = entityAIsEnemy ? entityA : entityB;
+            Entity bulletEntity = entityAIsEnemy ? entityB : entityA;
 
-            if (slimeBulletLookup.HasComponent(slimeBulletEntity))
-            {
-                var slimeBulletComponent = slimeBulletLookup[slimeBulletEntity];
+            if (!slimeBulletLookup.HasComponent(bulletEntity) || !slimeBulletLookup.HasComponent(bulletEntity))
+                return;
 
-                if (slimeBulletComponent.isAbleToMove || slimeBulletComponent.isBeingSummoned)
-                {
-                    int damage = slimeBulletComponent.damageEnemyAmount;
+            var bulletComponent = slimeBulletLookup[bulletEntity];
 
-                    if (entityAIsEnemy)
-                    {
-                        ecb.AddComponent(entityA, new DamageEventComponent { damageAmount = damage });
-                    }
-                    else if (entityBIsEnemy)
-                    {
-                        ecb.AddComponent(entityB, new DamageEventComponent { damageAmount = damage });
-                    }
-                }
-            }
+            // Skip if already hit this enemy or stopped moving
+            if (!bulletComponent.isAbleToMove || bulletComponent.lastHitEnemy == enemyEntity)
+                return;
+
+            // Deal damage
+            int damage = bulletComponent.remainingDamage;
+
+            if (damage <= 0)
+                return;
+
+            ecb.AddComponent(enemyEntity, new DamageEventComponent { damageAmount = damage });
+
+            // Reduce damage for future hits
+            bulletComponent.remainingDamage = (int)(damage * bulletComponent.passthroughDamageModifier);
+            bulletComponent.lastHitEnemy = enemyEntity;
+
+            ecb.SetComponent(bulletEntity, bulletComponent);
         }
     }
 }

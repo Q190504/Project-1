@@ -4,7 +4,6 @@ public struct SlimeBulletShooterComponent : IComponentData
 {
     public float delay;         // delay between bullets
     public float timer;
-    //public EntityCommandBuffer ecb;
     public int damage;
     public float cooldown;
     public int bulletCount;
@@ -14,7 +13,6 @@ public struct SlimeBulletShooterComponent : IComponentData
     public float maximumDistanceBetweenBullets;
     public float previousDistance;
     public float passthroughDamageModifier;
-    public int previousDamage;
     public float moveSpeed;
     public float existDuration;
     public bool isSlimeFrenzyActive;
