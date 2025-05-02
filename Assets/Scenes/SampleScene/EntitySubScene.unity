@@ -429,7 +429,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1676927601}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 774ee6bec7f16a54ab8716a9147b0664, type: 3}
   m_Name: 
@@ -815,6 +815,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1884580528}
   - component: {fileID: 1884580529}
+  - component: {fileID: 1884580530}
   m_Layer: 0
   m_Name: Slime Bullet Shooter
   m_TagString: Untagged
@@ -850,6 +851,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   delayTime: 0.7
+--- !u!114 &1884580530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1884580527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ce8269bc11b6be438fda624da89d0ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponId: SlimeBulletShooter
 --- !u!1 &1936001346
 GameObject:
   m_ObjectHideFlags: 0
@@ -866,7 +880,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1936001347
 Transform:
   m_ObjectHideFlags: 0
