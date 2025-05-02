@@ -15,7 +15,7 @@ public class SlimeBulletShooterAuthoring : MonoBehaviour
             string path = Path.Combine(Application.dataPath, "Data", $"{authoring.weaponId}.json");
             if (!File.Exists(path))
             {
-                Debug.LogWarning($"Weapon JSON not found at path: {path}");
+                Debug.LogWarning($"{authoring.weaponId} JSON not found at path: {path}");
                 return;
             }
 
@@ -32,6 +32,7 @@ public class SlimeBulletShooterAuthoring : MonoBehaviour
 
                 levels[i] = new SlimeBulletShooterLevelData
                 {
+                    level = level.level,
                     delay = level.delay,
                     damage = level.damage,
                     cooldown = level.cooldown,
@@ -55,7 +56,7 @@ public class SlimeBulletShooterAuthoring : MonoBehaviour
             {
                 Data = blob,
                 timer = 2f,
-                isSlimeFrenzyActive = false
+                isSlimeFrenzyActive = false,
             });
         }
     }
@@ -66,6 +67,7 @@ public class SlimeBulletShooterAuthoring : MonoBehaviour
 [System.Serializable]
 public class SlimeBulletShooterLevelJson
 {
+    public int level;
     public float delay;
     public int damage;
     public float cooldown;
@@ -85,6 +87,7 @@ public class SlimeBulletShooterLevelJson
 public class SlimeBulletShooterJson
 {
     public string id;
+    public string name;
     public SlimeBulletShooterLevelJson[] levels;
 }
 
@@ -97,6 +100,7 @@ public struct SlimeBulletShooterComponent : IComponentData
 
 public struct SlimeBulletShooterLevelData
 {
+    public int level;
     public float delay;
     public int damage;
     public float cooldown;

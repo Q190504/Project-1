@@ -51,8 +51,14 @@ public partial struct ShootSlimeBulletSystem : ISystem
 
             // Determine weapon level index (can be from another component if you support dynamic leveling)
             int levelIndex = 1;
+            if (levelIndex <= 0)
+            {
+                Debug.Log($"SlimeBulletShooter is level 0");
+                return;
+            }    
             ref var levelData = ref blobData.Value.Levels[levelIndex];
 
+            int level = levelData.level;
             int damage = levelData.damage;
             float cooldown = levelData.cooldown;
             int bulletCount = levelData.bulletCount;

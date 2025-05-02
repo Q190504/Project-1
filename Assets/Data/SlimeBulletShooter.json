@@ -3,19 +3,7 @@
   "name": "Slime Bullet Shooter",
   "levels": [
     {
-      "damage": 0,
-      "cooldown": 0,
-      "bulletCount": 0,
-      "minimumDistance": 0,
-      "minimumDistanceBetweenBullets": 0,
-      "maximumDistanceBetweenBullets": 0,
-      "passthroughDamageModifier": 0,
-      "moveSpeed": 0,
-      "existDuration": 0,
-      "slowModifier": 0,
-      "slowRadius": 0
-    },
-    {
+      "level": 1,
       "damage": 55,
       "cooldown": 1.5,
       "bulletCount": 1,
@@ -29,6 +17,7 @@
       "slowRadius": 0
     },
     {
+      "level": 2,
       "damage": 70,
       "cooldown": 1.25,
       "bulletCount": 1,
@@ -42,6 +31,7 @@
       "slowRadius": 0
     },
     {
+      "level": 3,
       "damage": 85,
       "cooldown": 1.25,
       "bulletCount": 2,
@@ -55,6 +45,7 @@
       "slowRadius": 0
     },
     {
+      "level": 4,
       "damage": 100,
       "cooldown": 1.0,
       "bulletCount": 2,
@@ -68,6 +59,7 @@
       "slowRadius": 0
     },
     {
+      "level": 5,
       "damage": 115,
       "cooldown": 1.0,
       "bulletCount": 3,
