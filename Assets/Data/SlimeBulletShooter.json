@@ -18,15 +18,15 @@
     {
       "damage": 10,
       "cooldown": 1.5,
-      "bulletCount": 3,
+      "bulletCount": 1,
       "minimumDistance": 7,
       "minimumDistanceBetweenBullets": 0.10,
       "maximumDistanceBetweenBullets": 0.45,
       "passthroughDamageModifier": 0.5,
       "moveSpeed": 20,
       "existDuration": 8,
-      "slowModifier": 0.2,
-      "slowRadius": 1
+      "slowModifier": 0,
+      "slowRadius": 0
     },
     {
       "damage": 20,

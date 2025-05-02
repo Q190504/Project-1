@@ -36,8 +36,8 @@ public partial struct SlimeBulletSlowEnemySystem : ISystem
             {
                 DebugDrawSphere(bulletPos, radius, Color.cyan);
 
-                foreach (var (transform, velocity, entity) in
-                    SystemAPI.Query<RefRW<LocalTransform>, RefRW<PhysicsVelocity>>().WithEntityAccess())
+                foreach (var (transform, enemyComponent, velocity, entity) in
+                    SystemAPI.Query<RefRO<LocalTransform>, RefRO<EnemyTagComponent>, RefRW<PhysicsVelocity>>().WithEntityAccess())
                 {
                     if (!entityManager.HasComponent<EnemyTagComponent>(entity))
                         continue;
@@ -48,15 +48,9 @@ public partial struct SlimeBulletSlowEnemySystem : ISystem
                     if (dist <= radius && dist > 0.01f)
                     {
                         if (!state.EntityManager.HasComponent<SlowedBySlimeBulletTag>(entity))
-                        {
-                            velocity.ValueRW.Linear *= slowModifier;
                             ecb.AddComponent(entity, new SlowedBySlimeBulletTag());
-                        }
-                        else
-                        {
-                            velocity.ValueRW.Linear *= slowModifier;
-                            ecb.SetComponent(entity, new SlowedBySlimeBulletTag());
-                        }
+
+                        velocity.ValueRW.Linear = math.normalize(velocity.ValueRW.Linear) * (enemyComponent.ValueRO.speed * slowModifier);
 
                         // Mark this enemy as still being affected
                         stillSlowedEnemies.Add(entity);
