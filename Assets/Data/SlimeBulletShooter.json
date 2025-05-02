@@ -16,7 +16,7 @@
       "slowRadius": 0
     },
     {
-      "damage": 10,
+      "damage": 55,
       "cooldown": 1.5,
       "bulletCount": 1,
       "minimumDistance": 7,
@@ -29,7 +29,7 @@
       "slowRadius": 0
     },
     {
-      "damage": 20,
+      "damage": 70,
       "cooldown": 1.25,
       "bulletCount": 1,
       "minimumDistance": 7,
@@ -42,7 +42,7 @@
       "slowRadius": 0
     },
     {
-      "damage": 30,
+      "damage": 85,
       "cooldown": 1.25,
       "bulletCount": 2,
       "minimumDistance": 7,
@@ -55,7 +55,7 @@
       "slowRadius": 0
     },
     {
-      "damage": 45,
+      "damage": 100,
       "cooldown": 1.0,
       "bulletCount": 2,
       "minimumDistance": 7,
@@ -68,7 +68,7 @@
       "slowRadius": 0
     },
     {
-      "damage": 45,
+      "damage": 115,
       "cooldown": 1.0,
       "bulletCount": 3,
       "minimumDistance": 7,
