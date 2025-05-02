@@ -1,0 +1,42 @@
+{
+  "id": "SlimeBeam",
+  "name": "Slime Beam",
+  "levels": [
+    {
+      "level": 0,
+      "damage": 0,
+      "cooldown": 0,
+      "timeBetween": 0
+    },
+    {
+      "level": 1,
+      "damage": 60,
+      "cooldown": 4,
+      "timeBetween": 0.528
+    },
+    {
+      "level": 2,
+      "damage": 95,
+      "cooldown": 4,
+      "timeBetween": 0.528
+    },
+    {
+      "level": 3,
+      "damage": 130,
+      "cooldown": 2.5,
+      "timeBetween": 0.528
+    },
+    {
+      "level": 4,
+      "damage": 165,
+      "cooldown": 2.5,
+      "timeBetween": 0.528
+    },
+    {
+      "level": 5,
+      "damage": 200,
+      "cooldown": 0,
+      "timeBetween": 0.528
+    }
+  ]
+}

@@ -401,7 +401,7 @@ GameObject:
   - component: {fileID: 1676927602}
   - component: {fileID: 1676927603}
   m_Layer: 0
-  m_Name: Slime Slash
+  m_Name: Slime Beam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -429,11 +429,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1676927601}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 774ee6bec7f16a54ab8716a9147b0664, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weaponId: SlimeBeam
 --- !u!1 &1711749687
 GameObject:
   m_ObjectHideFlags: 0
@@ -814,7 +815,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1884580528}
-  - component: {fileID: 1884580529}
   - component: {fileID: 1884580530}
   m_Layer: 0
   m_Name: Slime Bullet Shooter
@@ -838,19 +838,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1711749695}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1884580529
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1884580527}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb309433685662c4c877a768e448e271, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  delayTime: 0.7
 --- !u!114 &1884580530
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -864,205 +851,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponId: SlimeBulletShooter
---- !u!1 &1936001346
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1936001347}
-  - component: {fileID: 1936001348}
-  m_Layer: 0
-  m_Name: Weapon Manager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &1936001347
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1936001346}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1936001348
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1936001346}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07f0d9fe4bf7f0c4480eb9c721a88ec2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weapons:
-  - type: 0
-    levels:
-    - damage: 0
-      cooldownTime: 0
-      bulletCount: 0
-      maximumDistanceBetweenBullets: 0
-      minimumDistanceBetweenBullets: 0
-      passthroughDamageModifier: 0
-      moveSpeed: 0
-      distance: 0
-      existDuration: 0
-      slowModifier: 0
-      slowRadius: 0
-      radius: 0
-    - damage: 5
-      cooldownTime: 2
-      bulletCount: 1
-      maximumDistanceBetweenBullets: 0.4
-      minimumDistanceBetweenBullets: 0.25
-      passthroughDamageModifier: 0.5
-      moveSpeed: 20
-      distance: 7
-      existDuration: 8
-      slowModifier: 0
-      slowRadius: 0
-      radius: 0
-    - damage: 7
-      cooldownTime: 1.9
-      bulletCount: 2
-      maximumDistanceBetweenBullets: 0.4
-      minimumDistanceBetweenBullets: 0.25
-      passthroughDamageModifier: 0.6
-      moveSpeed: 20
-      distance: 7
-      existDuration: 8
-      slowModifier: 0
-      slowRadius: 0
-      radius: 0
-    - damage: 9
-      cooldownTime: 1.8
-      bulletCount: 3
-      maximumDistanceBetweenBullets: 0.4
-      minimumDistanceBetweenBullets: 0.25
-      passthroughDamageModifier: 0.7
-      moveSpeed: 20
-      distance: 7
-      existDuration: 10
-      slowModifier: 0
-      slowRadius: 0
-      radius: 0
-    - damage: 10
-      cooldownTime: 1.7
-      bulletCount: 3
-      maximumDistanceBetweenBullets: 0.4
-      minimumDistanceBetweenBullets: 0.25
-      passthroughDamageModifier: 0.8
-      moveSpeed: 20
-      distance: 7
-      existDuration: 10
-      slowModifier: 0
-      slowRadius: 0
-      radius: 0
-    - damage: 15
-      cooldownTime: 1.6
-      bulletCount: 3
-      maximumDistanceBetweenBullets: 0.4
-      minimumDistanceBetweenBullets: 0.25
-      passthroughDamageModifier: 1.9
-      moveSpeed: 20
-      distance: 7
-      existDuration: 12
-      slowModifier: 0.5
-      slowRadius: 1.5
-      radius: 0
-  - type: 1
-    levels:
-    - damage: 0
-      cooldownTime: 0
-      bulletCount: 0
-      maximumDistanceBetweenBullets: 0
-      minimumDistanceBetweenBullets: 0
-      passthroughDamageModifier: 0
-      moveSpeed: 0
-      distance: 0
-      existDuration: 0
-      slowModifier: 0
-      slowRadius: 0
-      radius: 0
-    - damage: 5
-      cooldownTime: 2
-      bulletCount: 0
-      maximumDistanceBetweenBullets: 0
-      minimumDistanceBetweenBullets: 0
-      passthroughDamageModifier: 0
-      moveSpeed: 0
-      distance: 0
-      existDuration: 0
-      slowModifier: 0
-      slowRadius: 0
-      radius: 1
-    - damage: 10
-      cooldownTime: 1.9
-      bulletCount: 0
-      maximumDistanceBetweenBullets: 0
-      minimumDistanceBetweenBullets: 0
-      passthroughDamageModifier: 0
-      moveSpeed: 0
-      distance: 0
-      existDuration: 0
-      slowModifier: 0
-      slowRadius: 0
-      radius: 1
-    - damage: 15
-      cooldownTime: 1.8
-      bulletCount: 0
-      maximumDistanceBetweenBullets: 0
-      minimumDistanceBetweenBullets: 0
-      passthroughDamageModifier: 0
-      moveSpeed: 0
-      distance: 0
-      existDuration: 0
-      slowModifier: 0
-      slowRadius: 0
-      radius: 1
-    - damage: 20
-      cooldownTime: 1.7
-      bulletCount: 0
-      maximumDistanceBetweenBullets: 0
-      minimumDistanceBetweenBullets: 0
-      passthroughDamageModifier: 0
-      moveSpeed: 0
-      distance: 0
-      existDuration: 0
-      slowModifier: 0
-      slowRadius: 0
-      radius: 1.25
-    - damage: 25
-      cooldownTime: 1.6
-      bulletCount: 0
-      maximumDistanceBetweenBullets: 0
-      minimumDistanceBetweenBullets: 0
-      passthroughDamageModifier: 0
-      moveSpeed: 0
-      distance: 0
-      existDuration: 0
-      slowModifier: 0
-      slowRadius: 0
-      radius: 1.5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 786503823}
-  - {fileID: 1936001347}
   - {fileID: 1711749695}
   - {fileID: 1841747514}
   - {fileID: 1035922628}
