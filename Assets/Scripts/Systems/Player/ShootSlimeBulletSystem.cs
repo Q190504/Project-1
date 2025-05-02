@@ -7,154 +7,196 @@ using UnityEngine;
 [BurstCompile]
 public partial struct ShootSlimeBulletSystem : ISystem
 {
-    private EntityQuery weaponDatabaseQuery;
+    private EntityManager entityManager;
+    private Entity player;
 
     public void OnCreate(ref SystemState state)
     {
-        weaponDatabaseQuery = state.GetEntityQuery(ComponentType.ReadOnly<WeaponDatabaseComponent>());
+        entityManager = state.EntityManager;
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        if (weaponDatabaseQuery.IsEmpty) return;
-
-        var weaponDatabaseComponent = SystemAPI.GetSingleton<WeaponDatabaseComponent>();
-        ref var weaponDatabase = ref weaponDatabaseComponent.weaponDatabase.Value;
+        float deltaTime = SystemAPI.Time.DeltaTime;
         var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        float deltaTime = SystemAPI.Time.DeltaTime;
-
-        Entity activeWeaponEntity = Entity.Null;
-        WeaponComponent activeWeapon = default;
-        bool foundActiveWeapon = false;
-
-
-        foreach (var (weapon, entity) in SystemAPI.Query<WeaponComponent>().WithEntityAccess())
+        if(!SystemAPI.TryGetSingleton<PlayerTagComponent>(out var playerTagComponent))
         {
-            if (weapon.type != WeaponType.SlimeBullet)
-                continue;
-
-            if (weapon.currentLevel > 0)
-            {
-                activeWeaponEntity = entity;
-                activeWeapon = weapon;
-                foundActiveWeapon = true;
-                break; // Stop after finding the first active slime bullet weapon
-            }
+            Debug.LogError("Cant find PlayerTagComponent in ShootSlimeBulletSystem");
+            return;
         }
 
-
-        if (foundActiveWeapon)
+        if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
         {
-            if (SystemAPI.HasComponent<CooldownComponent>(activeWeaponEntity))
-            {
-                ref var cooldownComponent = ref SystemAPI.GetComponentRW<CooldownComponent>(activeWeaponEntity).ValueRW;
-                cooldownComponent.remainingTime -= deltaTime;
+            Debug.Log($"Cant Found Player Entity in ShootSlimeBulletSystem!");
+            return;
+        }
 
-                if (cooldownComponent.remainingTime > 0)
-                    return;
-            }
+        if (!SystemAPI.TryGetSingleton<SlimeFrenzyComponent>(out var slimeFrenzyComponent))
+        {
+            Debug.LogError("Cant find SlimeFrenzyComponent in ShootSlimeBulletSystem");
+            return;
+        }
+        
+        foreach (var (weapon, shooterEntity) in SystemAPI.Query<RefRW<SlimeBulletShooterComponent>>().WithEntityAccess())
+        {
+            ref var shooter = ref weapon.ValueRW;
 
-            if (SystemAPI.TryGetSingleton<PlayerTagComponent>(out var playerTagComponent)
-                && SystemAPI.TryGetSingleton<SlimeFrenzyComponent>(out var slimeFrenzyComponent))
-            {
-                if (!playerTagComponent.isStunned)
-                {
-                    GetStats(ref weaponDatabase, WeaponType.SlimeBullet, activeWeapon.currentLevel, out int damage,
-                        out float cooldown, out int bulletCount, out float distance, out float minimumDistanceBetweenBullets,
-                        out float maximumDistanceBetweenBullets, out float passthroughDamageModifier, out float moveSpeed,
-                        out float existDuration, out float slowModifier, out float slowRadius);
+            shooter.timer -= deltaTime;
+            if (shooter.timer > 0) continue;
 
-                    Shoot(ecb, activeWeaponEntity, damage, cooldown, bulletCount, distance, minimumDistanceBetweenBullets,
-                        maximumDistanceBetweenBullets, passthroughDamageModifier, moveSpeed, existDuration, slowModifier, slowRadius, 
-                        playerTagComponent.isFrenzing, slimeFrenzyComponent.bonusDamagePercent);
+            var blobData = shooter.Data;
+            if (!blobData.IsCreated || blobData.Value.Levels.Length == 0) continue;
 
-                    float shootTimer = playerTagComponent.isFrenzing
-                        ? cooldown * (1 - slimeFrenzyComponent.fireRateReductionPercent)
-                        : cooldown;
+            // Determine weapon level index (can be from another component if you support dynamic leveling)
+            int levelIndex = 1;
+            ref var levelData = ref blobData.Value.Levels[levelIndex];
 
-                    if (!SystemAPI.HasComponent<CooldownComponent>(activeWeaponEntity))
-                    {
-                        ecb.AddComponent(activeWeaponEntity, new CooldownComponent { remainingTime = shootTimer });
+            int damage = levelData.damage;
+            float cooldown = levelData.cooldown;
+            int bulletCount = levelData.bulletCount;
+            int bulletRemaining = bulletCount;
+            float minimumDistance = levelData.minimumDistance;
+            float minDistBetweenBullets = levelData.minimumDistanceBetweenBullets;
+            float maxDistBetweenBullets = levelData.maximumDistanceBetweenBullets;
+            float passthroughDamageModifier = levelData.passthroughDamageModifier;
+            float moveSpeed = levelData.moveSpeed;
+            float existDuration = levelData.existDuration;
+            float slowModifier = levelData.slowModifier;
+            float slowRadius = levelData.slowRadius;
 
-                    }
-                    else
-                    {
-                        ecb.SetComponent(activeWeaponEntity, new CooldownComponent { remainingTime = shootTimer });
-                    }
-                }
-            }
+            Shoot(
+                ecb, shooterEntity, damage, cooldown, bulletCount, bulletRemaining,
+                minimumDistance, minDistBetweenBullets, maxDistBetweenBullets,
+                passthroughDamageModifier, moveSpeed, existDuration,
+                slowModifier, slowRadius, playerTagComponent.isFrenzing,
+                slimeFrenzyComponent.bonusDamagePercent
+            );
+
+            shooter.timer = cooldown; // Reset timer
         }
     }
 
-    private void Shoot(EntityCommandBuffer ecb, Entity shooterEntity, int damage, float cooldown, int bulletCount, float distance,
-        float minimumDistanceBetweenBullets, float maximumDistanceBetweenBullets, float passthroughDamageModifier, float moveSpeed,
-        float existDuration, float slowModifier, float slowRadius, bool isSlimeFrenzyActive, float bonusDamagePercent)
+    private void Shoot(
+        EntityCommandBuffer ecb,
+        Entity shooterEntity,
+        int damage,
+        float cooldown,
+        int bulletCount,
+        int bulletRemaining,
+        float minimumDistance,
+        float minDistBetweenBullets,
+        float maxDistBetweenBullets,
+        float passthroughDamageModifier,
+        float moveSpeed,
+        float existDuration,
+        float slowModifier,
+        float slowRadius,
+        bool isSlimeFrenzyActive,
+        float bonusDamagePercent)
     {
-        float delayBetweenShot = 0.1f;
 
-        SlimeBulletShooterComponent shot = new SlimeBulletShooterComponent
+        for (int i = 0; i < bulletRemaining; i++ )
         {
-            delay = delayBetweenShot,         // delay between bullets
-            timer = 0,
-            damage = damage,
-            cooldown = cooldown,
-            bulletCount = bulletCount,
-            bulletsRemaining = bulletCount,
-            minimumDistance = distance,
-            minimumDistanceBetweenBullets = minimumDistanceBetweenBullets,
-            maximumDistanceBetweenBullets = maximumDistanceBetweenBullets,
-            previousDistance = distance,
-            passthroughDamageModifier = passthroughDamageModifier,
-            moveSpeed = moveSpeed,
-            existDuration = existDuration,
-            isSlimeFrenzyActive = isSlimeFrenzyActive,
-            bonusDamagePercent = bonusDamagePercent,
-            slowModifier = slowModifier,
-            slowRadius = slowRadius,
-        };
+            // Spawn the bullet
+            Entity bullet = BulletManager.Instance.Take(ecb);
 
-        ecb.AddComponent(shooterEntity, shot);
+            float bonusDistance = (maxDistBetweenBullets - minDistBetweenBullets) / bulletRemaining;
+
+            float distance = minimumDistance + i * bonusDistance;
+
+            SetBulletStats(ecb, bullet, damage, passthroughDamageModifier, cooldown,
+                distance, moveSpeed, existDuration, slowModifier, slowRadius,
+                isSlimeFrenzyActive, bonusDamagePercent);
+
+
+            ////Damages player
+            //if (entityManager.HasComponent<PlayerHealthComponent>(player))
+            //{
+            //    if (isSlimeFrenzyActive)
+            //    {
+            //        ecb.AddComponent(player, new DamageEventComponent
+            //        {
+            //            damageAmount = (int)(slimeBulletComponent.damagePlayerAmount * hpCostPerShotPercent),
+            //        });
+            //    }
+            //    else
+            //    {
+            //        ecb.AddComponent(player, new DamageEventComponent
+            //        {
+            //            damageAmount = slimeBulletComponent.damagePlayerAmount,
+            //        });
+            //    }
+            //}
+
+            //shooter.ValueRW.bulletsRemaining--;
+            //shooter.ValueRW.timer = shooter.ValueRW.delay;
+
+            //shooter.ValueRW.previousDistance = distance;
+
+            //if (shooter.ValueRW.bulletsRemaining == 0)
+            //{
+            //    ecb.RemoveComponent<SlimeBulletShooterComponent>(entity);
+            //}
+        }     
     }
 
-    private void GetStats(ref WeaponDatabase weaponDatabase, WeaponType type, int level, out int damage,
-        out float cooldown, out int bulletCount, out float distance, out float minimumDistanceBetweenBullets,
-        out float maximumDistanceBetweenBullets, out float passthroughDamageModifier, out float moveSpeed, 
-        out float existDuration, out float slowModifier, out float slowRadius)
+    private void SetBulletStats(EntityCommandBuffer ecb, Entity bullet, int damage, float passthroughDamageModifier, float cooldown, float maxDistance, float moveSpeed,
+float existDuration, float slowModifier, float slowRadius, bool isSlimeFrenzyActive, float bonusDamagePercent)
     {
-        damage = 0;
-        cooldown = 0;
-        bulletCount = 0;
-        minimumDistanceBetweenBullets = 0;
-        maximumDistanceBetweenBullets = 0;
-        passthroughDamageModifier = 0;
-        moveSpeed = 0;
-        distance = 0;
-        existDuration = 0;
-        slowModifier = 0;
-        slowRadius = 0;
+        float3 playerPosition = entityManager.GetComponentData<LocalTransform>(player).Position;
 
-        for (int i = 0; i < weaponDatabase.weapons.Length; i++)
+        ecb.SetComponent(bullet, new LocalTransform
         {
-            if (weaponDatabase.weapons[i].type == type)
-            {
-                int levelIndex = math.clamp(level, 0, weaponDatabase.weapons[i].levels.Length - 1);
+            Position = playerPosition,
+            Rotation = Quaternion.identity,
+            Scale = 1f
+        });
 
-                damage = weaponDatabase.weapons[i].levels[levelIndex].damage;
-                cooldown = weaponDatabase.weapons[i].levels[levelIndex].cooldownTime;
-                bulletCount = weaponDatabase.weapons[i].levels[levelIndex].bulletCount;
-                minimumDistanceBetweenBullets = weaponDatabase.weapons[i].levels[levelIndex].minimumDistanceBetweenBullets;
-                maximumDistanceBetweenBullets = weaponDatabase.weapons[i].levels[levelIndex].maximumDistanceBetweenBullets;
-                passthroughDamageModifier = weaponDatabase.weapons[i].levels[levelIndex].passthroughDamageModifier;
-                moveSpeed = weaponDatabase.weapons[i].levels[levelIndex].moveSpeed;
-                distance = weaponDatabase.weapons[i].levels[levelIndex].distance;
-                existDuration = weaponDatabase.weapons[i].levels[levelIndex].existDuration;
-                slowModifier = weaponDatabase.weapons[i].levels[levelIndex].slowModifier;
-                slowRadius = weaponDatabase.weapons[i].levels[levelIndex].slowRadius;
-                
-                return;
-            }
+        float3 mouseWorldPosition = MapManager.GetMouseWorldPosition();
+
+        float3 moveDirection = math.normalize(mouseWorldPosition - playerPosition);
+
+        if (!entityManager.HasComponent<SlimeBulletComponent>(bullet))
+        {
+            ecb.AddComponent(bullet, new SlimeBulletComponent
+            {
+                isAbleToMove = true,
+                isBeingSummoned = false,
+                moveDirection = moveDirection,
+                moveSpeed = moveSpeed,
+                distanceTraveled = 0,
+                maxDistance = maxDistance,
+                remainingDamage = damage,
+                passthroughDamageModifier = passthroughDamageModifier,
+                lastHitEnemy = Entity.Null,
+                healPlayerAmount = 0,
+                existDuration = existDuration,
+                hasHealPlayer = false,
+                slowModifier = slowModifier,
+                slowRadius = slowRadius,
+            });
+        }
+        else
+        {
+            ecb.SetComponent(bullet, new SlimeBulletComponent
+            {
+                isAbleToMove = true,
+                isBeingSummoned = false,
+                moveDirection = moveDirection,
+                moveSpeed = moveSpeed,
+                distanceTraveled = 0,
+                maxDistance = maxDistance,
+                remainingDamage = damage,
+                passthroughDamageModifier = passthroughDamageModifier,
+                lastHitEnemy = Entity.Null,
+                healPlayerAmount = 0,
+                existDuration = existDuration,
+                hasHealPlayer = false,
+                slowModifier = slowModifier,
+                slowRadius = slowRadius,
+            });
         }
     }
 }

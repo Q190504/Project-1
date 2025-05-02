@@ -1,0 +1,84 @@
+{
+  "id": "SlimeBulletShooter",
+  "name": "Slime Bullet Shooter",
+  "levels": [
+    {
+      "damage": 0,
+      "cooldown": 0,
+      "bulletCount": 0,
+      "minimumDistance": 0,
+      "minimumDistanceBetweenBullets": 0,
+      "maximumDistanceBetweenBullets": 0,
+      "passthroughDamageModifier": 0,
+      "moveSpeed": 0,
+      "existDuration": 0,
+      "slowModifier": 0,
+      "slowRadius": 0
+    },
+    {
+      "damage": 55,
+      "cooldown": 1.5,
+      "bulletCount": 1,
+      "minimumDistance": 7,
+      "minimumDistanceBetweenBullets": 0.10,
+      "maximumDistanceBetweenBullets": 0.45,
+      "passthroughDamageModifier": 0.5,
+      "moveSpeed": 20,
+      "existDuration": 8,
+      "slowModifier": 0,
+      "slowRadius": 0
+    },
+    {
+      "damage": 70,
+      "cooldown": 1.25,
+      "bulletCount": 1,
+      "minimumDistance": 7,
+      "minimumDistanceBetweenBullets": 0.25,
+      "maximumDistanceBetweenBullets": 0.45,
+      "passthroughDamageModifier": 0.6,
+      "moveSpeed": 13,
+      "existDuration": 8,
+      "slowModifier": 0,
+      "slowRadius": 0
+    },
+    {
+      "damage": 85,
+      "cooldown": 1.25,
+      "bulletCount": 2,
+      "minimumDistance": 7,
+      "minimumDistanceBetweenBullets": 0.25,
+      "maximumDistanceBetweenBullets": 0.45,
+      "passthroughDamageModifier": 0.7,
+      "moveSpeed": 20,
+      "existDuration": 10,
+      "slowModifier": 0,
+      "slowRadius": 0
+    },
+    {
+      "damage": 100,
+      "cooldown": 1.0,
+      "bulletCount": 2,
+      "minimumDistance": 7,
+      "minimumDistanceBetweenBullets": 0.25,
+      "maximumDistanceBetweenBullets": 0.45,
+      "passthroughDamageModifier": 0.8,
+      "moveSpeed": 20,
+      "existDuration": 10,
+      "slowModifier": 0,
+      "slowRadius": 0
+    },
+    {
+      "damage": 115,
+      "cooldown": 1.0,
+      "bulletCount": 3,
+      "minimumDistance": 7,
+      "minimumDistanceBetweenBullets": 0.25,
+      "maximumDistanceBetweenBullets": 0.45,
+      "passthroughDamageModifier": 0.9,
+      "moveSpeed": 20,
+      "existDuration": 12,
+      "slowModifier": 0.5,
+      "slowRadius": 1
+    }
+  ]
+}
