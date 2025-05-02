@@ -3,13 +3,13 @@ using Unity.Collections;
 using UnityEngine;
 using System.IO;
 
-public class SlimeBeamAuthoring : MonoBehaviour
+public class SlimeBeamShooterAuthoring : MonoBehaviour
 {
     public string weaponId;
 
-    public class Baker : Baker<SlimeBeamAuthoring>
+    public class Baker : Baker<SlimeBeamShooterAuthoring>
     {
-        public override void Bake(SlimeBeamAuthoring authoring)
+        public override void Bake(SlimeBeamShooterAuthoring authoring)
         {
             string path = Path.Combine(Application.dataPath, "Data", $"{authoring.weaponId}.json");
             if (!File.Exists(path))
@@ -19,17 +19,17 @@ public class SlimeBeamAuthoring : MonoBehaviour
             }
 
             string jsonText = File.ReadAllText(path);
-            SlimeBeamJson weapon = JsonUtility.FromJson<SlimeBeamJson>(jsonText);
+            SlimeBeamShooterJson weapon = JsonUtility.FromJson<SlimeBeamShooterJson>(jsonText);
 
             using var builder = new BlobBuilder(Allocator.Temp);
-            ref var root = ref builder.ConstructRoot<SlimeBeamDataBlob>();
+            ref var root = ref builder.ConstructRoot<SlimeBeamShooterDataBlob>();
 
             var levels = builder.Allocate(ref root.Levels, weapon.levels.Length);
             for (int i = 0; i < weapon.levels.Length; i++)
             {
                 var level = weapon.levels[i];
 
-                levels[i] = new SlimeBeamLevelData
+                levels[i] = new SlimeBeamShooterLevelData
                 {
                     level = level.level,
                     damage = level.damage,
@@ -39,9 +39,9 @@ public class SlimeBeamAuthoring : MonoBehaviour
                 };
             }
 
-            var blob = builder.CreateBlobAssetReference<SlimeBeamDataBlob>(Allocator.Temp);
+            var blob = builder.CreateBlobAssetReference<SlimeBeamShooterDataBlob>(Allocator.Temp);
 
-            AddComponent(GetEntity(TransformUsageFlags.None), new SlimeBeamComponent
+            AddComponent(GetEntity(TransformUsageFlags.None), new SlimeBeamShooterComponent
             {
                 Data = blob,
                 timer = 2f,
@@ -55,7 +55,7 @@ public class SlimeBeamAuthoring : MonoBehaviour
 // ---------- DOTS DATA DEFINITIONS ----------
 
 [System.Serializable]
-public class SlimeBeamLevelJson
+public class SlimeBeamShooterLevelJson
 {
     public int level;
     public int damage;
@@ -65,22 +65,22 @@ public class SlimeBeamLevelJson
 }
 
 [System.Serializable]
-public class SlimeBeamJson
+public class SlimeBeamShooterJson
 {
     public string id;
     public string name;
-    public SlimeBeamLevelJson[] levels;
+    public SlimeBeamShooterLevelJson[] levels;
 }
 
-public struct SlimeBeamComponent : IComponentData
+public struct SlimeBeamShooterComponent : IComponentData
 {
     public float timer;
     public float timeBetween;
     public int slashCount;
-    public BlobAssetReference<SlimeBeamDataBlob> Data;
+    public BlobAssetReference<SlimeBeamShooterDataBlob> Data;
 }
 
-public struct SlimeBeamLevelData
+public struct SlimeBeamShooterLevelData
 {
     public int level;
     public int damage;
@@ -89,8 +89,8 @@ public struct SlimeBeamLevelData
     public float timeBetween;
 }
 
-public struct SlimeBeamDataBlob
+public struct SlimeBeamShooterDataBlob
 {
     public BlobString Name;
-    public BlobArray<SlimeBeamLevelData> Levels;
+    public BlobArray<SlimeBeamShooterLevelData> Levels;
 }

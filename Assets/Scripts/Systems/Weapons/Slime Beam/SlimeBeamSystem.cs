@@ -1,113 +1,85 @@
-using Unity.Entities;
-using UnityEngine;
-using Unity.Mathematics;
-using Unity.Collections;
-using Unity.Physics;
 using Unity.Burst;
-using Unity.Transforms;
+using Unity.Entities;
+using Unity.Physics;
+using Unity.Collections;
 
-[BurstCompile]
 public partial struct SlimeBeamSystem : ISystem
 {
-    private EntityManager entityManager;
-    private Entity player;
+    private EntityQuery _collisionGroup;
 
     public void OnCreate(ref SystemState state)
     {
-        entityManager = state.EntityManager;
+        _collisionGroup = SystemAPI.QueryBuilder()
+            .WithAll<PhysicsCollider, PhysicsVelocity>()
+            .Build();
     }
 
     public void OnUpdate(ref SystemState state)
     {
+        float deltaTime = SystemAPI.Time.DeltaTime;
         var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        float deltaTime = SystemAPI.Time.DeltaTime;
-
-        if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
+        var job = new SlimeBeamDamageEnemyJob
         {
-            Debug.Log($"Cant Found Player Entity in SlimeBeamSystem!");
-            return;
-        }
+            slimeBeamLookup = SystemAPI.GetComponentLookup<SlimeBeamComponent>(true),
+            enemyLookup = SystemAPI.GetComponentLookup<EnemyTagComponent>(true),
+            ecb = ecb,
+            deltaTime = deltaTime,
+        };
 
-        foreach (var (weapon, entity) in SystemAPI.Query<RefRW<SlimeBeamComponent>>().WithEntityAccess())
+        state.Dependency = job.Schedule(SystemAPI.GetSingleton<SimulationSingleton>(), state.Dependency);
+    }
+}
+
+//[BurstCompile]
+struct SlimeBeamDamageEnemyJob : ITriggerEventsJob
+{
+    [ReadOnly] public ComponentLookup<SlimeBeamComponent> slimeBeamLookup;
+    [ReadOnly] public ComponentLookup<EnemyTagComponent> enemyLookup;
+    [ReadOnly] public float deltaTime;
+    public EntityCommandBuffer ecb;
+
+    public void Execute(TriggerEvent triggerEvent)
+    {
+        Entity entityA = triggerEvent.EntityA;
+        Entity entityB = triggerEvent.EntityB;
+
+        bool entityAIsEnemy = enemyLookup.HasComponent(entityA);
+        bool entityBIsEnemy = enemyLookup.HasComponent(entityB);
+
+        if (entityAIsEnemy || entityBIsEnemy)
         {
-            ref var slasher = ref weapon.ValueRW;
-            slasher.timer -= deltaTime;
-            if (slasher.timer > 0) continue;
+            Entity enemyEntity = entityAIsEnemy ? entityA : entityB;
+            Entity beamEntity = entityAIsEnemy ? entityB : entityA;
 
-            var blobData = slasher.Data;
-            if (!blobData.IsCreated || blobData.Value.Levels.Length == 0) continue;
+            if (!slimeBeamLookup.HasComponent(beamEntity) || !slimeBeamLookup.HasComponent(beamEntity))
+                return;
 
-            // Determine weapon level index (can be from another component if you support dynamic leveling)
-            int levelIndex = 1;
-            if (levelIndex <= 0) // is active
+            var beamComponent = slimeBeamLookup[beamEntity];
+
+            beamComponent.timer -= deltaTime;
+            // Destroy if out of lifetime
+            if (beamComponent.timer <= 0)
             {
-                Debug.Log($"SlimeSlash is inactive");
+                BulletManager.Instance.ReturnSlimeBeam(beamEntity, ecb);
                 return;
             }
 
-            ref var levelData = ref blobData.Value.Levels[levelIndex];
+            // Skip if has deal damage to enemies in frame(s) before
+            if (beamComponent.hasDealDamageToEnemies)
+                return;
 
-            int level = levelData.level;
-            int damage = levelData.damage;
-            float cooldown = levelData.cooldown;
-            float range = levelData.range;
-            float timeBetween = levelData.timeBetween;
+            // Deal damage
+            int damage = beamComponent.damage;
 
-            float3 playerPosition = entityManager.GetComponentData<LocalTransform>(player).Position;
+            if (damage <= 0)
+                return;
 
-            if(level == 5) //max level
-            {
-                for (int slashCount = 0; slashCount < 4; slashCount++)
-                    PerformSingleBeam(entity, playerPosition, range, damage, slashCount, ecb);
+            ecb.AddComponent(enemyEntity, new DamageEventComponent { damageAmount = damage });
 
-                slasher.timer = cooldown; // Reset timer
-            }
-            else
-            {
-                slasher.timeBetween += deltaTime;
-
-                if (slasher.timeBetween >= timeBetween && slasher.slashCount < 4)
-                {
-                    PerformSingleBeam(entity, playerPosition, range, damage, slasher.slashCount, ecb);
-
-                    slasher.slashCount++;
-                    slasher.timeBetween = 0f;
-                }
-
-                if (slasher.slashCount >= 4)
-                {
-                    slasher.slashCount = 0;
-                    slasher.timer = cooldown; // Reset timer
-                }
-            }
+            beamComponent.hasDealDamageToEnemies = true;
+            ecb.SetComponent(beamEntity, beamComponent);
         }
-    }
-
-    private void PerformSingleBeam(Entity entity, float3 originPosition, float range, int damage, int slashCount, EntityCommandBuffer ecb)
-    {
-        PhysicsWorldSingleton physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
-        EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-        NativeList<Unity.Physics.RaycastHit> hits = new NativeList<Unity.Physics.RaycastHit>(Allocator.Temp);
-
-        float3 direction = GetAttackPosition(slashCount);
-
-        //spawn beam
-
-        hits.Dispose();
-    }
-
-    private float3 GetAttackPosition(int count)
-    {
-        float offset = 1f; // Adjust based on desired effect
-        switch (count % 4)
-        {
-            case 0: return new float3(0, offset, 0);  // Top (0°)
-            case 1: return new float3(offset, 0, 0);  // Right (-90°)
-            case 2: return new float3(0, -offset, 0); // Bottom (180°)
-            case 3: return new float3(-offset, 0, 0); // Left (90°)
-        }
-        return float3.zero;
     }
 }
