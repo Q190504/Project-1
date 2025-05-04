@@ -2,40 +2,37 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Physics;
 using Unity.Collections;
+using UnityEngine;
 
-public partial struct SlimeBeamDamageSystem : ISystem
+[BurstCompile]
+public partial struct RadiantFieldDamageSystem : ISystem
 {
-    private EntityQuery _collisionGroup;
-
-    public void OnCreate(ref SystemState state)
-    {
-        _collisionGroup = SystemAPI.QueryBuilder()
-            .WithAll<PhysicsCollider, PhysicsVelocity>()
-            .Build();
-    }
-
     public void OnUpdate(ref SystemState state)
     {
         var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        var job = new SlimeBeamDamageEnemyJob
+        double currentTime = (float)SystemAPI.Time.ElapsedTime;
+
+        var job = new RadiantFieldSlowEnemyJob
         {
-            slimeBeamLookup = SystemAPI.GetComponentLookup<SlimeBeamComponent>(true),
+            radiantFieldLookup = SystemAPI.GetComponentLookup<RadiantFieldComponent>(true),
             enemyLookup = SystemAPI.GetComponentLookup<EnemyTagComponent>(true),
             ecb = ecb,
+            currentTime = currentTime,
         };
 
         state.Dependency = job.Schedule(SystemAPI.GetSingleton<SimulationSingleton>(), state.Dependency);
     }
 }
 
-[BurstCompile]
-struct SlimeBeamDamageEnemyJob : ITriggerEventsJob
+//[BurstCompile]
+struct RadiantFieldDamageEnemyJob : ITriggerEventsJob
 {
-    [ReadOnly] public ComponentLookup<SlimeBeamComponent> slimeBeamLookup;
+    [ReadOnly] public ComponentLookup<RadiantFieldComponent> radiantFieldLookup;
     [ReadOnly] public ComponentLookup<EnemyTagComponent> enemyLookup;
     public EntityCommandBuffer ecb;
+    public double currentTime;
 
     public void Execute(TriggerEvent triggerEvent)
     {
@@ -48,27 +45,29 @@ struct SlimeBeamDamageEnemyJob : ITriggerEventsJob
         if (entityAIsEnemy || entityBIsEnemy)
         {
             Entity enemyEntity = entityAIsEnemy ? entityA : entityB;
-            Entity beamEntity = entityAIsEnemy ? entityB : entityA;
+            Entity radiantFieldEntity = entityAIsEnemy ? entityB : entityA;
 
-            if (!slimeBeamLookup.HasComponent(beamEntity) || !slimeBeamLookup.HasComponent(beamEntity))
+            if (!radiantFieldLookup.HasComponent(radiantFieldEntity))
                 return;
 
-            var beamComponent = slimeBeamLookup[beamEntity];
+            var radiantFieldComponent = radiantFieldLookup[radiantFieldEntity];
 
-            // Skip if has deal damage to enemies in frame(s) before
-            if (beamComponent.hasDealDamageToEnemies)
+            // Skip if has not pass a tick
+            if (currentTime - radiantFieldComponent.lastTickTime < radiantFieldComponent.timeBetween)
                 return;
+
+            radiantFieldComponent.lastTickTime = currentTime;
+            ecb.SetComponent(radiantFieldEntity, radiantFieldComponent);
 
             // Deal damage
-            int damage = beamComponent.damage;
+            RadiantFieldLevelData currerntLevelData = radiantFieldComponent.Data.Value.Levels[radiantFieldComponent.currentLevel];
+            int damage = currerntLevelData.damagePerTick;
 
             if (damage <= 0)
                 return;
 
             ecb.AddComponent(enemyEntity, new DamageEventComponent { damageAmount = damage });
-
-            beamComponent.hasDealDamageToEnemies = true;
-            ecb.SetComponent(beamEntity, beamComponent);
+            Debug.Log("hurt by rd");
         }
     }
 }

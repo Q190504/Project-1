@@ -1,0 +1,43 @@
+{
+  "id": "RadiantField",
+  "name": "Radiant Field",
+  "timeBetween": 0.264,
+  "levels": [
+    {
+      "damagePerTick": 0,
+      "cooldown": 0,
+      "radius": 0,
+      "slowModifier": 0
+    },
+    {
+      "damagePerTick": 5,
+      "cooldown": 0,
+      "radius": 5.2,
+      "slowModifier": 0
+    },
+    {
+      "damagePerTick": 15,
+      "cooldown": 0,
+      "radius": 5.6,
+      "slowModifier": 0
+    },
+    {
+      "damagePerTick": 25,
+      "cooldown": 0,
+      "radius": 5.75,
+      "slowModifier": 0
+    },
+    {
+      "damagePerTick": 35,
+      "cooldown": 0,
+      "radius": 6.4,
+      "slowModifier": 0
+    },
+    {
+      "damagePerTick": 45,
+      "cooldown": 0,
+      "radius": 6.8,
+      "slowModifier": 0.35
+    }
+  ]
+}

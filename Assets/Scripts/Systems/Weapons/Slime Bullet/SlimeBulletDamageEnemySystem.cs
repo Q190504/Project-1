@@ -19,8 +19,6 @@ public partial struct SlimeBulletDamageEnemySystem : ISystem
         var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        float currentTime = (float)SystemAPI.Time.ElapsedTime;
-
         var job = new SlimeBulletDamageEnemyJob
         {
             slimeBulletLookup = SystemAPI.GetComponentLookup<SlimeBulletComponent>(true),
