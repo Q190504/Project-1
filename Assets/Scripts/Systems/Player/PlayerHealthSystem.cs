@@ -33,8 +33,6 @@ public partial struct PlayerHealthSystem : ISystem
 
                     UpdateHPBar(playerHealth.currentHealth, playerHealth.maxHealth);
 
-                    SetBulletPrepare(playerHealth.currentHealth);
-
                     // Update tracker
                     tracker.healthSystemInitialized = true;
                     ecb.SetComponent(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), tracker);
@@ -87,10 +85,5 @@ public partial struct PlayerHealthSystem : ISystem
     public void UpdateHPBar(int currentHP, int maxHP)
     {
         GamePlayUIManager.Instance.UpdateHPBar(currentHP, maxHP);
-    }
-
-    private void SetBulletPrepare(int bulletAmount)
-    {
-        BulletManager.Instance?.SetBulletPrepare(bulletAmount);
     }
 }

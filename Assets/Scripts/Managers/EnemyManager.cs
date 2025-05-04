@@ -91,9 +91,7 @@ public class EnemyManager : MonoBehaviour
                 {
                     if (enemySpawner.IsPlayerAround)
                     {
-                        SpawnEnemy(new Vector3(Random.Range(enemySpawner.transform.position.x - 1, enemySpawner.transform.position.x + 1),
-                            Random.Range(enemySpawner.transform.position.y - 1, enemySpawner.transform.position.y + 1),
-                            0));
+                        SpawnEnemy(new Vector3(enemySpawner.transform.position.x, enemySpawner.transform.position.y, 0));
 
                         enemiesToSpawnCounter--;
 

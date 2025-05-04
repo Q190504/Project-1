@@ -32,7 +32,6 @@ public class SlimeBulletShooterAuthoring : MonoBehaviour
 
                 levels[i] = new SlimeBulletShooterLevelData
                 {
-                    level = level.level,
                     delay = level.delay,
                     damage = level.damage,
                     cooldown = level.cooldown,
@@ -57,6 +56,7 @@ public class SlimeBulletShooterAuthoring : MonoBehaviour
                 Data = blob,
                 timer = 2f,
                 isSlimeFrenzyActive = false,
+                level = 0,
             });
         }
     }
@@ -67,7 +67,6 @@ public class SlimeBulletShooterAuthoring : MonoBehaviour
 [System.Serializable]
 public class SlimeBulletShooterLevelJson
 {
-    public int level;
     public float delay;
     public int damage;
     public float cooldown;
@@ -93,14 +92,14 @@ public class SlimeBulletShooterJson
 
 public struct SlimeBulletShooterComponent : IComponentData
 {
+    public int level;
     public float timer;
-    public BlobAssetReference<SlimeBulletShooterDataBlob> Data;
     public bool isSlimeFrenzyActive;
+    public BlobAssetReference<SlimeBulletShooterDataBlob> Data;
 }
 
 public struct SlimeBulletShooterLevelData
 {
-    public int level;
     public float delay;
     public int damage;
     public float cooldown;
