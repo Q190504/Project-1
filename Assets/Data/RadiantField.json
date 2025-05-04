@@ -13,7 +13,7 @@
       "damagePerTick": 5,
       "cooldown": 0,
       "radius": 5.2,
-      "slowModifier": 0
+      "slowModifier": 0.35
     },
     {
       "damagePerTick": 15,

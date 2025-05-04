@@ -14,7 +14,7 @@ public partial struct RadiantFieldDamageSystem : ISystem
 
         double currentTime = (float)SystemAPI.Time.ElapsedTime;
 
-        var job = new RadiantFieldSlowEnemyJob
+        var job = new RadiantFieldDamageEnemyJob
         {
             radiantFieldLookup = SystemAPI.GetComponentLookup<RadiantFieldComponent>(true),
             enemyLookup = SystemAPI.GetComponentLookup<EnemyTagComponent>(true),
@@ -26,7 +26,7 @@ public partial struct RadiantFieldDamageSystem : ISystem
     }
 }
 
-//[BurstCompile]
+[BurstCompile]
 struct RadiantFieldDamageEnemyJob : ITriggerEventsJob
 {
     [ReadOnly] public ComponentLookup<RadiantFieldComponent> radiantFieldLookup;
@@ -42,15 +42,23 @@ struct RadiantFieldDamageEnemyJob : ITriggerEventsJob
         bool entityAIsEnemy = enemyLookup.HasComponent(entityA);
         bool entityBIsEnemy = enemyLookup.HasComponent(entityB);
 
-        if (entityAIsEnemy || entityBIsEnemy)
+        if ((!entityAIsEnemy && entityBIsEnemy) || (entityAIsEnemy && !entityBIsEnemy))
         {
             Entity enemyEntity = entityAIsEnemy ? entityA : entityB;
             Entity radiantFieldEntity = entityAIsEnemy ? entityB : entityA;
 
             if (!radiantFieldLookup.HasComponent(radiantFieldEntity))
+            {
                 return;
+            }
 
             var radiantFieldComponent = radiantFieldLookup[radiantFieldEntity];
+
+            if (radiantFieldComponent.currentLevel <= 0) // is inactive
+            {
+                Debug.Log($"radiant Field is inactive");
+                return;
+            }
 
             // Skip if has not pass a tick
             if (currentTime - radiantFieldComponent.lastTickTime < radiantFieldComponent.timeBetween)
@@ -67,7 +75,6 @@ struct RadiantFieldDamageEnemyJob : ITriggerEventsJob
                 return;
 
             ecb.AddComponent(enemyEntity, new DamageEventComponent { damageAmount = damage });
-            Debug.Log("hurt by rd");
         }
     }
 }

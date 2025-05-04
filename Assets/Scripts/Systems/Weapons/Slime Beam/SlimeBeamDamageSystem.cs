@@ -45,7 +45,7 @@ struct SlimeBeamDamageEnemyJob : ITriggerEventsJob
         bool entityAIsEnemy = enemyLookup.HasComponent(entityA);
         bool entityBIsEnemy = enemyLookup.HasComponent(entityB);
 
-        if (entityAIsEnemy || entityBIsEnemy)
+        if ((!entityAIsEnemy && entityBIsEnemy) || (entityAIsEnemy && !entityBIsEnemy))
         {
             Entity enemyEntity = entityAIsEnemy ? entityA : entityB;
             Entity beamEntity = entityAIsEnemy ? entityB : entityA;

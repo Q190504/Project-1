@@ -12,10 +12,15 @@ public partial struct SlimeBulletSlowEnemySystem : ISystem
 {
     private EntityManager entityManager;
 
+    public void OnCreate(ref SystemState state)
+    {
+        entityManager = state.EntityManager;
+        state.RequireForUpdate<SlimeBulletComponent>();
+    }
+
     public void OnUpdate(ref SystemState state)
     {
         var ecb = new EntityCommandBuffer(Allocator.Temp);
-        entityManager = state.EntityManager;
 
         // Temporarily track enemies that should remain slowed
         int estimatedEnemyCount = SystemAPI.QueryBuilder().WithAll<EnemyTagComponent>().Build().CalculateEntityCount();
@@ -54,7 +59,8 @@ public partial struct SlimeBulletSlowEnemySystem : ISystem
                             velocity.ValueRW.Linear = math.normalize(velocity.ValueRO.Linear) * (enemyComponent.ValueRO.speed * slowModifier);
 
                         // Mark this enemy as still being affected
-                        stillSlowedEnemies.Add(entity);
+                        if(!stillSlowedEnemies.Contains(entity))
+                            stillSlowedEnemies.Add(entity);
                     }
                 }
             }

@@ -3,20 +3,26 @@ using Unity.Entities;
 using Unity.Physics;
 using Unity.Collections;
 using Unity.Mathematics;
+using Unity.Jobs;
 using UnityEngine;
 
 [BurstCompile]
 [UpdateAfter(typeof(EnemyMoveSystem))]
 public partial struct RadiantFieldSlowSystem : ISystem
 {
+    private EntityManager entityManager;
+
+    public void OnCreate(ref SystemState state)
+    {
+        entityManager = state.EntityManager;
+
+        state.RequireForUpdate<RadiantFieldComponent>();
+    }
+
     public void OnUpdate(ref SystemState state)
     {
         var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
-
-        // Temporarily track enemies that should remain slowed
-        int estimatedEnemyCount = SystemAPI.QueryBuilder().WithAll<EnemyTagComponent>().Build().CalculateEntityCount();
-        var stillSlowedEnemies = new NativeHashSet<Entity>(estimatedEnemyCount, Allocator.Temp);
 
         double currentTime = (float)SystemAPI.Time.ElapsedTime;
 
@@ -24,24 +30,27 @@ public partial struct RadiantFieldSlowSystem : ISystem
         {
             radiantFieldLookup = SystemAPI.GetComponentLookup<RadiantFieldComponent>(true),
             enemyLookup = SystemAPI.GetComponentLookup<EnemyTagComponent>(true),
-            velocityLookup = SystemAPI.GetComponentLookup<PhysicsVelocity>(true),
+            velocityLookup = SystemAPI.GetComponentLookup<PhysicsVelocity>(false),
+            slowedByRadiantFieldTagLookup = SystemAPI.GetComponentLookup<SlowedByRadiantFieldTag>(true),
             ecb = ecb,
             currentTime = currentTime,
-            stillSlowedEnemies = stillSlowedEnemies
         };
 
-        state.Dependency = job.Schedule(SystemAPI.GetSingleton<SimulationSingleton>(), state.Dependency);
+        var jobHandle = job.Schedule(SystemAPI.GetSingleton<SimulationSingleton>(), state.Dependency);
 
-        // Remove the tag from enemies who are no longer in the radius
+        jobHandle.Complete();
+
+        // Clean-up tags
         foreach (var (slowedByRadiantFieldTag, entity) in SystemAPI.Query<RefRO<SlowedByRadiantFieldTag>>().WithEntityAccess())
         {
-            if (!stillSlowedEnemies.Contains(entity))
-            {
+            if (!entityManager.HasComponent<StillSlowedByRadiantFieldThisFrameTag>(entity))
                 ecb.RemoveComponent<SlowedByRadiantFieldTag>(entity);
-            }
         }
 
-        stillSlowedEnemies.Dispose();
+        foreach (var (_, entity) in SystemAPI.Query<RefRW<StillSlowedByRadiantFieldThisFrameTag>>().WithEntityAccess())
+        {
+            ecb.RemoveComponent<StillSlowedByRadiantFieldThisFrameTag>(entity);
+        }
     }
 }
 
@@ -50,11 +59,10 @@ struct RadiantFieldSlowEnemyJob : ITriggerEventsJob
 {
     [ReadOnly] public ComponentLookup<RadiantFieldComponent> radiantFieldLookup;
     [ReadOnly] public ComponentLookup<EnemyTagComponent> enemyLookup;
-    [ReadOnly] public ComponentLookup<PhysicsVelocity> velocityLookup;
+    public ComponentLookup<PhysicsVelocity> velocityLookup;
     [ReadOnly] public ComponentLookup<SlowedByRadiantFieldTag> slowedByRadiantFieldTagLookup;
     public EntityCommandBuffer ecb;
     public double currentTime;
-    public NativeHashSet<Entity> stillSlowedEnemies;
 
     public void Execute(TriggerEvent triggerEvent)
     {
@@ -64,7 +72,7 @@ struct RadiantFieldSlowEnemyJob : ITriggerEventsJob
         bool entityAIsEnemy = enemyLookup.HasComponent(entityA);
         bool entityBIsEnemy = enemyLookup.HasComponent(entityB);
 
-        if (entityAIsEnemy || entityBIsEnemy)
+        if ((!entityAIsEnemy && entityBIsEnemy) || (entityAIsEnemy && !entityBIsEnemy))
         {
             Entity enemyEntity = entityAIsEnemy ? entityA : entityB;
             Entity radiantFieldEntity = entityAIsEnemy ? entityB : entityA;
@@ -74,6 +82,11 @@ struct RadiantFieldSlowEnemyJob : ITriggerEventsJob
 
             RadiantFieldComponent radiantFieldComponent = radiantFieldLookup[radiantFieldEntity];
 
+            if (radiantFieldComponent.currentLevel <= 0) // is inactive
+            {
+                return;
+            }
+
             // Skip if has not pass a tick
             if (currentTime - radiantFieldComponent.lastTickTime < radiantFieldComponent.timeBetween)
                 return;
@@ -82,14 +95,14 @@ struct RadiantFieldSlowEnemyJob : ITriggerEventsJob
             ecb.SetComponent(radiantFieldEntity, radiantFieldComponent);
 
             RadiantFieldLevelData currerntLevelData = radiantFieldComponent.Data.Value.Levels[radiantFieldComponent.currentLevel];
-            // Slow enemy
+
             float slowModifier = currerntLevelData.slowModifier;
+
+
             if (slowModifier <= 0 || slowModifier >= 1)
                 return;
 
-            if (!slowedByRadiantFieldTagLookup.HasComponent(enemyEntity))
-                ecb.AddComponent(enemyEntity, new SlowedByRadiantFieldTag());
-
+            // Slow enemy
             if (velocityLookup.HasComponent(enemyEntity))
             {
                 PhysicsVelocity enemyVelocity = velocityLookup[enemyEntity];
@@ -99,13 +112,16 @@ struct RadiantFieldSlowEnemyJob : ITriggerEventsJob
                 {
                     enemyVelocity.Linear = math.normalize(enemyVelocity.Linear) * (enemyTagComponent.speed * slowModifier);
                     ecb.SetComponent(enemyEntity, enemyVelocity);
-                    Debug.Log("slow by rd");
-                }
 
-                // Mark this enemy as still being affected
-                stillSlowedEnemies.Add(enemyEntity);
+                    Debug.Log(enemyEntity.Index);
+                }
             }
+
+            // Add Tags
+            if (!slowedByRadiantFieldTagLookup.HasComponent(enemyEntity))
+                ecb.AddComponent(enemyEntity, new SlowedByRadiantFieldTag());
+
+            ecb.AddComponent(enemyEntity, new StillSlowedByRadiantFieldThisFrameTag());
         }
     }
 }
-

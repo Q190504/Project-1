@@ -28,7 +28,6 @@ public class RadiantFieldAuthoring : MonoBehaviour
             for (int i = 0; i < weapon.levels.Length; i++)
             {
                 var level = weapon.levels[i];
-
                 levels[i] = new RadiantFieldLevelData
                 {
                     damagePerTick = level.damagePerTick,
@@ -40,7 +39,9 @@ public class RadiantFieldAuthoring : MonoBehaviour
 
             var blob = builder.CreateBlobAssetReference<RadiantFieldDataBlob>(Allocator.Temp);
 
-            AddComponent(GetEntity(TransformUsageFlags.None), new RadiantFieldComponent
+            Entity radiantFieldEntity = GetEntity(TransformUsageFlags.Dynamic);
+
+            AddComponent(radiantFieldEntity, new RadiantFieldComponent
             {
                 Data = blob,
                 timer = 2f,

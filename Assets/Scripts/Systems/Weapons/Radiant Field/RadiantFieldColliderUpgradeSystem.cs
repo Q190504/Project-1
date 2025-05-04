@@ -20,7 +20,7 @@ public partial struct RadiantFieldColliderUpgradeSystem : ISystem
 
         foreach (var (weapon, localTransform, entity) in SystemAPI.Query<RefRW<RadiantFieldComponent>, RefRW<LocalTransform>>().WithEntityAccess())
         {
-            var radiantField = weapon.ValueRW;
+            ref var radiantField = ref weapon.ValueRW;
             var blobData = radiantField.Data;
             if (!blobData.IsCreated || blobData.Value.Levels.Length == 0) continue;
 
@@ -28,13 +28,12 @@ public partial struct RadiantFieldColliderUpgradeSystem : ISystem
             int currentLevel = radiantField.currentLevel;
             int previousLevel = radiantField.previousLevel;
 
-            if (currentLevel <= 0) // is active
+            if (currentLevel <= 0) // is inactive
             {
                 Debug.Log($"Radiant Field is inactive");
                 return;
             }
-            Debug.Log($"currentLevel before {radiantField.currentLevel}");
-            Debug.Log($"previousLevel before {radiantField.previousLevel}");
+
             if (currentLevel == previousLevel) // has not level up
                 continue;
 
@@ -43,14 +42,9 @@ public partial struct RadiantFieldColliderUpgradeSystem : ISystem
             float newRadius = levelData.radius;
 
             localTransform.ValueRW.Scale = newRadius;
-            Debug.Log($"Radiant Field newRadius {localTransform.ValueRO.Scale}");
 
             // Update tracker
             radiantField.previousLevel = radiantField.currentLevel;
-            //Debug.Log($"currentLevel after {radiantField.currentLevel}");
-            //Debug.Log($"previousLevel after {radiantField.previousLevel}");
-
-            ecb.SetComponent(entity, radiantField);
         }
     }
 }

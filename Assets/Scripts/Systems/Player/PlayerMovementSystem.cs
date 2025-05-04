@@ -2,7 +2,6 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
-using UnityEngine.InputSystem;
 
 [BurstCompile]
 public partial struct PlayerMovementSystem : ISystem
