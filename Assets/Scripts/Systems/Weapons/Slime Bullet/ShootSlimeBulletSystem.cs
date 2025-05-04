@@ -49,7 +49,9 @@ public partial struct ShootSlimeBulletSystem : ISystem
             var blobData = shooter.Data;
             if (!blobData.IsCreated || blobData.Value.Levels.Length == 0) continue;
 
-            // Determine weapon level index (can be from another component if you support dynamic leveling)
+            // Determine weapon level index 
+            //int levelIndex = slasher.level;
+
             int levelIndex = 1;
             if (levelIndex <= 0)
             {
@@ -58,7 +60,6 @@ public partial struct ShootSlimeBulletSystem : ISystem
             }    
             ref var levelData = ref blobData.Value.Levels[levelIndex];
 
-            int level = levelData.level;
             int damage = levelData.damage;
             float cooldown = levelData.cooldown;
             int bulletCount = levelData.bulletCount;
@@ -106,7 +107,7 @@ public partial struct ShootSlimeBulletSystem : ISystem
         for (int i = 0; i < bulletRemaining; i++ )
         {
             // Spawn the bullet
-            Entity bullet = BulletManager.Instance.Take(ecb);
+            Entity bullet = BulletManager.Instance.TakeSlimeBullet(ecb);
 
             float bonusDistance = (maxDistBetweenBullets - minDistBetweenBullets) / bulletRemaining;
 

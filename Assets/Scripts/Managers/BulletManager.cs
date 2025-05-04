@@ -67,7 +67,10 @@ public class BulletManager : MonoBehaviour
             Debug.LogError("Slime Beam prefab not found! Make sure it's baked correctly.");
         }
 
-        Prepare();
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+        Prepare(ecb, true, true);
+        ecb.Playback(entityManager);
+        ecb.Dispose();
     }
 
     // Update is called once per frame
@@ -85,35 +88,37 @@ public class BulletManager : MonoBehaviour
             inactiveSlimeBeams.Dispose();
     }
 
-    private void Prepare()
+    private void Prepare(EntityCommandBuffer ecb, bool prepareSlimeBullet = false, bool prepareSlimeBeam = false)
     {
         if (slimeBulletPrefab == Entity.Null) return;
 
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
-
-        for (int i = 0; i < slimeBulletPrepare; i++)
+        if(prepareSlimeBullet)
         {
-            Entity slimeBulletInstance = entityManager.Instantiate(slimeBulletPrefab);
-            ecb.AddComponent<Disabled>(slimeBulletInstance);
-            inactiveSlimeBullets.Enqueue(slimeBulletInstance);
-            slimeBulletCount++;
+            for (int i = 0; i < slimeBulletPrepare; i++)
+            {
+                Entity slimeBulletInstance = entityManager.Instantiate(slimeBulletPrefab);
+                ecb.AddComponent<Disabled>(slimeBulletInstance);
+                inactiveSlimeBullets.Enqueue(slimeBulletInstance);
+                slimeBulletCount++;
+            }
         }
 
-        for (int i = 0; i < slimeBeamPrepare; i++)
+        if(prepareSlimeBeam)
         {
-            Entity slimeBeamInstance = entityManager.Instantiate(slimeBeamPrefab);
-            ecb.AddComponent<Disabled>(slimeBeamInstance);
-            inactiveSlimeBeams.Enqueue(slimeBeamInstance);
-            slimeBeamCount++;
+            for (int i = 0; i < slimeBeamPrepare; i++)
+            {
+                Entity slimeBeamInstance = entityManager.Instantiate(slimeBeamPrefab);
+                ecb.AddComponent<Disabled>(slimeBeamInstance);
+                inactiveSlimeBeams.Enqueue(slimeBeamInstance);
+                slimeBeamCount++;
+            }
         }
-
-        ecb.Playback(entityManager);
-        ecb.Dispose();
     }
-    public Entity Take(EntityCommandBuffer ecb)
+
+    public Entity TakeSlimeBullet(EntityCommandBuffer ecb)
     {
         if (inactiveSlimeBullets.IsEmpty())
-            Prepare();
+            Prepare(ecb, true, false);
 
         Entity slimeBulletInstance = inactiveSlimeBullets.Dequeue();
         slimeBulletCount--;
@@ -124,7 +129,7 @@ public class BulletManager : MonoBehaviour
     public Entity TakeSlimeBeam(EntityCommandBuffer ecb)
     {
         if (inactiveSlimeBeams.IsEmpty())
-            Prepare();
+            Prepare(ecb, false, true);
 
         Entity slimeBeamInstance = inactiveSlimeBeams.Dequeue();
         slimeBeamCount--;

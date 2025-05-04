@@ -1,6 +1,7 @@
 {
   "id": "SlimeBeam",
   "name": "Slime Beam",
+  "spawnOffsetPositon": 2.5,
   "levels": [
     {
       "level": 0,
@@ -35,7 +36,7 @@
     {
       "level": 5,
       "damage": 200,
-      "cooldown": 0,
+      "cooldown": 1,
       "timeBetween": 0.528
     }
   ]

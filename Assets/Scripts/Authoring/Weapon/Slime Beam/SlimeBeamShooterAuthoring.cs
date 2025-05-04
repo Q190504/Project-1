@@ -31,7 +31,6 @@ public class SlimeBeamShooterAuthoring : MonoBehaviour
 
                 levels[i] = new SlimeBeamShooterLevelData
                 {
-                    level = level.level,
                     damage = level.damage,
                     cooldown = level.cooldown,
                     range = level.range,
@@ -45,8 +44,10 @@ public class SlimeBeamShooterAuthoring : MonoBehaviour
             {
                 Data = blob,
                 timer = 2f,
-                slashCount = 0,
-                timeBetween = 0
+                beamCount = 0,
+                timeBetween = 0,
+                level = 0,
+                spawnOffsetPositon = weapon.spawnOffsetPositon,
             });
         }
     }
@@ -57,7 +58,6 @@ public class SlimeBeamShooterAuthoring : MonoBehaviour
 [System.Serializable]
 public class SlimeBeamShooterLevelJson
 {
-    public int level;
     public int damage;
     public float cooldown;
     public float range;
@@ -69,20 +69,22 @@ public class SlimeBeamShooterJson
 {
     public string id;
     public string name;
+    public float spawnOffsetPositon;
     public SlimeBeamShooterLevelJson[] levels;
 }
 
 public struct SlimeBeamShooterComponent : IComponentData
 {
+    public int level;
     public float timer;
     public float timeBetween;
-    public int slashCount;
+    public int beamCount;
+    public float spawnOffsetPositon;
     public BlobAssetReference<SlimeBeamShooterDataBlob> Data;
 }
 
 public struct SlimeBeamShooterLevelData
 {
-    public int level;
     public int damage;
     public float cooldown;
     public float range;

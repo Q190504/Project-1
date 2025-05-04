@@ -19,9 +19,7 @@ public partial struct SlimeBeamShooterSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
-
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
         float deltaTime = SystemAPI.Time.DeltaTime;
 
         if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
@@ -32,70 +30,73 @@ public partial struct SlimeBeamShooterSystem : ISystem
 
         foreach (var (weapon, entity) in SystemAPI.Query<RefRW<SlimeBeamShooterComponent>>().WithEntityAccess())
         {
-            ref var slasher = ref weapon.ValueRW;
-            slasher.timer -= deltaTime;
-            if (slasher.timer > 0) continue;
+            ref var beamShooter = ref weapon.ValueRW;
+            beamShooter.timer -= deltaTime;
+            if (beamShooter.timer > 0) continue;
 
-            var blobData = slasher.Data;
+            var blobData = beamShooter.Data;
             if (!blobData.IsCreated || blobData.Value.Levels.Length == 0) continue;
 
-            // Determine weapon level index (can be from another component if you support dynamic leveling)
-            int levelIndex = 1;
-            if (levelIndex <= 0) // is active
+            // Determine weapon level
+            int level = beamShooter.level;
+
+            if (level <= 0) // is active
             {
-                Debug.Log($"SlimeSlash is inactive");
+                Debug.Log($"SlimeBeam is inactive");
                 return;
             }
 
-            ref var levelData = ref blobData.Value.Levels[levelIndex];
+            ref var levelData = ref blobData.Value.Levels[level];
 
-            int level = levelData.level;
             int damage = levelData.damage;
             float cooldown = levelData.cooldown;
             float timeBetween = levelData.timeBetween;
-
-            float3 playerPosition = entityManager.GetComponentData<LocalTransform>(player).Position;
+            float spawnOffsetPositon = beamShooter.spawnOffsetPositon;
 
             if(level == 5) //max level
             {
-                for (int slashCount = 0; slashCount < 4; slashCount++)
-                    PerformSingleBeam(entity, playerPosition, damage, slashCount, ecb);
+                for (int beamCount = 0; beamCount < 4; beamCount++)
+                    PerformSingleBeam(entity, spawnOffsetPositon, damage, beamCount, ecb);
 
-                slasher.timer = cooldown; // Reset timer
+                beamShooter.timer = cooldown; // Reset timer
             }
             else
             {
-                slasher.timeBetween += deltaTime;
+                beamShooter.timeBetween += deltaTime;
 
-                if (slasher.timeBetween >= timeBetween && slasher.slashCount < 4)
+                if (beamShooter.timeBetween >= timeBetween && beamShooter.beamCount < 4)
                 {
-                    PerformSingleBeam(entity, playerPosition, damage, slasher.slashCount, ecb);
+                    PerformSingleBeam(entity, spawnOffsetPositon, damage, beamShooter.beamCount, ecb);
 
-                    slasher.slashCount++;
-                    slasher.timeBetween = 0f;
+                    beamShooter.beamCount++;
+                    beamShooter.timeBetween = 0f;
                 }
 
-                if (slasher.slashCount >= 4)
+                if (beamShooter.beamCount >= 4)
                 {
-                    slasher.slashCount = 0;
-                    slasher.timer = cooldown; // Reset timer
+                    beamShooter.beamCount = 0;
+                    beamShooter.timer = cooldown; // Reset timer
                 }
             }
         }
+
+        ecb.Playback(entityManager);
+        ecb.Dispose();
     }
 
-    private void PerformSingleBeam(Entity entity, float3 originPosition, int damage, int beamCount, EntityCommandBuffer ecb)
+    private void PerformSingleBeam(Entity entity, float spawnOffsetPositon, int damage, int beamCount, EntityCommandBuffer ecb)
     {
         PhysicsWorldSingleton physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
         EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         NativeList<Unity.Physics.RaycastHit> hits = new NativeList<Unity.Physics.RaycastHit>(Allocator.Temp);
 
-        float3 direction = GetAttackPosition(beamCount);
+        float3 playerPosition = entityManager.GetComponentData<LocalTransform>(player).Position;
+        float3 position = playerPosition + GetAttackDirection(spawnOffsetPositon, beamCount);
         Quaternion rotation = GetRotation(beamCount);
 
         //spawn beam
         Entity slimeBeamInstance = BulletManager.Instance.TakeSlimeBeam(ecb);
-        SetStats(ecb, slimeBeamInstance, damage, originPosition, rotation);
+        SetStats(ecb, slimeBeamInstance, damage, position, rotation);
 
         hits.Dispose();
     }
@@ -113,22 +114,21 @@ public partial struct SlimeBeamShooterSystem : ISystem
         {
             damage = damage,
             hasDealDamageToEnemies = false,
-            existDuration = 0.3f,
-            timer = 0
+            existDuration = 0.2f,
+            timer = 0.3f,
         });
     }
 
-    private float3 GetAttackPosition(int count)
+    private float3 GetAttackDirection(float spawnOffsetPositon, int count)
     {
-        float offset = 1f;
         switch (count % 4)
         {
-            case 0: return new float3(0, offset, 0);  // Top 
-            case 1: return new float3(offset, 0, 0);  // Right 
-            case 2: return new float3(0, -offset, 0); // Bottom
-            case 3: return new float3(-offset, 0, 0); // Left 
+            case 0: return new float3(0, spawnOffsetPositon, 0);  // Top 
+            case 1: return new float3(spawnOffsetPositon, 0, 0);  // Right 
+            case 2: return new float3(0, -spawnOffsetPositon, 0); // Bottom
+            case 3: return new float3(-spawnOffsetPositon, 0, 0); // Left 
+            default: return float3.zero;
         }
-        return float3.zero;
     }
 
     private Quaternion GetRotation(int count)
@@ -136,9 +136,9 @@ public partial struct SlimeBeamShooterSystem : ISystem
         switch (count % 4)
         {
             case 0: return Quaternion.identity;         // Top 0 degrees
-            case 1: return Quaternion.Euler(0, 0, 90);  // Right 90 degrees
+            case 1: return Quaternion.Euler(0, 0, 270); // Right 270 degrees
             case 2: return Quaternion.Euler(0, 0, 180); // Bottom 180 degrees
-            case 3: return Quaternion.Euler(0, 0, 270); // Left 270 degrees
+            case 3: return Quaternion.Euler(0, 0, 90);  // Left 90 degrees
             default: return Quaternion.identity;
         }
     }
