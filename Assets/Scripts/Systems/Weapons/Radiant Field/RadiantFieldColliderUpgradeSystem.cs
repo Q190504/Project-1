@@ -30,7 +30,6 @@ public partial struct RadiantFieldColliderUpgradeSystem : ISystem
 
             if (currentLevel <= 0) // is inactive
             {
-                Debug.Log($"Radiant Field is inactive");
                 return;
             }
 

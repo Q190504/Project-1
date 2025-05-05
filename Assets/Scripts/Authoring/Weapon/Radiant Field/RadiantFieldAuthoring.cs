@@ -46,8 +46,8 @@ public class RadiantFieldAuthoring : MonoBehaviour
                 Data = blob,
                 timer = 2f,
                 timeBetween = weapon.timeBetween,
-                currentLevel = 1, //TO DO: set to 0
-                previousLevel = 0, //TO DO: set to -1
+                currentLevel = 0,
+                previousLevel = -1, 
                 lastTickTime = 0,
             });
         }

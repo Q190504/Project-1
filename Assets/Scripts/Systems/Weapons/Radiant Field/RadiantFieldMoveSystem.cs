@@ -23,19 +23,16 @@ public partial struct RadiantFieldMoveSystem : ISystem
 
         foreach (var (localTransform, radiantFieldComponent) in SystemAPI.Query<RefRW<LocalTransform>, RefRO<RadiantFieldComponent>>())
         {
-            if (radiantFieldComponent.ValueRO.currentLevel > 0)
-            {
-                float3 playerPosition = entityManager.GetComponentData<LocalTransform>(player).Position;
-                float smoothTime = entityManager.GetComponentData<PlayerMovementComponent>(player).smoothTime;
+            float3 playerPosition = entityManager.GetComponentData<LocalTransform>(player).Position;
+            float smoothTime = entityManager.GetComponentData<PlayerMovementComponent>(player).smoothTime;
 
-                float followSpeed = 15f / smoothTime;
+            float followSpeed = 15f / smoothTime;
 
-                localTransform.ValueRW.Position = math.lerp(
-                    localTransform.ValueRW.Position,
-                    playerPosition,
-                    deltaTime * followSpeed
-                );
-            }
+            localTransform.ValueRW.Position = math.lerp(
+                localTransform.ValueRW.Position,
+                playerPosition,
+                deltaTime * followSpeed
+            );
         }
     }
 }
