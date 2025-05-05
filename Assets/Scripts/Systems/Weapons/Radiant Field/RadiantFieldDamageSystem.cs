@@ -56,7 +56,6 @@ struct RadiantFieldDamageEnemyJob : ITriggerEventsJob
 
             if (radiantFieldComponent.currentLevel <= 0) // is inactive
             {
-                Debug.Log($"radiant Field is inactive");
                 return;
             }
 

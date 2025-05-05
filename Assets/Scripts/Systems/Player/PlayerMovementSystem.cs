@@ -11,15 +11,15 @@ public partial struct PlayerMovementSystem : ISystem
         foreach (var (playerInput, playerMovement, physicsVelocity, playerTagComponent, slimeFrenzyComponent) in
                  SystemAPI.Query<RefRO<PlayerInputComponent>, RefRO<PlayerMovementComponent>, RefRW<PhysicsVelocity>, RefRO<PlayerTagComponent>, RefRO<SlimeFrenzyComponent>>())
         {
-            float2 targetVelocity;
+            float3 targetVelocity;
             if (playerTagComponent.ValueRO.isStunned)
-                targetVelocity = new float2(0, 0);
-            else if(playerTagComponent.ValueRO.isFrenzing)
-                targetVelocity = playerInput.ValueRO.moveInput * (playerMovement.ValueRO.speed + playerMovement.ValueRO.speed * slimeFrenzyComponent.ValueRO.bonusMovementSpeedPercent);
+                targetVelocity = float3.zero;
+            else if (playerTagComponent.ValueRO.isFrenzing)
+                targetVelocity = new float3(playerInput.ValueRO.moveInput.x, playerInput.ValueRO.moveInput.y, 0) * (playerMovement.ValueRO.speed + playerMovement.ValueRO.speed * slimeFrenzyComponent.ValueRO.bonusMovementSpeedPercent);
             else
-                targetVelocity = playerInput.ValueRO.moveInput * playerMovement.ValueRO.speed;
+                targetVelocity = new float3(playerInput.ValueRO.moveInput.x, playerInput.ValueRO.moveInput.y, 0) * playerMovement.ValueRO.speed;
 
-            physicsVelocity.ValueRW.Linear.xy = math.lerp(physicsVelocity.ValueRW.Linear.xy, targetVelocity, playerMovement.ValueRO.smoothTime);
+            physicsVelocity.ValueRW.Linear = math.lerp(physicsVelocity.ValueRW.Linear, targetVelocity, playerMovement.ValueRO.smoothTime);
         }
     }
 }
