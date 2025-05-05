@@ -16,8 +16,8 @@ public partial struct SlimeBulletMoverSystem : ISystem
         {
             if (slimeBulletComponent.ValueRO.isAbleToMove)
             {
-                float2 targetVelocity = new float2(slimeBulletComponent.ValueRO.moveDirection.x, slimeBulletComponent.ValueRO.moveDirection.y) * slimeBulletComponent.ValueRO.moveSpeed;
-                physicsVelocity.ValueRW.Linear.xy = math.lerp(physicsVelocity.ValueRW.Linear.xy, targetVelocity, 0.1f);
+                float3 targetVelocity = new float3(slimeBulletComponent.ValueRO.moveDirection.x, slimeBulletComponent.ValueRO.moveDirection.y, 0) * slimeBulletComponent.ValueRO.moveSpeed;
+                physicsVelocity.ValueRW.Linear = math.lerp(physicsVelocity.ValueRW.Linear, targetVelocity, 0.1f);
 
                 slimeBulletComponent.ValueRW.distanceTraveled += slimeBulletComponent.ValueRO.moveSpeed * SystemAPI.Time.DeltaTime;
                 if (slimeBulletComponent.ValueRO.distanceTraveled >= slimeBulletComponent.ValueRO.maxDistance)
@@ -25,7 +25,7 @@ public partial struct SlimeBulletMoverSystem : ISystem
             }
             else
             {
-                physicsVelocity.ValueRW.Linear.xy = 0;
+                physicsVelocity.ValueRW.Linear = 0;
 
                 if (slimeBulletComponent.ValueRO.existDuration <= 0)
                     BulletManager.Instance.Return(entity, ecb);

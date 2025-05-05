@@ -5,13 +5,9 @@ using Unity.Physics;
 
 public partial struct SlimeBulletDamageEnemySystem : ISystem
 {
-    private EntityQuery _collisionGroup;
-
     public void OnCreate(ref SystemState state)
     {
-        _collisionGroup = SystemAPI.QueryBuilder()
-            .WithAll<PhysicsCollider, PhysicsVelocity>()
-            .Build();
+        state.RequireForUpdate<SlimeBulletComponent>();
     }
 
     public void OnUpdate(ref SystemState state)
