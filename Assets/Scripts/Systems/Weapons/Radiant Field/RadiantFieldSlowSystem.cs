@@ -10,12 +10,8 @@ using UnityEngine;
 [UpdateAfter(typeof(EnemyMoveSystem))]
 public partial struct RadiantFieldSlowSystem : ISystem
 {
-    private EntityManager entityManager;
-
     public void OnCreate(ref SystemState state)
     {
-        entityManager = state.EntityManager;
-
         state.RequireForUpdate<RadiantFieldComponent>();
     }
 
@@ -39,22 +35,10 @@ public partial struct RadiantFieldSlowSystem : ISystem
         var jobHandle = job.Schedule(SystemAPI.GetSingleton<SimulationSingleton>(), state.Dependency);
 
         jobHandle.Complete();
-
-        // Clean-up tags
-        foreach (var (slowedByRadiantFieldTag, entity) in SystemAPI.Query<RefRO<SlowedByRadiantFieldTag>>().WithEntityAccess())
-        {
-            if (!entityManager.HasComponent<StillSlowedByRadiantFieldThisFrameTag>(entity))
-                ecb.RemoveComponent<SlowedByRadiantFieldTag>(entity);
-        }
-
-        foreach (var (_, entity) in SystemAPI.Query<RefRW<StillSlowedByRadiantFieldThisFrameTag>>().WithEntityAccess())
-        {
-            ecb.RemoveComponent<StillSlowedByRadiantFieldThisFrameTag>(entity);
-        }
     }
 }
 
-//[BurstCompile]
+[BurstCompile]
 struct RadiantFieldSlowEnemyJob : ITriggerEventsJob
 {
     [ReadOnly] public ComponentLookup<RadiantFieldComponent> radiantFieldLookup;
@@ -87,41 +71,27 @@ struct RadiantFieldSlowEnemyJob : ITriggerEventsJob
                 return;
             }
 
-            // Skip if has not pass a tick
-            if (currentTime - radiantFieldComponent.lastTickTime < radiantFieldComponent.timeBetween)
-                return;
-
-            radiantFieldComponent.lastTickTime = currentTime;
-            ecb.SetComponent(radiantFieldEntity, radiantFieldComponent);
-
             RadiantFieldLevelData currerntLevelData = radiantFieldComponent.Data.Value.Levels[radiantFieldComponent.currentLevel];
 
             float slowModifier = currerntLevelData.slowModifier;
 
-
             if (slowModifier <= 0 || slowModifier >= 1)
                 return;
 
-            // Slow enemy
-            if (velocityLookup.HasComponent(enemyEntity))
+            if (!slowedByRadiantFieldTagLookup.HasComponent(enemyEntity))
             {
-                PhysicsVelocity enemyVelocity = velocityLookup[enemyEntity];
-                EnemyTagComponent enemyTagComponent = enemyLookup[enemyEntity];
-
-                if (math.lengthsq(enemyVelocity.Linear) > 0)
+                // Slow enemy
+                if (velocityLookup.HasComponent(enemyEntity))
                 {
-                    enemyVelocity.Linear = math.normalize(enemyVelocity.Linear) * (enemyTagComponent.speed * slowModifier);
-                    ecb.SetComponent(enemyEntity, enemyVelocity);
+                    PhysicsVelocity enemyVelocity = velocityLookup[enemyEntity];
 
-                    Debug.Log(enemyEntity.Index);
+                    if (math.lengthsq(enemyVelocity.Linear) > 0)
+                    {
+                        enemyVelocity.Linear = math.normalize(enemyVelocity.Linear) * slowModifier;
+                        ecb.SetComponent(enemyEntity, enemyVelocity);
+                    }
                 }
             }
-
-            // Add Tags
-            if (!slowedByRadiantFieldTagLookup.HasComponent(enemyEntity))
-                ecb.AddComponent(enemyEntity, new SlowedByRadiantFieldTag());
-
-            ecb.AddComponent(enemyEntity, new StillSlowedByRadiantFieldThisFrameTag());
         }
     }
 }

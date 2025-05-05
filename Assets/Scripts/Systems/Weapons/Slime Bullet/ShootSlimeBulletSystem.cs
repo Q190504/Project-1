@@ -50,14 +50,8 @@ public partial struct ShootSlimeBulletSystem : ISystem
             if (!blobData.IsCreated || blobData.Value.Levels.Length == 0) continue;
 
             // Determine weapon level index 
-            //int levelIndex = slasher.level;
-
-            int levelIndex = 1;
-            if (levelIndex <= 0)
-            {
-                Debug.Log($"SlimeBulletShooter is level 0");
-                return;
-            }    
+            int levelIndex = shooter.level;
+   
             ref var levelData = ref blobData.Value.Levels[levelIndex];
 
             int damage = levelData.damage;

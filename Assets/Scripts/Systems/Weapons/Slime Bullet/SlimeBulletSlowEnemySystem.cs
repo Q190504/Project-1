@@ -56,7 +56,7 @@ public partial struct SlimeBulletSlowEnemySystem : ISystem
                             ecb.AddComponent(entity, new SlowedBySlimeBulletTag());
 
                         if (math.lengthsq(velocity.ValueRO.Linear) > 0)
-                            velocity.ValueRW.Linear = math.normalize(velocity.ValueRO.Linear) * (enemyComponent.ValueRO.speed * slowModifier);
+                            velocity.ValueRW.Linear = math.normalize(velocity.ValueRO.Linear) * (slowModifier);
 
                         // Mark this enemy as still being affected
                         if(!stillSlowedEnemies.Contains(entity))

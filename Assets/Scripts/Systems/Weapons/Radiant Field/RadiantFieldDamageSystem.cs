@@ -64,9 +64,6 @@ struct RadiantFieldDamageEnemyJob : ITriggerEventsJob
             if (currentTime - radiantFieldComponent.lastTickTime < radiantFieldComponent.timeBetween)
                 return;
 
-            radiantFieldComponent.lastTickTime = currentTime;
-            ecb.SetComponent(radiantFieldEntity, radiantFieldComponent);
-
             // Deal damage
             RadiantFieldLevelData currerntLevelData = radiantFieldComponent.Data.Value.Levels[radiantFieldComponent.currentLevel];
             int damage = currerntLevelData.damagePerTick;
