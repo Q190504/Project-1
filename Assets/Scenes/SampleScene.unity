@@ -442,9 +442,9 @@ TilemapRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingLayerID: -567320941
+  m_SortingLayer: -1
+  m_SortingOrder: 1
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0.53125, y: 0.734375, z: 0}
   m_MaxChunkCount: 16
@@ -5916,7 +5916,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 00000000935e2fdeabd8b881
+  m_ApplyToSortingLayers: 00000000935e2fdeabd8b8818fa25e05a3739860
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -46322,7 +46322,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: -0.5435336}
+  m_Offset: {x: 0, y: -0.72167534}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -46332,7 +46332,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.0116897, y: 1.1013876}
+  m_Size: {x: 1.0116897, y: 0.7451042}
   m_EdgeRadius: 0
 --- !u!212 &1879491734
 SpriteRenderer:
@@ -46375,9 +46375,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -2118592341
-  m_SortingLayer: 1
-  m_SortingOrder: 0
+  m_SortingLayerID: -567320941
+  m_SortingLayer: -1
+  m_SortingOrder: 2
   m_Sprite: {fileID: -3680518950676972392, guid: f888da072f5530847a63a781b63efdf1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

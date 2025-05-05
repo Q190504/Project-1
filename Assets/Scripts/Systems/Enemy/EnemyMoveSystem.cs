@@ -33,7 +33,7 @@ public partial struct EnemyMoveSystem : ISystem
         int width = flowFieldGridDataComponent.width;
         float cellSize = flowFieldGridDataComponent.nodeSize;
 
-        foreach (var (localTransform, enemyTag, physicsVelocity) in SystemAPI.Query<RefRW<LocalTransform>, RefRO<EnemyTagComponent>, RefRW<PhysicsVelocity>>())
+        foreach (var (localTransform, enemyTag, physicsVelocity, entity) in SystemAPI.Query<RefRW<LocalTransform>, RefRO<EnemyTagComponent>, RefRW<PhysicsVelocity>>().WithEntityAccess())
         {
             int x = (int)(localTransform.ValueRO.Position.x / cellSize);
             int y = (int)(localTransform.ValueRO.Position.y / cellSize);

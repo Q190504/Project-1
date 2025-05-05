@@ -19,8 +19,6 @@ public partial struct SlimeBulletDamageEnemySystem : ISystem
         var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        float currentTime = (float)SystemAPI.Time.ElapsedTime;
-
         var job = new SlimeBulletDamageEnemyJob
         {
             slimeBulletLookup = SystemAPI.GetComponentLookup<SlimeBulletComponent>(true),
@@ -48,7 +46,7 @@ struct SlimeBulletDamageEnemyJob : ITriggerEventsJob
         bool entityAIsEnemy = enemyLookup.HasComponent(entityA);
         bool entityBIsEnemy = enemyLookup.HasComponent(entityB);
 
-        if (entityAIsEnemy || entityBIsEnemy)
+        if ((!entityAIsEnemy && entityBIsEnemy) || (entityAIsEnemy && !entityBIsEnemy))
         {
             Entity enemyEntity = entityAIsEnemy ? entityA : entityB;
             Entity bulletEntity = entityAIsEnemy ? entityB : entityA;

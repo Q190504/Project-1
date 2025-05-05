@@ -42,7 +42,6 @@ public partial struct SlimeBeamShooterSystem : ISystem
 
             if (level <= 0) // is active
             {
-                Debug.Log($"SlimeBeam is inactive");
                 return;
             }
 
