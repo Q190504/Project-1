@@ -16,8 +16,9 @@ public class PawPrintPoisonCloudAuthoring : MonoBehaviour
                 maximumCloudDuration = 0f,
                 existDurationTimer = 0f,
                 tick = 0f,
-                tickTimer = 0,
-                bonusMoveSpeedPerTargetInTheCloudModifier = 0f
+                lastTick = 0,
+                bonusMoveSpeedPerTargetInTheCloudModifier = 0f,
+                totalEnemiesCurrentlyInTheCloud = 0,
             });
         }
     }
@@ -26,10 +27,11 @@ public class PawPrintPoisonCloudAuthoring : MonoBehaviour
 public struct PawPrintPoisonCloudComponent : IComponentData
 {
     public float tick;
-    public float tickTimer;
+    public double lastTick;
     public int damagePerTick;
     public float cloudSize;
     public float maximumCloudDuration;
     public float existDurationTimer;
     public float bonusMoveSpeedPerTargetInTheCloudModifier;
+    public int totalEnemiesCurrentlyInTheCloud;
 }

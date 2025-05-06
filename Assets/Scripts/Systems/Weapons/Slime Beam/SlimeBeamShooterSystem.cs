@@ -54,6 +54,7 @@ public partial struct SlimeBeamShooterSystem : ISystem
 
             if(level == 5) //max level
             {
+                //TO DO: Only spawn once, do not return beams
                 for (int beamCount = 0; beamCount < 4; beamCount++)
                     PerformSingleBeam(entity, spawnOffsetPositon, damage, beamCount, ecb);
 

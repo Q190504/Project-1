@@ -4,9 +4,9 @@ using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Transforms;
 using UnityEngine;
-using UnityEngine.EventSystems;
-public partial struct PawPrintPoisonerSystem : ISystem
 
+[UpdateAfter(typeof(PlayerMovementSystem))]
+public partial struct PawPrintPoisonerSystem : ISystem
 {
     private EntityManager entityManager;
     private Entity player;
@@ -73,8 +73,6 @@ public partial struct PawPrintPoisonerSystem : ISystem
         float distanceThisFrame = math.length(playerCurrentVelocity) * deltaTime;
         distanceTraveled += distanceThisFrame;
 
-
-
         // If the player moved at least distanceToCreateACloud & is not in any existing cloud, create a new one
         if (distanceTraveled >= distanceToCreateACloud)
         {
@@ -91,9 +89,9 @@ public partial struct PawPrintPoisonerSystem : ISystem
                     break;
                 }
             }
-
+            
             // If the player is in any existing cloud, do not create a new one
-            if(!isNotInCloud)
+            if (!isNotInCloud)
             {
                 return;
             }
@@ -151,12 +149,13 @@ public partial struct PawPrintPoisonerSystem : ISystem
             ecb.AddComponent(cloud, new PawPrintPoisonCloudComponent
             {
                 tick = tick,
-                tickTimer = tick,
+                lastTick = tick,
                 damagePerTick = damagePerTick,
                 cloudSize = cloudSize,
                 maximumCloudDuration = maximumCloudDuration,
                 existDurationTimer = maximumCloudDuration,
                 bonusMoveSpeedPerTargetInTheCloudModifier = bonusMoveSpeedPerTargetInTheCloudModifier,
+                totalEnemiesCurrentlyInTheCloud = 0,
             });
         }
         else
@@ -169,6 +168,7 @@ public partial struct PawPrintPoisonerSystem : ISystem
                 maximumCloudDuration = maximumCloudDuration,
                 existDurationTimer = maximumCloudDuration,
                 bonusMoveSpeedPerTargetInTheCloudModifier = bonusMoveSpeedPerTargetInTheCloudModifier,
+                totalEnemiesCurrentlyInTheCloud = 0,
             });
         }
     }
