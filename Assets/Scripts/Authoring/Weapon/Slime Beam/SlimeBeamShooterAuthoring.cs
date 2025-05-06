@@ -5,7 +5,7 @@ using System.IO;
 
 public class SlimeBeamShooterAuthoring : MonoBehaviour
 {
-    public string weaponId;
+    public WeaponType weaponId = WeaponType.SlimeBeamShooter;
 
     public class Baker : Baker<SlimeBeamShooterAuthoring>
     {

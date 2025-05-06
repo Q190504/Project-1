@@ -19,7 +19,7 @@ public partial struct SlimeBeamSystem : ISystem
             slimeBeamComponent.ValueRW.timer -= deltaTime;
             // Destroy if out of lifetime
             if (slimeBeamComponent.ValueRO.timer <= 0)
-                BulletManager.Instance.ReturnSlimeBeam(beamEntity, ecb);
+                ProjectilesManager.Instance.ReturnSlimeBeam(beamEntity, ecb);
         }
 
         ecb.Playback(entityManager);

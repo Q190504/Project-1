@@ -1,6 +1,6 @@
 {
-  "id": "SlimeBeam",
-  "name": "Slime Beam",
+  "id": "SlimeBeamShooter",
+  "name": "Slime Beam Shooter",
   "spawnOffsetPositon": 2.5,
   "levels": [
     {

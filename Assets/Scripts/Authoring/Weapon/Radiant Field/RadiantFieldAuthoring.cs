@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class RadiantFieldAuthoring : MonoBehaviour
 {
-    public string weaponId;
+    public WeaponType weaponId = WeaponType.RadiantField;
 
     public class Baker : Baker<RadiantFieldAuthoring>
     {

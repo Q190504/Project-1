@@ -101,7 +101,7 @@ public partial struct ShootSlimeBulletSystem : ISystem
         for (int i = 0; i < bulletRemaining; i++ )
         {
             // Spawn the bullet
-            Entity bullet = BulletManager.Instance.TakeSlimeBullet(ecb);
+            Entity bullet = ProjectilesManager.Instance.TakeSlimeBullet(ecb);
 
             float bonusDistance = (maxDistBetweenBullets - minDistBetweenBullets) / bulletRemaining;
 
@@ -143,8 +143,9 @@ public partial struct ShootSlimeBulletSystem : ISystem
         }     
     }
 
-    private void SetBulletStats(EntityCommandBuffer ecb, Entity bullet, int damage, float passthroughDamageModifier, float cooldown, float maxDistance, float moveSpeed,
-float existDuration, float slowModifier, float slowRadius, bool isSlimeFrenzyActive, float bonusDamagePercent)
+    private void SetBulletStats(EntityCommandBuffer ecb, Entity bullet, int damage, float passthroughDamageModifier, 
+        float cooldown, float maxDistance, float moveSpeed, float existDuration, float slowModifier,
+        float slowRadius, bool isSlimeFrenzyActive, float bonusDamagePercent)
     {
         float3 playerPosition = entityManager.GetComponentData<LocalTransform>(player).Position;
 

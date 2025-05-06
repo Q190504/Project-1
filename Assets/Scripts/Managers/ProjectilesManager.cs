@@ -4,28 +4,32 @@ using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
 
-public class BulletManager : MonoBehaviour
+public class ProjectilesManager : MonoBehaviour
 {
-    private static BulletManager _instance;
+    private static ProjectilesManager _instance;
 
     [SerializeField] private int slimeBulletPrepare = 100;
     [SerializeField] private int slimeBeamPrepare = 4;
+    [SerializeField] private int poisionCloudPrepare = 24;
 
     private EntityManager entityManager;
     private Entity slimeBulletPrefab;
     private Entity slimeBeamPrefab;
+    private Entity poisionCloudPrefab;
 
     private NativeQueue<Entity> inactiveSlimeBullets;
     private NativeQueue<Entity> inactiveSlimeBeams;
+    private NativeQueue<Entity> inactivePoisionClouds;
     private int slimeBulletCount = 0;
     private int slimeBeamCount = 0;
+    private int poisionCloudCount = 0;
 
-    public static BulletManager Instance
+    public static ProjectilesManager Instance
     {
         get
         {
             if (_instance == null)
-                _instance = FindFirstObjectByType<BulletManager>();
+                _instance = FindFirstObjectByType<ProjectilesManager>();
             return _instance;
         }
     }
@@ -67,8 +71,24 @@ public class BulletManager : MonoBehaviour
             Debug.LogError("Slime Beam prefab not found! Make sure it's baked correctly.");
         }
 
+        EntityQuery poisonCloudPrefabQuery = entityManager.CreateEntityQuery(typeof(PawPrintPoisonCloudPrefabComponent));
+        if (poisonCloudPrefabQuery.CalculateEntityCount() > 0)
+        {
+            poisionCloudPrefab = entityManager.GetComponentData<PawPrintPoisonCloudPrefabComponent>(poisonCloudPrefabQuery.GetSingletonEntity()).pawPrintPoisonCloudPrefab;
+        }
+        else
+        {
+            Debug.LogError("Paw Print Poison Cloud prefab not found! Make sure it's baked correctly.");
+        }
+
+
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
-        Prepare(ecb, true, true);
+
+        // Prepare the initial pool of entities
+        PreparePoisonCloud(ecb);
+        PrepareSlimeBeam(ecb);
+        PrepareSlimeBullet(ecb);
+
         ecb.Playback(entityManager);
         ecb.Dispose();
     }
@@ -86,39 +106,54 @@ public class BulletManager : MonoBehaviour
 
         if (inactiveSlimeBeams.IsCreated)
             inactiveSlimeBeams.Dispose();
+
+        if (inactivePoisionClouds.IsCreated)
+            inactivePoisionClouds.Dispose();
     }
 
-    private void Prepare(EntityCommandBuffer ecb, bool prepareSlimeBullet = false, bool prepareSlimeBeam = false)
+    private void PrepareSlimeBullet(EntityCommandBuffer ecb)
     {
         if (slimeBulletPrefab == Entity.Null) return;
 
-        if(prepareSlimeBullet)
+        for (int i = 0; i < slimeBulletPrepare; i++)
         {
-            for (int i = 0; i < slimeBulletPrepare; i++)
-            {
-                Entity slimeBulletInstance = entityManager.Instantiate(slimeBulletPrefab);
-                ecb.AddComponent<Disabled>(slimeBulletInstance);
-                inactiveSlimeBullets.Enqueue(slimeBulletInstance);
-                slimeBulletCount++;
-            }
+            Entity slimeBulletInstance = entityManager.Instantiate(slimeBulletPrefab);
+            ecb.AddComponent<Disabled>(slimeBulletInstance);
+            inactiveSlimeBullets.Enqueue(slimeBulletInstance);
+            slimeBulletCount++;
         }
+    }
 
-        if(prepareSlimeBeam)
+    private void PrepareSlimeBeam(EntityCommandBuffer ecb)
+    {
+        if (slimeBeamPrefab == Entity.Null) return;
+
+        for (int i = 0; i < slimeBeamPrepare; i++)
         {
-            for (int i = 0; i < slimeBeamPrepare; i++)
-            {
-                Entity slimeBeamInstance = entityManager.Instantiate(slimeBeamPrefab);
-                ecb.AddComponent<Disabled>(slimeBeamInstance);
-                inactiveSlimeBeams.Enqueue(slimeBeamInstance);
-                slimeBeamCount++;
-            }
+            Entity slimeBeamInstance = entityManager.Instantiate(slimeBeamPrefab);
+            ecb.AddComponent<Disabled>(slimeBeamInstance);
+            inactiveSlimeBeams.Enqueue(slimeBeamInstance);
+            slimeBeamCount++;
+        }
+    }
+
+    private void PreparePoisonCloud(EntityCommandBuffer ecb)
+    {
+        if (poisionCloudPrefab == Entity.Null) return;
+
+        for (int i = 0; i < slimeBeamPrepare; i++)
+        {
+            Entity poisionCloudInstance = entityManager.Instantiate(poisionCloudPrefab);
+            ecb.AddComponent<Disabled>(poisionCloudInstance);
+            inactivePoisionClouds.Enqueue(poisionCloudInstance);
+            poisionCloudCount++;
         }
     }
 
     public Entity TakeSlimeBullet(EntityCommandBuffer ecb)
     {
         if (inactiveSlimeBullets.IsEmpty())
-            Prepare(ecb, true, false);
+            PrepareSlimeBullet(ecb);
 
         Entity slimeBulletInstance = inactiveSlimeBullets.Dequeue();
         slimeBulletCount--;
@@ -129,7 +164,7 @@ public class BulletManager : MonoBehaviour
     public Entity TakeSlimeBeam(EntityCommandBuffer ecb)
     {
         if (inactiveSlimeBeams.IsEmpty())
-            Prepare(ecb, false, true);
+            PrepareSlimeBeam(ecb);
 
         Entity slimeBeamInstance = inactiveSlimeBeams.Dequeue();
         slimeBeamCount--;
@@ -137,7 +172,18 @@ public class BulletManager : MonoBehaviour
         return slimeBeamInstance;
     }
 
-    public void Return(Entity bullet, EntityCommandBuffer ecb)
+    public Entity TakePoisonCloud(EntityCommandBuffer ecb)
+    {
+        if (inactivePoisionClouds.IsEmpty())
+            PreparePoisonCloud(ecb);
+
+        Entity poisionCloudInstance = inactivePoisionClouds.Dequeue();
+        poisionCloudCount--;
+        ecb.RemoveComponent<Disabled>(poisionCloudInstance);
+        return poisionCloudInstance;
+    }
+
+    public void ReturnSlimeBullet(Entity bullet, EntityCommandBuffer ecb)
     {
         if (!entityManager.Exists(bullet)) return;
 
@@ -153,5 +199,14 @@ public class BulletManager : MonoBehaviour
         ecb.AddComponent<Disabled>(beam);
         inactiveSlimeBeams.Enqueue(beam);
         slimeBeamCount++;
+    }
+
+    public void ReturnPoisonCloud(Entity cloud, EntityCommandBuffer ecb)
+    {
+        if (!entityManager.Exists(cloud)) return;
+
+        ecb.AddComponent<Disabled>(cloud);
+        inactivePoisionClouds.Enqueue(cloud);
+        poisionCloudCount++;
     }
 }

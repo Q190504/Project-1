@@ -36,7 +36,7 @@ public partial struct SlimeBeamShooterSystem : ISystem
 
             var blobData = beamShooter.Data;
             if (!blobData.IsCreated || blobData.Value.Levels.Length == 0) continue;
-
+            
             // Determine weapon level
             int level = beamShooter.level;
 
@@ -94,7 +94,7 @@ public partial struct SlimeBeamShooterSystem : ISystem
         Quaternion rotation = GetRotation(beamCount);
 
         //spawn beam
-        Entity slimeBeamInstance = BulletManager.Instance.TakeSlimeBeam(ecb);
+        Entity slimeBeamInstance = ProjectilesManager.Instance.TakeSlimeBeam(ecb);
         SetStats(ecb, slimeBeamInstance, damage, position, rotation);
 
         hits.Dispose();

@@ -5,7 +5,7 @@ using System.IO;
 
 public class SlimeBulletShooterAuthoring : MonoBehaviour
 {
-    public string weaponId;
+    public WeaponType weaponId = WeaponType.SlimeBulletShooter;
 
     [WorldSystemFilter(WorldSystemFilterFlags.BakingSystem)]
     public class Baker : Baker<SlimeBulletShooterAuthoring>

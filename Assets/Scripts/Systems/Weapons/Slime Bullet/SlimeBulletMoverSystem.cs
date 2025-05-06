@@ -28,7 +28,7 @@ public partial struct SlimeBulletMoverSystem : ISystem
                 physicsVelocity.ValueRW.Linear = 0;
 
                 if (slimeBulletComponent.ValueRO.existDuration <= 0)
-                    BulletManager.Instance.Return(entity, ecb);
+                    ProjectilesManager.Instance.ReturnSlimeBullet(entity, ecb);
                 else
                     slimeBulletComponent.ValueRW.existDuration -= SystemAPI.Time.DeltaTime;
             }
