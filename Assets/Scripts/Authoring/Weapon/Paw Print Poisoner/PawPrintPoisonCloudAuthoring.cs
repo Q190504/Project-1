@@ -1,5 +1,6 @@
 using Unity.Entities;
 using UnityEngine;
+using Unity.Transforms;
 
 public class PawPrintPoisonCloudAuthoring : MonoBehaviour
 {
@@ -11,12 +12,12 @@ public class PawPrintPoisonCloudAuthoring : MonoBehaviour
 
             AddComponent(entity, new PawPrintPoisonCloudComponent
             {
+                tick = 0f,
+                tickTimer = 0,
                 damagePerTick = 0,
-                cloudSize = 0f,
+                cloudRadius = 0f,
                 maximumCloudDuration = 0f,
                 existDurationTimer = 1f,
-                tick = 0f,
-                lastTick = 0,
                 bonusMoveSpeedPerTargetInTheCloudModifier = 0f,
                 totalEnemiesCurrentlyInTheCloud = 0,
             });
@@ -27,9 +28,9 @@ public class PawPrintPoisonCloudAuthoring : MonoBehaviour
 public struct PawPrintPoisonCloudComponent : IComponentData
 {
     public float tick;
-    public double lastTick;
+    public float tickTimer;
     public int damagePerTick;
-    public float cloudSize;
+    public float cloudRadius;
     public float maximumCloudDuration;
     public float existDurationTimer;
     public float bonusMoveSpeedPerTargetInTheCloudModifier;

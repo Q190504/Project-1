@@ -17,6 +17,7 @@ public partial struct PawPrintPoisonerSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<PawPrintPoisonerComponent>();
         clouds = new NativeList<Entity>(24, Allocator.Persistent); // Initialize the list with a capacity of the maximum number of clouds
     }
 
@@ -40,9 +41,8 @@ public partial struct PawPrintPoisonerSystem : ISystem
         float deltaTime = SystemAPI.Time.DeltaTime;
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
-        PawPrintPoisonerComponent pawPrintPoisonerComponent = entityManager.GetComponentData<PawPrintPoisonerComponent>(pawPrintPoisonerEntity);
+        PawPrintPoisonerComponent pawPrintPoisoner = entityManager.GetComponentData<PawPrintPoisonerComponent>(pawPrintPoisonerEntity);
 
-        ref var pawPrintPoisoner = ref pawPrintPoisonerComponent;
         pawPrintPoisoner.timer -= deltaTime;
         if (pawPrintPoisoner.timer > 0) return;
 
@@ -68,7 +68,7 @@ public partial struct PawPrintPoisonerSystem : ISystem
         // Take cloud's level data
         ref var levelData = ref blobData.Value.Levels[level];
         int damagePerTick = levelData.damagePerTick;
-        float cloudSize = levelData.cloudSize;
+        float cloudRadius = levelData.cloudRadius;
         float maximumCloudDuration = levelData.maximumCloudDuration;
         float bonusMoveSpeedPerTargetInTheCloudModifier = levelData.bonusMoveSpeedPerTargetInTheCloud;
 
@@ -88,7 +88,7 @@ public partial struct PawPrintPoisonerSystem : ISystem
             {
                 float3 cloudPos = cloudTransform.ValueRO.Position;
                 float distance = math.distance(playerPos, cloudPos);
-                if (distance < pawPrintPoisonCloudComponent.ValueRO.cloudSize)
+                if (distance < pawPrintPoisonCloudComponent.ValueRO.cloudRadius)
                 {
                     isNotInCloud = false;
                     break;
@@ -115,7 +115,7 @@ public partial struct PawPrintPoisonerSystem : ISystem
             Entity cloudEntity = ProjectilesManager.Instance.TakePoisonCloud(ecb);
 
             // Set the cloud's stats
-            SetCloudStats(ecb, cloudEntity, tick, damagePerTick, cloudSize, maximumCloudDuration,
+            SetCloudStats(ecb, cloudEntity, tick, damagePerTick, cloudRadius, maximumCloudDuration,
                 bonusMoveSpeedPerTargetInTheCloudModifier);
 
             // Add this cloud to the list of clouds
@@ -128,7 +128,7 @@ public partial struct PawPrintPoisonerSystem : ISystem
 
         pawPrintPoisoner.distanceTraveled = distanceTraveled;
 
-        ecb.SetComponent(pawPrintPoisonerEntity, pawPrintPoisonerComponent);
+        ecb.SetComponent(pawPrintPoisonerEntity, pawPrintPoisoner);
     }
 
     public void OnDestroy(ref SystemState state)
@@ -136,7 +136,7 @@ public partial struct PawPrintPoisonerSystem : ISystem
         clouds.Dispose();
     }
 
-    public void SetCloudStats(EntityCommandBuffer ecb, Entity cloud, float tick, int damagePerTick, float cloudSize,
+    public void SetCloudStats(EntityCommandBuffer ecb, Entity cloud, float tick, int damagePerTick, float cloudRadius,
         float maximumCloudDuration, float bonusMoveSpeedPerTargetInTheCloudModifier)
     {
         float3 playerPosition = entityManager.GetComponentData<LocalTransform>(player).Position;
@@ -145,7 +145,7 @@ public partial struct PawPrintPoisonerSystem : ISystem
         {
             Position = playerPosition,
             Rotation = Quaternion.identity,
-            Scale = 1f
+            Scale = cloudRadius
         });
 
         if (!entityManager.HasComponent<PawPrintPoisonCloudComponent>(cloud))
@@ -153,9 +153,9 @@ public partial struct PawPrintPoisonerSystem : ISystem
             ecb.AddComponent(cloud, new PawPrintPoisonCloudComponent
             {
                 tick = tick,
-                lastTick = tick,
+                tickTimer = tick,
                 damagePerTick = damagePerTick,
-                cloudSize = cloudSize,
+                cloudRadius = cloudRadius,
                 maximumCloudDuration = maximumCloudDuration,
                 existDurationTimer = maximumCloudDuration,
                 bonusMoveSpeedPerTargetInTheCloudModifier = bonusMoveSpeedPerTargetInTheCloudModifier,
@@ -167,8 +167,9 @@ public partial struct PawPrintPoisonerSystem : ISystem
             ecb.SetComponent(cloud, new PawPrintPoisonCloudComponent
             {
                 tick = tick,
+                tickTimer = tick,
                 damagePerTick = damagePerTick,
-                cloudSize = cloudSize,
+                cloudRadius = cloudRadius,
                 maximumCloudDuration = maximumCloudDuration,
                 existDurationTimer = maximumCloudDuration,
                 bonusMoveSpeedPerTargetInTheCloudModifier = bonusMoveSpeedPerTargetInTheCloudModifier,

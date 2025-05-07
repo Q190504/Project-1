@@ -22,33 +22,35 @@ public class SlimeBeamShooterAuthoring : MonoBehaviour
             SlimeBeamShooterJson weapon = JsonUtility.FromJson<SlimeBeamShooterJson>(jsonText);
 
             using var builder = new BlobBuilder(Allocator.Temp);
-            ref var root = ref builder.ConstructRoot<SlimeBeamShooterDataBlob>();
-
-            var levels = builder.Allocate(ref root.Levels, weapon.levels.Length);
-            for (int i = 0; i < weapon.levels.Length; i++)
             {
-                var level = weapon.levels[i];
+                ref var root = ref builder.ConstructRoot<SlimeBeamShooterDataBlob>();
 
-                levels[i] = new SlimeBeamShooterLevelData
+                var levels = builder.Allocate(ref root.Levels, weapon.levels.Length);
+                for (int i = 0; i < weapon.levels.Length; i++)
                 {
-                    damage = level.damage,
-                    cooldown = level.cooldown,
-                    range = level.range,
-                    timeBetween = level.timeBetween,
-                };
+                    var level = weapon.levels[i];
+
+                    levels[i] = new SlimeBeamShooterLevelData
+                    {
+                        damage = level.damage,
+                        cooldown = level.cooldown,
+                        range = level.range,
+                        timeBetween = level.timeBetween,
+                    };
+                }
+
+                var blob = builder.CreateBlobAssetReference<SlimeBeamShooterDataBlob>(Allocator.Temp);
+
+                AddComponent(GetEntity(TransformUsageFlags.None), new SlimeBeamShooterComponent
+                {
+                    Data = blob,
+                    timer = 2f,
+                    beamCount = 0,
+                    timeBetween = 0,
+                    level = 0,
+                    spawnOffsetPositon = weapon.spawnOffsetPositon,
+                });
             }
-
-            var blob = builder.CreateBlobAssetReference<SlimeBeamShooterDataBlob>(Allocator.Temp);
-
-            AddComponent(GetEntity(TransformUsageFlags.None), new SlimeBeamShooterComponent
-            {
-                Data = blob,
-                timer = 2f,
-                beamCount = 0,
-                timeBetween = 0,
-                level = 0,
-                spawnOffsetPositon = weapon.spawnOffsetPositon,
-            });
         }
     }
 }

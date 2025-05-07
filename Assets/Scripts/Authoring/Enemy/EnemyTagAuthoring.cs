@@ -1,5 +1,4 @@
 using Unity.Entities;
-using UnityEditor.Search;
 using UnityEngine;
 
 public class EnemyTagAuthoring : MonoBehaviour

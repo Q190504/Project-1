@@ -51,7 +51,7 @@ public partial struct PawPrintPoisonCloudBoostSpeedSystem : ISystem
 
         foreach (var (cloud, transform) in SystemAPI.Query<PawPrintPoisonCloudComponent, LocalTransform>())
         {
-            poisonClouds.Add((transform.Position, cloud.cloudSize));
+            poisonClouds.Add((transform.Position, cloud.cloudRadius));
             bonusPercentPerEnemy = cloud.bonusMoveSpeedPerTargetInTheCloudModifier;
         }
 

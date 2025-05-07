@@ -22,34 +22,36 @@ public class RadiantFieldAuthoring : MonoBehaviour
             RadiantFieldJson weapon = JsonUtility.FromJson<RadiantFieldJson>(jsonText);
 
             using var builder = new BlobBuilder(Allocator.Temp);
-            ref var root = ref builder.ConstructRoot<RadiantFieldDataBlob>();
-
-            var levels = builder.Allocate(ref root.Levels, weapon.levels.Length);
-            for (int i = 0; i < weapon.levels.Length; i++)
             {
-                var level = weapon.levels[i];
-                levels[i] = new RadiantFieldLevelData
+                ref var root = ref builder.ConstructRoot<RadiantFieldDataBlob>();
+
+                var levels = builder.Allocate(ref root.Levels, weapon.levels.Length);
+                for (int i = 0; i < weapon.levels.Length; i++)
                 {
-                    damagePerTick = level.damagePerTick,
-                    cooldown = level.cooldown,
-                    radius = level.radius,
-                    slowModifier = level.slowModifier,
-                };
+                    var level = weapon.levels[i];
+                    levels[i] = new RadiantFieldLevelData
+                    {
+                        damagePerTick = level.damagePerTick,
+                        cooldown = level.cooldown,
+                        radius = level.radius,
+                        slowModifier = level.slowModifier,
+                    };
+                }
+
+                var blob = builder.CreateBlobAssetReference<RadiantFieldDataBlob>(Allocator.Temp);
+
+                Entity radiantFieldEntity = GetEntity(TransformUsageFlags.Dynamic);
+
+                AddComponent(radiantFieldEntity, new RadiantFieldComponent
+                {
+                    Data = blob,
+                    timer = 2f,
+                    timeBetween = weapon.timeBetween,
+                    currentLevel = 0,
+                    previousLevel = -1,
+                    lastTickTime = 0,
+                });
             }
-
-            var blob = builder.CreateBlobAssetReference<RadiantFieldDataBlob>(Allocator.Temp);
-
-            Entity radiantFieldEntity = GetEntity(TransformUsageFlags.Dynamic);
-
-            AddComponent(radiantFieldEntity, new RadiantFieldComponent
-            {
-                Data = blob,
-                timer = 2f,
-                timeBetween = weapon.timeBetween,
-                currentLevel = 0,
-                previousLevel = -1, 
-                lastTickTime = 0,
-            });
         }
     }
 }

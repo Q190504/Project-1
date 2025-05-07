@@ -7,7 +7,6 @@ public class SlimeBulletShooterAuthoring : MonoBehaviour
 {
     public WeaponType weaponId = WeaponType.SlimeBulletShooter;
 
-    [WorldSystemFilter(WorldSystemFilterFlags.BakingSystem)]
     public class Baker : Baker<SlimeBulletShooterAuthoring>
     {
         public override void Bake(SlimeBulletShooterAuthoring authoring)
@@ -23,41 +22,43 @@ public class SlimeBulletShooterAuthoring : MonoBehaviour
             SlimeBulletShooterJson weapon = JsonUtility.FromJson<SlimeBulletShooterJson>(jsonText);
 
             using var builder = new BlobBuilder(Allocator.Temp);
-            ref var root = ref builder.ConstructRoot<SlimeBulletShooterDataBlob>();
-
-            var levels = builder.Allocate(ref root.Levels, weapon.levels.Length);
-            for (int i = 0; i < weapon.levels.Length; i++)
             {
-                var level = weapon.levels[i];
+                ref var root = ref builder.ConstructRoot<SlimeBulletShooterDataBlob>();
 
-                levels[i] = new SlimeBulletShooterLevelData
+                var levels = builder.Allocate(ref root.Levels, weapon.levels.Length);
+                for (int i = 0; i < weapon.levels.Length; i++)
                 {
-                    delay = level.delay,
-                    damage = level.damage,
-                    cooldown = level.cooldown,
-                    bulletCount = level.bulletCount,
-                    minimumDistance = level.minimumDistance,
-                    minimumDistanceBetweenBullets = level.minimumDistanceBetweenBullets,
-                    maximumDistanceBetweenBullets = level.maximumDistanceBetweenBullets,
-                    previousDistance = 0f,
-                    passthroughDamageModifier = level.passthroughDamageModifier,
-                    moveSpeed = level.moveSpeed,
-                    existDuration = level.existDuration,
-                    bonusDamagePercent = level.bonusDamagePercent,
-                    slowModifier = level.slowModifier,
-                    slowRadius = level.slowRadius
-                };
-            }
-         
-            var blob = builder.CreateBlobAssetReference<SlimeBulletShooterDataBlob>(Allocator.Temp);
+                    var level = weapon.levels[i];
 
-            AddComponent(GetEntity(TransformUsageFlags.None), new SlimeBulletShooterComponent
-            {
-                Data = blob,
-                timer = 2f,
-                isSlimeFrenzyActive = false,
-                level = 0,
-            });
+                    levels[i] = new SlimeBulletShooterLevelData
+                    {
+                        delay = level.delay,
+                        damage = level.damage,
+                        cooldown = level.cooldown,
+                        bulletCount = level.bulletCount,
+                        minimumDistance = level.minimumDistance,
+                        minimumDistanceBetweenBullets = level.minimumDistanceBetweenBullets,
+                        maximumDistanceBetweenBullets = level.maximumDistanceBetweenBullets,
+                        previousDistance = 0f,
+                        passthroughDamageModifier = level.passthroughDamageModifier,
+                        moveSpeed = level.moveSpeed,
+                        existDuration = level.existDuration,
+                        bonusDamagePercent = level.bonusDamagePercent,
+                        slowModifier = level.slowModifier,
+                        slowRadius = level.slowRadius
+                    };
+                }
+
+                var blob = builder.CreateBlobAssetReference<SlimeBulletShooterDataBlob>(Allocator.Temp);
+
+                AddComponent(GetEntity(TransformUsageFlags.None), new SlimeBulletShooterComponent
+                {
+                    Data = blob,
+                    timer = 2f,
+                    isSlimeFrenzyActive = false,
+                    level = 0,
+                });
+            }
         }
     }
 }

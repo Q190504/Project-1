@@ -7,7 +7,6 @@ public class PawPrintPoisonerAuthoring : MonoBehaviour
 {
     public WeaponType weaponId = WeaponType.PawPrintPoisoner; 
 
-    [WorldSystemFilter(WorldSystemFilterFlags.BakingSystem)]
     public class Baker : Baker<PawPrintPoisonerAuthoring>
     {
         public override void Bake(PawPrintPoisonerAuthoring authoring)
@@ -23,35 +22,37 @@ public class PawPrintPoisonerAuthoring : MonoBehaviour
             PawPrintPoisonerJson weapon = JsonUtility.FromJson<PawPrintPoisonerJson>(jsonText);
 
             using var builder = new BlobBuilder(Allocator.Temp);
-            ref var root = ref builder.ConstructRoot<PawPrintPoisonerDataBlob>();
-
-            var levels = builder.Allocate(ref root.Levels, weapon.levels.Length);
-            for (int i = 0; i < weapon.levels.Length; i++)
             {
-                var level = weapon.levels[i];
+                ref var root = ref builder.ConstructRoot<PawPrintPoisonerDataBlob>();
 
-                levels[i] = new PawPrintPoisonerLevelData
+                var levels = builder.Allocate(ref root.Levels, weapon.levels.Length);
+                for (int i = 0; i < weapon.levels.Length; i++)
                 {
-                    damagePerTick = level.damagePerTick,
-                    cloudSize = level.cloudSize,
-                    maximumCloudDuration = level.maximumCloudDuration,
-                    bonusMoveSpeedPerTargetInTheCloud = level.bonusMoveSpeedPerTargetInTheCloud,
-                };
+                    var level = weapon.levels[i];
+
+                    levels[i] = new PawPrintPoisonerLevelData
+                    {
+                        damagePerTick = level.damagePerTick,
+                        cloudRadius = level.cloudRadius,
+                        maximumCloudDuration = level.maximumCloudDuration,
+                        bonusMoveSpeedPerTargetInTheCloud = level.bonusMoveSpeedPerTargetInTheCloud,
+                    };
+                }
+
+                var blob = builder.CreateBlobAssetReference<PawPrintPoisonerDataBlob>(Allocator.Temp);
+
+                AddComponent(GetEntity(TransformUsageFlags.None), new PawPrintPoisonerComponent
+                {
+                    Data = blob,
+                    level = 1, //TO DO: SET TO 0
+                    timer = 0f,
+                    tick = weapon.tick,
+                    cooldown = weapon.cooldown,
+                    maximumClouds = weapon.maximumClouds,
+                    distanceToCreateACloud = weapon.distanceToCreateACloud,
+                    distanceTraveled = 0f,
+                });
             }
-
-            var blob = builder.CreateBlobAssetReference<PawPrintPoisonerDataBlob>(Allocator.Temp);
-
-            AddComponent(GetEntity(TransformUsageFlags.None), new PawPrintPoisonerComponent
-            {
-                Data = blob,
-                level = 1, //TO DO: SET TO 0
-                timer = 0f,
-                tick = weapon.tick,
-                cooldown = weapon.cooldown,
-                maximumClouds = weapon.maximumClouds,
-                distanceToCreateACloud = weapon.distanceToCreateACloud,
-                distanceTraveled = 0f,
-            });
         }
     }
 }
@@ -62,7 +63,7 @@ public class PawPrintPoisonerAuthoring : MonoBehaviour
 public class PawPrintPoisonerLevelJson
 {
     public int damagePerTick;
-    public float cloudSize;
+    public float cloudRadius;
     public float maximumCloudDuration;
     public float bonusMoveSpeedPerTargetInTheCloud;
 }
@@ -94,7 +95,7 @@ public struct PawPrintPoisonerComponent : IComponentData
 public struct PawPrintPoisonerLevelData
 {
     public int damagePerTick;
-    public float cloudSize;
+    public float cloudRadius;
     public float maximumCloudDuration;
     public float bonusMoveSpeedPerTargetInTheCloud;
 }

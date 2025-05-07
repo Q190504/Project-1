@@ -8,37 +8,37 @@
   "levels": [
     {
       "damagePerTick": 0,
-      "cloudSize": 0,
+      "cloudRadius": 0,
       "maximumCloudDuration": 0,
       "bonusMoveSpeedPerTargetInTheCloudModifier": 0
     },
     {
       "damagePerTick": 15,
-      "cloudSize": 1.5,
+      "cloudRadius": 1.5,
       "maximumCloudDuration": 2.5,
       "bonusMoveSpeedPerTargetInTheCloudModifier": 0.005
     },
     {
       "damagePerTick": 30,
-      "cloudSize": 2.25,
+      "cloudRadius": 2.25,
       "maximumCloudDuration": 3.5,
       "bonusMoveSpeedPerTargetInTheCloudModifier": 0
     },
     {
       "damagePerTick": 45,
-      "cloudSize": 3,
+      "cloudRadius": 3,
       "maximumCloudDuration": 4.5,
       "bonusMoveSpeedPerTargetInTheCloudModifier": 0
     },
     {
       "damagePerTick": 60,
-      "cloudSize": 3,
+      "cloudRadius": 3,
       "maximumCloudDuration": 5.5,
       "bonusMoveSpeedPerTargetInTheCloudModifier": 0
     },
     {
       "damagePerTick": 75,
-      "cloudSize": 3,
+      "cloudRadius": 3,
       "maximumCloudDuration": 6.5,
       "bonusMoveSpeedPerTargetInTheCloudModifier": 0.005
     }
