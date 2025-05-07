@@ -50,6 +50,9 @@ TagManager:
   - name: Enemy
     uniqueID: 90088079
     locked: 0
+  - name: ForegroundEffect
+    uniqueID: 999991303
+    locked: 0
   - name: Player
     uniqueID: 2176374955
     locked: 0

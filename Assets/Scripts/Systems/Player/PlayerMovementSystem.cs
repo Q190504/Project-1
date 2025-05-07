@@ -26,6 +26,8 @@ public partial struct PlayerMovementSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
+        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+
         #region Checking
 
         if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
@@ -80,6 +82,9 @@ public partial struct PlayerMovementSystem : ISystem
 
         #endregion
 
+        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+
         float3 targetVelocity;
         if (playerTagComponent.isStunned)
             targetVelocity = float3.zero;
@@ -89,6 +94,9 @@ public partial struct PlayerMovementSystem : ISystem
         else
             targetVelocity = new float3(playerInput.moveInput.x, playerInput.moveInput.y, 0) * playerMovement.currentSpeed;
 
+
         physicsVelocity.Linear = math.lerp(physicsVelocity.Linear, targetVelocity, playerMovement.smoothTime);
+
+        ecb.SetComponent(player, physicsVelocity);
     }
 }

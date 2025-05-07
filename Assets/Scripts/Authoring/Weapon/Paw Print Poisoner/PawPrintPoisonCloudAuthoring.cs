@@ -14,7 +14,7 @@ public class PawPrintPoisonCloudAuthoring : MonoBehaviour
                 damagePerTick = 0,
                 cloudSize = 0f,
                 maximumCloudDuration = 0f,
-                existDurationTimer = 0f,
+                existDurationTimer = 1f,
                 tick = 0f,
                 lastTick = 0,
                 bonusMoveSpeedPerTargetInTheCloudModifier = 0f,

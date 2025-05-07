@@ -41,8 +41,10 @@ public class ProjectilesManager : MonoBehaviour
         else
             Destroy(this.gameObject);
 
+        
         inactiveSlimeBullets = new NativeQueue<Entity>(Allocator.Persistent);
         inactiveSlimeBeams = new NativeQueue<Entity>(Allocator.Persistent);
+        inactivePoisionClouds = new NativeQueue<Entity>(Allocator.Persistent);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -141,7 +143,7 @@ public class ProjectilesManager : MonoBehaviour
     {
         if (poisionCloudPrefab == Entity.Null) return;
 
-        for (int i = 0; i < slimeBeamPrepare; i++)
+        for (int i = 0; i < poisionCloudPrepare; i++)
         {
             Entity poisionCloudInstance = entityManager.Instantiate(poisionCloudPrefab);
             ecb.AddComponent<Disabled>(poisionCloudInstance);

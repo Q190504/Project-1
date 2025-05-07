@@ -1,3 +1,4 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -5,6 +6,7 @@ using Unity.Physics;
 using Unity.Transforms;
 using UnityEngine;
 
+//[BurstCompile]
 [UpdateAfter(typeof(PlayerMovementSystem))]
 public partial struct PawPrintPoisonerSystem : ISystem
 {
@@ -15,14 +17,11 @@ public partial struct PawPrintPoisonerSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
-        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         clouds = new NativeList<Entity>(24, Allocator.Persistent); // Initialize the list with a capacity of the maximum number of clouds
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
-        float deltaTime = SystemAPI.Time.DeltaTime;
 
         if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
         {
@@ -36,13 +35,18 @@ public partial struct PawPrintPoisonerSystem : ISystem
             return;
         }
 
+        var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+        float deltaTime = SystemAPI.Time.DeltaTime;
+        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+
         PawPrintPoisonerComponent pawPrintPoisonerComponent = entityManager.GetComponentData<PawPrintPoisonerComponent>(pawPrintPoisonerEntity);
 
         ref var pawPrintPoisoner = ref pawPrintPoisonerComponent;
         pawPrintPoisoner.timer -= deltaTime;
         if (pawPrintPoisoner.timer > 0) return;
 
-        var blobData = pawPrintPoisoner.Data;
+        ref var blobData = ref pawPrintPoisoner.Data;
         if (!blobData.IsCreated || blobData.Value.Levels.Length == 0) return;
 
         // Determine pawPrintPoisonerComponent level
@@ -58,6 +62,7 @@ public partial struct PawPrintPoisonerSystem : ISystem
         float tick = pawPrintPoisoner.tick;
         float distanceToCreateACloud = pawPrintPoisoner.distanceToCreateACloud;
         float distanceTraveled = pawPrintPoisoner.distanceTraveled;
+
         int maximumClouds = pawPrintPoisoner.maximumClouds;
 
         // Take cloud's level data
@@ -68,9 +73,9 @@ public partial struct PawPrintPoisonerSystem : ISystem
         float bonusMoveSpeedPerTargetInTheCloudModifier = levelData.bonusMoveSpeedPerTargetInTheCloud;
 
         // Update distance traveled
-        PhysicsVelocity playerVelocityComponent = entityManager.GetComponentData<PhysicsVelocity>(player);
-        float3 playerCurrentVelocity = playerVelocityComponent.Linear;
-        float distanceThisFrame = math.length(playerCurrentVelocity) * deltaTime;
+        PlayerMovementComponent playerMovementComponent = entityManager.GetComponentData<PlayerMovementComponent>(player);
+        float playerCurrentSpeed = playerMovementComponent.currentSpeed;
+        float distanceThisFrame = playerCurrentSpeed * deltaTime;
         distanceTraveled += distanceThisFrame;
 
         // If the player moved at least distanceToCreateACloud & is not in any existing cloud, create a new one
@@ -123,8 +128,7 @@ public partial struct PawPrintPoisonerSystem : ISystem
 
         pawPrintPoisoner.distanceTraveled = distanceTraveled;
 
-        ecb.Playback(entityManager);
-        ecb.Dispose();
+        ecb.SetComponent(pawPrintPoisonerEntity, pawPrintPoisonerComponent);
     }
 
     public void OnDestroy(ref SystemState state)

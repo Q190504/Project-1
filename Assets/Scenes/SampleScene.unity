@@ -443,7 +443,7 @@ TilemapRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 15444467
-  m_SortingLayer: 4
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0.53125, y: 0.734375, z: 0}
@@ -5796,7 +5796,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 00000000935e2fdeabd8b8818fa25e05a3739860f3a9eb00
+  m_ApplyToSortingLayers: 00000000935e2fdeabd8b8818fa25e05a3739860f3a9eb0007a89a3b
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -45841,7 +45841,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1655423561}
   - component: {fileID: 1655423560}
-  - component: {fileID: 1655423563}
   - component: {fileID: 1655423562}
   m_Layer: 0
   m_Name: Paw Print Poison Cloud
@@ -45849,7 +45848,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &1655423560
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -45891,9 +45890,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1620603811
-  m_SortingLayer: 1
-  m_SortingOrder: 1
+  m_SortingLayerID: 999991303
+  m_SortingLayer: 3
+  m_SortingOrder: 0
   m_Sprite: {fileID: -6571863576434913728, guid: 327d1522eac350b4387fdb7915720b2e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0.69411767}
   m_FlipX: 0
@@ -45942,18 +45941,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &1655423563
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1655423559}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11e3d4aa350758f4a89a499c0242d2cd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1663186465
 GameObject:
   m_ObjectHideFlags: 0
@@ -46388,5 +46375,5 @@ SceneRoots:
   - {fileID: 406217612}
   - {fileID: 527219658}
   - {fileID: 893131588}
-  - {fileID: 1035922628}
   - {fileID: 1655423561}
+  - {fileID: 1035922628}

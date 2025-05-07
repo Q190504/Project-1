@@ -5,6 +5,7 @@ using Unity.Physics;
 using UnityEngine;
 
 [UpdateAfter(typeof(PawPrintPoisonCloudExistingSystem))]
+[UpdateAfter(typeof(PawPrintPoisonerResetDamageTagSystem))]
 public partial struct PawPrintPoisonCloudDamageSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
@@ -14,27 +15,20 @@ public partial struct PawPrintPoisonCloudDamageSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
         double currentTime = SystemAPI.Time.ElapsedTime;
-
-        //// Temporarily track enemies that currently in a cloud
-        //int estimatedEnemyCount = SystemAPI.QueryBuilder().WithAll<EnemyTagComponent>().Build().CalculateEntityCount();
-        //var stillSlowedEnemies = new NativeHashSet<Entity>(estimatedEnemyCount, Allocator.Temp);
-
 
         var job = new PawPrintPoisonCloudDamageEnemyJob
         {
             pawPrintPoisonCloudLookup = SystemAPI.GetComponentLookup<PawPrintPoisonCloudComponent>(true),
             enemyLookup = SystemAPI.GetComponentLookup<EnemyTagComponent>(true),
-            damageByPawPrintPoisonCloudTagLookup = SystemAPI.GetComponentLookup<DamageByPawPrintPoisonCloudTag>(true),
+            damagedByPoisonCloudThisTickTagLookup = SystemAPI.GetComponentLookup<DamagedByPoisonCloudThisTickTag>(true),
             ecb = ecb,
             currentTime = currentTime,
         };
 
         state.Dependency = job.Schedule(SystemAPI.GetSingleton<SimulationSingleton>(), state.Dependency);
-
-
     }
 }
 
@@ -43,7 +37,7 @@ struct PawPrintPoisonCloudDamageEnemyJob : ITriggerEventsJob
 {
     [ReadOnly] public ComponentLookup<PawPrintPoisonCloudComponent> pawPrintPoisonCloudLookup;
     [ReadOnly] public ComponentLookup<EnemyTagComponent> enemyLookup;
-    [ReadOnly] public ComponentLookup<DamageByPawPrintPoisonCloudTag> damageByPawPrintPoisonCloudTagLookup;
+    [ReadOnly] public ComponentLookup<DamagedByPoisonCloudThisTickTag> damagedByPoisonCloudThisTickTagLookup;
     public EntityCommandBuffer ecb;
     [ReadOnly] public double currentTime;
     
@@ -60,10 +54,6 @@ struct PawPrintPoisonCloudDamageEnemyJob : ITriggerEventsJob
             Entity enemyEntity = entityAIsEnemy ? entityA : entityB;
             Entity cloudEntity = entityAIsEnemy ? entityB : entityA;
 
-            // Pass if the enemy is already damaged by a cloud
-            if(damageByPawPrintPoisonCloudTagLookup.HasComponent(enemyEntity))
-                return;
-
             // Check if the cloud has the PawPrintPoisonCloud component
             if (!pawPrintPoisonCloudLookup.HasComponent(cloudEntity) || !pawPrintPoisonCloudLookup.HasComponent(cloudEntity))
                 return;
@@ -74,6 +64,10 @@ struct PawPrintPoisonCloudDamageEnemyJob : ITriggerEventsJob
             if (currentTime - pawPrintPoisonCloudComponent.lastTick < pawPrintPoisonCloudComponent.tick)
                 return;
 
+            // Pass if the enemy is already damaged by a cloud
+            if (damagedByPoisonCloudThisTickTagLookup.HasComponent(enemyEntity))
+                return;
+
             // Deal damage
             int damage = pawPrintPoisonCloudComponent.damagePerTick;
 
@@ -81,7 +75,7 @@ struct PawPrintPoisonCloudDamageEnemyJob : ITriggerEventsJob
                 return;
 
             ecb.AddComponent(enemyEntity, new DamageEventComponent { damageAmount = damage });
-            ecb.AddComponent(enemyEntity, new DamageByPawPrintPoisonCloudTag());
+            ecb.AddComponent(enemyEntity, new DamagedByPoisonCloudThisTickTag());
         }
     }
 }

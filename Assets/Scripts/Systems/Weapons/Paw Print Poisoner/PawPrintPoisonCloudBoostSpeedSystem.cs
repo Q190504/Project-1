@@ -1,14 +1,17 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
+[BurstCompile]
 [UpdateBefore(typeof(PlayerMovementSystem))]
 public partial struct PawPrintPoisonCloudBoostSpeedSystem : ISystem
 {
     private EntityManager entityManager;
     private Entity player;
+    private Entity pawPrintPoisoner;
 
     public void OnCreate(ref SystemState state)
     {
@@ -24,9 +27,23 @@ public partial struct PawPrintPoisonCloudBoostSpeedSystem : ISystem
             return;
         }
 
-        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+        if (!SystemAPI.TryGetSingletonEntity<PawPrintPoisonerComponent>(out pawPrintPoisoner))
+        {
+            Debug.Log($"Cant Found Paw Print Poisoner Entity in PawPrintPoisonCloudBoostSpeedSystem!");
+            return;
+        }
+
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+
+        int currentLevel = entityManager.GetComponentData<PawPrintPoisonerComponent>(pawPrintPoisoner).level;
+        //if(currentLevel < 5)
+        //{
+        //    // Not max level, no effect
+        //    return;
+        //}
+
+        var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         // Collect cloud data
         var poisonClouds = new NativeList<(float3 pos, float radius)>(Allocator.Temp);
