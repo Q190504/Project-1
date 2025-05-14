@@ -21,12 +21,6 @@ public partial struct PawPrintPoisonCloudBoostSpeedSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
-        {
-            Debug.Log($"Cant Found Player Entity in PawPrintPoisonCloudBoostSpeedSystem!");
-            return;
-        }
-
         if (!SystemAPI.TryGetSingletonEntity<PawPrintPoisonerComponent>(out pawPrintPoisoner))
         {
             Debug.Log($"Cant Found Paw Print Poisoner Entity in PawPrintPoisonCloudBoostSpeedSystem!");
@@ -36,11 +30,17 @@ public partial struct PawPrintPoisonCloudBoostSpeedSystem : ISystem
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
         int currentLevel = entityManager.GetComponentData<PawPrintPoisonerComponent>(pawPrintPoisoner).level;
-        //if(currentLevel < 5)
-        //{
-        //    // Not max level, no effect
-        //    return;
-        //}
+        if (currentLevel < 5)
+        {
+            // Not max level, no effect
+            return;
+        }
+
+        if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
+        {
+            Debug.Log($"Cant Found Player Entity in PawPrintPoisonCloudBoostSpeedSystem!");
+            return;
+        }
 
         var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
@@ -49,10 +49,10 @@ public partial struct PawPrintPoisonCloudBoostSpeedSystem : ISystem
         var poisonClouds = new NativeList<(float3 pos, float radius)>(Allocator.Temp);
         float bonusPercentPerEnemy = 0;
 
-        foreach (var (cloud, transform) in SystemAPI.Query<PawPrintPoisonCloudComponent, LocalTransform>())
+        foreach (var (cloud, transform) in SystemAPI.Query<RefRO<PawPrintPoisonCloudComponent>, RefRO<LocalTransform>>())
         {
-            poisonClouds.Add((transform.Position, cloud.cloudRadius));
-            bonusPercentPerEnemy = cloud.bonusMoveSpeedPerTargetInTheCloudModifier;
+            poisonClouds.Add((transform.ValueRO.Position, cloud.ValueRO.cloudRadius));
+            bonusPercentPerEnemy = cloud.ValueRO.bonusMoveSpeedPerTargetInTheCloudModifier;
         }
 
         // Count enemies in cloud
@@ -78,7 +78,7 @@ public partial struct PawPrintPoisonCloudBoostSpeedSystem : ISystem
         float bonusMultiplier = 1f + (bonusPercentPerEnemy * enemiesInCloud);
         playerMovement.currentSpeed = playerMovement.baseSpeed * bonusMultiplier;
 
-        entityManager.SetComponentData(player, playerMovement); 
+        entityManager.SetComponentData(player, playerMovement);
 
         poisonClouds.Dispose();
     }

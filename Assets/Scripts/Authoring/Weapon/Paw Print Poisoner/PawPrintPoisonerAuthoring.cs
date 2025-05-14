@@ -38,7 +38,7 @@ public class PawPrintPoisonerAuthoring : MonoBehaviour
                     damagePerTick = level.damagePerTick,
                     cloudRadius = level.cloudRadius,
                     maximumCloudDuration = level.maximumCloudDuration,
-                    bonusMoveSpeedPerTargetInTheCloud = level.bonusMoveSpeedPerTargetInTheCloud,
+                    bonusMoveSpeedPerTargetInTheCloudModifier = level.bonusMoveSpeedPerTargetInTheCloudModifier,
                 };
             }
 
@@ -108,7 +108,7 @@ public class PawPrintPoisonerLevelJson
     public int damagePerTick;
     public float cloudRadius;
     public float maximumCloudDuration;
-    public float bonusMoveSpeedPerTargetInTheCloud;
+    public float bonusMoveSpeedPerTargetInTheCloudModifier;
 }
 
 [System.Serializable]
@@ -140,7 +140,7 @@ public struct PawPrintPoisonerLevelData
     public int damagePerTick;
     public float cloudRadius;
     public float maximumCloudDuration;
-    public float bonusMoveSpeedPerTargetInTheCloud;
+    public float bonusMoveSpeedPerTargetInTheCloudModifier;
 }
 
 public struct PawPrintPoisonerDataBlob

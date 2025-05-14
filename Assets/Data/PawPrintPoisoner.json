@@ -16,7 +16,7 @@
       "damagePerTick": 15,
       "cloudRadius": 1.5,
       "maximumCloudDuration": 2.5,
-      "bonusMoveSpeedPerTargetInTheCloudModifier": 0.005
+      "bonusMoveSpeedPerTargetInTheCloudModifier": 0
     },
     {
       "damagePerTick": 30,

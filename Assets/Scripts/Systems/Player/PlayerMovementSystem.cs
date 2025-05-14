@@ -5,6 +5,7 @@ using Unity.Physics;
 using UnityEngine;
 
 [BurstCompile]
+[UpdateAfter(typeof(PawPrintPoisonCloudBoostSpeedSystem))]
 public partial struct PlayerMovementSystem : ISystem
 {
     private EntityManager entityManager;
@@ -93,7 +94,6 @@ public partial struct PlayerMovementSystem : ISystem
                 * (playerMovement.currentSpeed + playerMovement.currentSpeed * slimeFrenzyComponent.bonusMovementSpeedPercent);
         else
             targetVelocity = new float3(playerInput.moveInput.x, playerInput.moveInput.y, 0) * playerMovement.currentSpeed;
-
 
         physicsVelocity.Linear = math.lerp(physicsVelocity.Linear, targetVelocity, playerMovement.smoothTime);
 
