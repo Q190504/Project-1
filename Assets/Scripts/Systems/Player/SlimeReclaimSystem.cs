@@ -5,7 +5,6 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 [BurstCompile]
 public partial struct SlimeReclaimSystem : ISystem
@@ -18,15 +17,15 @@ public partial struct SlimeReclaimSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
-
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
         {
-            Debug.Log($"Cant Found Player Entity in SlimeBulletMoverSystem!");
+            Debug.Log($"Cant Found Player Entity in SlimeReclaimSystem!");
             return;
         }
+
+        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
         if (SystemAPI.TryGetSingleton<PlayerInputComponent>(out var playerInput) && SystemAPI.TryGetSingleton<SlimeReclaimComponent>(out var slimeReclaimComponent))
         {
@@ -51,18 +50,17 @@ public partial struct SlimeReclaimSystem : ISystem
                 && hasWaitingSlimeBullet)
                 {
                     //Update UI
-                    GamePlayUIManager.Instance.SetSkill2ImageOpacityUp();
-                    GamePlayUIManager.Instance.SetSkill1ImageOpacityDown();
+                    GamePlayUIManager.Instance.SetSkill2ImageOpacity(true);
 
-                    if (playerInput.isSkillPressed)
+                    if (playerInput.isSpacePressed)
                     {
-                        // Apply stun effect
-                        if (!entityManager.HasComponent<StunTimerComponent>(player))
-                            ecb.AddComponent(player, new StunTimerComponent 
-                            { 
-                                timeRemaining = slimeReclaimComponent.stunPlayerTime ,
-                                initialDuration = slimeReclaimComponent.stunPlayerTime,
-                            });
+                        //// Apply stun effect
+                        //if (!entityManager.HasComponent<StunTimerComponent>(player))
+                        //    ecb.AddComponent(player, new StunTimerComponent
+                        //    {
+                        //        timeRemaining = slimeReclaimComponent.stunPlayerTime,
+                        //        initialDuration = slimeReclaimComponent.stunPlayerTime,
+                        //    });
 
                         // Activate skill effects
                         foreach (var slimeBulletComponent in SystemAPI.Query<RefRW<SlimeBulletComponent>>())
@@ -74,12 +72,15 @@ public partial struct SlimeReclaimSystem : ISystem
                         cooldownTimer = slimeReclaimComponent.cooldownTime;
                     }
                 }
+                else
+                    GamePlayUIManager.Instance.SetSkill1ImageOpacity(false);
             }
             else
             {
                 cooldownTimer -= SystemAPI.Time.DeltaTime;
                 //update UI cooldown
                 GamePlayUIManager.Instance.SetSkill2CooldownUI(true);
+                GamePlayUIManager.Instance.SetSkill2ImageOpacity(false);
                 GamePlayUIManager.Instance.UpdateSkill2CooldownUI(cooldownTimer, slimeReclaimComponent.cooldownTime);
             }
         }
@@ -90,9 +91,12 @@ public partial struct SlimeReclaimSystem : ISystem
 
     private bool CheckPlayerHealth(int currentHealth, int maxHealth)
     {
-        if (maxHealth <= 0) return false;
-        if (currentHealth <= 0) return false;
+        //if (maxHealth <= 0) return false;
+        //if (currentHealth <= 0) return false;
 
-        return (float)currentHealth / maxHealth <= GameManager.Instance.SKILL_2_THRESHOLD;
+        //return (float)currentHealth / maxHealth <= GameManager.Instance.SKILL_2_THRESHOLD;
+
+        if (currentHealth <= 0) return false;
+        else return true;
     }
 }

@@ -131,14 +131,20 @@ public class GamePlayUIManager : MonoBehaviour
         image.color = color;
     }
 
-    public void SetSkill2ImageOpacityUp()
+    public void SetSkill2ImageOpacity(bool status)
     {
-        SetImageOpacity(skill2Image, 1);
+        if(status)
+            SetImageOpacity(skill2Image, 1);
+        else
+            SetImageOpacity(skill2Image, 0.5f);
     }
 
-    public void SetSkill1ImageOpacityDown()
+    public void SetSkill1ImageOpacity(bool status)
     {
-        SetImageOpacity(skill1Image, 0.5f);
+        if (status)
+            SetImageOpacity(skill1Image, 1);
+        else
+            SetImageOpacity(skill1Image, 0.5f);
     }
 
     public void SetSkill1CooldownUI(bool status)

@@ -12,15 +12,15 @@ public partial struct SlimeFrenzySystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
-
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
         {
             Debug.Log($"Cant Found Player Entity in SlimeFrenzySystem!");
             return;
         }
+
+        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
         if (SystemAPI.TryGetSingleton<PlayerInputComponent>(out var playerInput) && SystemAPI.TryGetSingleton<SlimeFrenzyComponent>(out var slimeFrenzyComponent) && SystemAPI.TryGetSingleton<PlayerTagComponent>(out var playerTagComponent))
         {
@@ -30,8 +30,9 @@ public partial struct SlimeFrenzySystem : ISystem
             if (cooldownTimer <= 0)
             {
                 GamePlayUIManager.Instance.SetSkill1CooldownUI(false);
+                GamePlayUIManager.Instance.SetSkill1ImageOpacity(true);
 
-                if (playerInput.isSkillPressed
+                if (playerInput.isCPressed
                 && CheckPlayerHealth(playerHealthComponent.currentHealth, playerHealthComponent.maxHealth))
                 {
                     // Apply frenzy effect
@@ -57,6 +58,7 @@ public partial struct SlimeFrenzySystem : ISystem
 
                 //update UI cooldown
                 GamePlayUIManager.Instance.SetSkill1CooldownUI(true);
+                GamePlayUIManager.Instance.SetSkill1ImageOpacity(false);
                 GamePlayUIManager.Instance.UpdateSkill1CooldownUI(cooldownTimer, slimeFrenzyComponent.cooldownTime);
             }
         }
@@ -66,12 +68,15 @@ public partial struct SlimeFrenzySystem : ISystem
     }
     private bool CheckPlayerHealth(int currentHealth, int maxHealth)
     {
-        if (maxHealth <= 0) return false;
+        //if (maxHealth <= 0) return false;
+        //if (currentHealth <= 0) return false;
+
+        //bool isAboveSkill2Threshold = (float)currentHealth / maxHealth > GameManager.Instance.SKILL_2_THRESHOLD;
+        //bool isSmallerOrEqualSkill1Threshold = (float)currentHealth / maxHealth <= GameManager.Instance.SKILL_1_THRESHOLD;
+
+        //return isSmallerOrEqualSkill1Threshold && isAboveSkill2Threshold;
+
         if (currentHealth <= 0) return false;
-
-        bool isAboveSkill2Threshold = (float)currentHealth / maxHealth > GameManager.Instance.SKILL_2_THRESHOLD;
-        bool isSmallerOrEqualSkill1Threshold = (float)currentHealth / maxHealth <= GameManager.Instance.SKILL_1_THRESHOLD;
-
-        return isSmallerOrEqualSkill1Threshold && isAboveSkill2Threshold;
+        else return true;
     }
 }

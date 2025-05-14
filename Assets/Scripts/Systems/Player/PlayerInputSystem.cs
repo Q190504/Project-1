@@ -11,20 +11,26 @@ public partial struct PlayerInputSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         float2 movement = float2.zero;
+        bool isPressingCButton = false;
+        bool isPressingSpaceButton = false;
         if (Keyboard.current != null)
         {
             movement.x = (Keyboard.current.dKey.isPressed ? 1f : 0f) - (Keyboard.current.aKey.isPressed ? 1f : 0f);
             movement.y = (Keyboard.current.wKey.isPressed ? 1f : 0f) - (Keyboard.current.sKey.isPressed ? 1f : 0f);
+
+            isPressingCButton = Keyboard.current.cKey.wasReleasedThisFrame;
+            isPressingSpaceButton = Keyboard.current.spaceKey.wasReleasedThisFrame;
         }
 
-        bool isShooting = Mouse.current != null && Mouse.current.leftButton.wasReleasedThisFrame;
-        bool isPressingSkillButton = Keyboard.current.spaceKey.wasPressedThisFrame;
+        //bool isShooting = Mouse.current != null && Mouse.current.leftButton.wasReleasedThisFrame;
+
 
         foreach (var playerInput in SystemAPI.Query<RefRW<PlayerInputComponent>>())
         {
             playerInput.ValueRW.moveInput = movement;
-            playerInput.ValueRW.isShootingPressed = isShooting;
-            playerInput.ValueRW.isSkillPressed = isPressingSkillButton;
+            //playerInput.ValueRW.isShootingPressed = isShooting;
+            playerInput.ValueRW.isCPressed = isPressingCButton;
+            playerInput.ValueRW.isSpacePressed = isPressingSpaceButton;
         }
     }
 }
