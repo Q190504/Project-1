@@ -55,7 +55,7 @@ public class PawPrintPoisonerAuthoring : MonoBehaviour
             AddComponent(GetEntity(TransformUsageFlags.None), new PawPrintPoisonerComponent
             {
                 Data = blobReference,
-                level = 1, //TO DO: SET TO 0
+                level = 0,
                 timer = 0f,
                 tick = weapon.tick,
                 cooldown = weapon.cooldown,

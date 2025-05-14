@@ -242,7 +242,7 @@ GameObject:
   - component: {fileID: 160250829}
   - component: {fileID: 160250828}
   m_Layer: 5
-  m_Name: Skill 1 Cooldown Text
+  m_Name: Skill 2 Cooldown Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1906,7 +1906,7 @@ GameObject:
   m_Component:
   - component: {fileID: 197260375}
   m_Layer: 5
-  m_Name: Skill 2
+  m_Name: Skill 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2023,7 +2023,7 @@ GameObject:
   m_Component:
   - component: {fileID: 293328324}
   m_Layer: 5
-  m_Name: Skill 1
+  m_Name: Skill 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6620,12 +6620,12 @@ MonoBehaviour:
   hpText: {fileID: 625670461}
   xpBar: {fileID: 1470844627}
   xpText: {fileID: 1452916238}
-  skill1Image: {fileID: 1587889806}
-  skill1CoodownImage: {fileID: 1560425571}
-  skill1CoodownText: {fileID: 160250828}
-  skill2Image: {fileID: 1533457325}
-  skill2CoodownImage: {fileID: 1194095088}
-  skill2CoodownText: {fileID: 955689987}
+  skill1Image: {fileID: 1533457325}
+  skill1CoodownImage: {fileID: 1194095088}
+  skill1CoodownText: {fileID: 955689987}
+  skill2Image: {fileID: 1587889806}
+  skill2CoodownImage: {fileID: 1560425571}
+  skill2CoodownText: {fileID: 160250828}
   basicWeaponImage: {fileID: 1419500362}
   weapon1Image: {fileID: 574939213}
   weapon2Image: {fileID: 1504736618}
@@ -6654,7 +6654,7 @@ GameObject:
   - component: {fileID: 955689988}
   - component: {fileID: 955689987}
   m_Layer: 5
-  m_Name: Skill 2 Cooldown Text
+  m_Name: Skill 1 Cooldown Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44625,7 +44625,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 200, y: 74}
+  m_AnchoredPosition: {x: 199.99991, y: 74}
   m_SizeDelta: {x: 400, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1113382834
@@ -44642,13 +44642,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Padding:
     m_Left: 0
-    m_Right: 0
+    m_Right: 20
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 6
   m_Spacing: 0
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
@@ -44666,7 +44666,7 @@ GameObject:
   - component: {fileID: 1194095089}
   - component: {fileID: 1194095088}
   m_Layer: 5
-  m_Name: Skill 2 Cooldown Image
+  m_Name: Skill 1 Cooldown Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45408,7 +45408,7 @@ GameObject:
   - component: {fileID: 1533457326}
   - component: {fileID: 1533457325}
   m_Layer: 5
-  m_Name: Skill 2 Image
+  m_Name: Skill 1 Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45453,7 +45453,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -3530069344316797834, guid: d832e36fff4c7cc4eaa22921c39320cc, type: 3}
+  m_Sprite: {fileID: -5906687731359168616, guid: d832e36fff4c7cc4eaa22921c39320cc, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -45483,7 +45483,7 @@ GameObject:
   - component: {fileID: 1560425572}
   - component: {fileID: 1560425571}
   m_Layer: 5
-  m_Name: Skill 1 Cooldown Image
+  m_Name: Skill 2 Cooldown Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45605,7 +45605,7 @@ GameObject:
   - component: {fileID: 1587889807}
   - component: {fileID: 1587889806}
   m_Layer: 5
-  m_Name: Skill 1 Image
+  m_Name: Skill 2 Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45650,7 +45650,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -5906687731359168616, guid: d832e36fff4c7cc4eaa22921c39320cc, type: 3}
+  m_Sprite: {fileID: -3530069344316797834, guid: d832e36fff4c7cc4eaa22921c39320cc, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

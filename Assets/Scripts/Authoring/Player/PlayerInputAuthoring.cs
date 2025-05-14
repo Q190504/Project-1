@@ -22,5 +22,6 @@ public struct PlayerInputComponent : IComponentData
 {
     public float2 moveInput;
     public bool isShootingPressed;
-    public bool isSkillPressed;
+    public bool isCPressed;
+    public bool isSpacePressed;
 }
