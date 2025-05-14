@@ -55,6 +55,8 @@ struct SlimeBeamDamageEnemyJob : ITriggerEventsJob
 
             var beamComponent = slimeBeamLookup[beamEntity];
 
+            //TO DO: If is level 5, use tick instead of check hasDealDamageToEnemies
+
             // Skip if has deal damage to enemies in frame(s) before
             if (beamComponent.hasDealDamageToEnemies)
                 return;

@@ -14,7 +14,8 @@ public class PlayerMovementAuthoring : MonoBehaviour
             var entity = GetEntity(TransformUsageFlags.Dynamic);
             AddComponent(entity, new PlayerMovementComponent
             {
-                speed = authoring.speed,
+                baseSpeed = authoring.speed,
+                currentSpeed = authoring.speed,
                 smoothTime = authoring.smoothTime,
             });
         }
@@ -23,6 +24,7 @@ public class PlayerMovementAuthoring : MonoBehaviour
 
 public struct PlayerMovementComponent : IComponentData
 {
-    public float speed;
+    public float baseSpeed;
+    public float currentSpeed;
     public float smoothTime;
 }

@@ -5,9 +5,8 @@ using System.IO;
 
 public class SlimeBulletShooterAuthoring : MonoBehaviour
 {
-    public string weaponId;
+    public WeaponType weaponId = WeaponType.SlimeBulletShooter;
 
-    [WorldSystemFilter(WorldSystemFilterFlags.BakingSystem)]
     public class Baker : Baker<SlimeBulletShooterAuthoring>
     {
         public override void Bake(SlimeBulletShooterAuthoring authoring)
@@ -22,9 +21,13 @@ public class SlimeBulletShooterAuthoring : MonoBehaviour
             string jsonText = File.ReadAllText(path);
             SlimeBulletShooterJson weapon = JsonUtility.FromJson<SlimeBulletShooterJson>(jsonText);
 
-            using var builder = new BlobBuilder(Allocator.Temp);
+            // Create a new builder that will use temporary memory to construct the blob asset
+            var builder = new BlobBuilder(Allocator.Temp);
+
+            // Construct the root object for the blob asset. Notice the use of `ref`.
             ref var root = ref builder.ConstructRoot<SlimeBulletShooterDataBlob>();
 
+            // Now fill the constructed root with the data:
             var levels = builder.Allocate(ref root.Levels, weapon.levels.Length);
             for (int i = 0; i < weapon.levels.Length; i++)
             {
@@ -48,16 +51,63 @@ public class SlimeBulletShooterAuthoring : MonoBehaviour
                     slowRadius = level.slowRadius
                 };
             }
-         
-            var blob = builder.CreateBlobAssetReference<SlimeBulletShooterDataBlob>(Allocator.Temp);
+
+            // Now copy the data from the builder into its final place, which will
+            // use the persistent allocator
+            var blobReference = builder.CreateBlobAssetReference<SlimeBulletShooterDataBlob>(Allocator.Persistent);
+
+            // Make sure to dispose the builder itself so all internal memory is disposed.
+            builder.Dispose();
+
+            // Register the Blob Asset to the Baker for de-duplication and reverting.
+            AddBlobAsset<SlimeBulletShooterDataBlob>(ref blobReference, out var hash);
 
             AddComponent(GetEntity(TransformUsageFlags.None), new SlimeBulletShooterComponent
             {
-                Data = blob,
+                Data = blobReference,
                 timer = 2f,
                 isSlimeFrenzyActive = false,
                 level = 0,
             });
+
+            //using var builder = new BlobBuilder(Allocator.Temp);
+            //{
+            //    ref var root = ref builder.ConstructRoot<SlimeBulletShooterDataBlob>();
+
+            //    var levels = builder.Allocate(ref root.Levels, weapon.levels.Length);
+            //    for (int i = 0; i < weapon.levels.Length; i++)
+            //    {
+            //        var level = weapon.levels[i];
+
+            //        levels[i] = new SlimeBulletShooterLevelData
+            //        {
+            //            delay = level.delay,
+            //            damage = level.damage,
+            //            cooldown = level.cooldown,
+            //            bulletCount = level.bulletCount,
+            //            minimumDistance = level.minimumDistance,
+            //            minimumDistanceBetweenBullets = level.minimumDistanceBetweenBullets,
+            //            maximumDistanceBetweenBullets = level.maximumDistanceBetweenBullets,
+            //            previousDistance = 0f,
+            //            passthroughDamageModifier = level.passthroughDamageModifier,
+            //            moveSpeed = level.moveSpeed,
+            //            existDuration = level.existDuration,
+            //            bonusDamagePercent = level.bonusDamagePercent,
+            //            slowModifier = level.slowModifier,
+            //            slowRadius = level.slowRadius
+            //        };
+            //    }
+
+            //    var blob = builder.CreateBlobAssetReference<SlimeBulletShooterDataBlob>(Allocator.Temp);
+
+            //    AddComponent(GetEntity(TransformUsageFlags.None), new SlimeBulletShooterComponent
+            //    {
+            //        Data = blob,
+            //        timer = 2f,
+            //        isSlimeFrenzyActive = false,
+            //        level = 0,
+            //    });
+            //}
         }
     }
 }

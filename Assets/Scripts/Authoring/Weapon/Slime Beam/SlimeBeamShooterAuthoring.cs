@@ -5,7 +5,7 @@ using System.IO;
 
 public class SlimeBeamShooterAuthoring : MonoBehaviour
 {
-    public string weaponId;
+    public WeaponType weaponId = WeaponType.SlimeBeamShooter;
 
     public class Baker : Baker<SlimeBeamShooterAuthoring>
     {
@@ -21,9 +21,13 @@ public class SlimeBeamShooterAuthoring : MonoBehaviour
             string jsonText = File.ReadAllText(path);
             SlimeBeamShooterJson weapon = JsonUtility.FromJson<SlimeBeamShooterJson>(jsonText);
 
-            using var builder = new BlobBuilder(Allocator.Temp);
+            // Create a new builder that will use temporary memory to construct the blob asset
+            var builder = new BlobBuilder(Allocator.Temp);
+
+            // Construct the root object for the blob asset. Notice the use of `ref`.
             ref var root = ref builder.ConstructRoot<SlimeBeamShooterDataBlob>();
 
+            // Now fill the constructed root with the data:
             var levels = builder.Allocate(ref root.Levels, weapon.levels.Length);
             for (int i = 0; i < weapon.levels.Length; i++)
             {
@@ -38,17 +42,56 @@ public class SlimeBeamShooterAuthoring : MonoBehaviour
                 };
             }
 
-            var blob = builder.CreateBlobAssetReference<SlimeBeamShooterDataBlob>(Allocator.Temp);
+            // Now copy the data from the builder into its final place, which will
+            // use the persistent allocator
+            var blobReference = builder.CreateBlobAssetReference<SlimeBeamShooterDataBlob>(Allocator.Persistent);
+
+            // Make sure to dispose the builder itself so all internal memory is disposed.
+            builder.Dispose();
+
+            // Register the Blob Asset to the Baker for de-duplication and reverting.
+            AddBlobAsset<SlimeBeamShooterDataBlob>(ref blobReference, out var hash);
 
             AddComponent(GetEntity(TransformUsageFlags.None), new SlimeBeamShooterComponent
             {
-                Data = blob,
+                Data = blobReference,
                 timer = 2f,
                 beamCount = 0,
                 timeBetween = 0,
                 level = 0,
                 spawnOffsetPositon = weapon.spawnOffsetPositon,
             });
+
+            //using var builder = new BlobBuilder(Allocator.Temp);
+            //{
+            //    ref var root = ref builder.ConstructRoot<SlimeBeamShooterDataBlob>();
+
+            //    var levels = builder.Allocate(ref root.Levels, weapon.levels.Length);
+            //    for (int i = 0; i < weapon.levels.Length; i++)
+            //    {
+            //        var level = weapon.levels[i];
+
+            //        levels[i] = new SlimeBeamShooterLevelData
+            //        {
+            //            damage = level.damage,
+            //            cooldown = level.cooldown,
+            //            range = level.range,
+            //            timeBetween = level.timeBetween,
+            //        };
+            //    }
+
+            //    var blob = builder.CreateBlobAssetReference<SlimeBeamShooterDataBlob>(Allocator.Temp);
+
+            //    AddComponent(GetEntity(TransformUsageFlags.None), new SlimeBeamShooterComponent
+            //    {
+            //        Data = blob,
+            //        timer = 2f,
+            //        beamCount = 0,
+            //        timeBetween = 0,
+            //        level = 0,
+            //        spawnOffsetPositon = weapon.spawnOffsetPositon,
+            //    });
+            //}
         }
     }
 }

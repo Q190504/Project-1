@@ -31,7 +31,7 @@ public partial struct SlimeBulletHealPlayerSystem : ISystem
 
         foreach (var bullet in bulletsToReturn)
         {
-            BulletManager.Instance.Return(bullet, ecb);
+            ProjectilesManager.Instance.ReturnSlimeBullet(bullet, ecb);
         }
 
         bulletsToReturn.Dispose();

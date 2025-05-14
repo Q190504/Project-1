@@ -1,0 +1,46 @@
+{
+  "id": "PawPrintPoisoner",
+  "name": "Paw Print Poisoner",
+  "tick": 0.25,
+  "cooldown": 0,
+  "maximumClouds": 24,
+  "distanceToCreateACloud": 1,
+  "levels": [
+    {
+      "damagePerTick": 0,
+      "cloudRadius": 0,
+      "maximumCloudDuration": 0,
+      "bonusMoveSpeedPerTargetInTheCloudModifier": 0
+    },
+    {
+      "damagePerTick": 15,
+      "cloudRadius": 1.5,
+      "maximumCloudDuration": 2.5,
+      "bonusMoveSpeedPerTargetInTheCloudModifier": 0.005
+    },
+    {
+      "damagePerTick": 30,
+      "cloudRadius": 2.25,
+      "maximumCloudDuration": 3.5,
+      "bonusMoveSpeedPerTargetInTheCloudModifier": 0
+    },
+    {
+      "damagePerTick": 45,
+      "cloudRadius": 3,
+      "maximumCloudDuration": 4.5,
+      "bonusMoveSpeedPerTargetInTheCloudModifier": 0
+    },
+    {
+      "damagePerTick": 60,
+      "cloudRadius": 3,
+      "maximumCloudDuration": 5.5,
+      "bonusMoveSpeedPerTargetInTheCloudModifier": 0
+    },
+    {
+      "damagePerTick": 75,
+      "cloudRadius": 3,
+      "maximumCloudDuration": 6.5,
+      "bonusMoveSpeedPerTargetInTheCloudModifier": 0.005
+    }
+  ]
+}
