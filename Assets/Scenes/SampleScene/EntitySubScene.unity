@@ -4143,6 +4143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a7cbaf266d78fd4ab8be76a9adbae1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  worldUIPrefab: {fileID: 804877257755488376, guid: d18888974b2ddc94db30c0129c84c81b, type: 3}
 --- !u!114 &1711749689
 MonoBehaviour:
   m_ObjectHideFlags: 0

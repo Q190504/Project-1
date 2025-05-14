@@ -91,28 +91,23 @@ public class GamePlayUIManager : MonoBehaviour
 
         hpText.text = $"{hpBar.value} / {hpBar.maxValue}";
 
-        Image fillImage = hpBar.fillRect.GetComponent<Image>();
+        //Image fillImage = hpBar.fillRect.GetComponent<Image>();
 
-        if (fillImage != null)
-        {
-            if (hpBar.value / hpBar.maxValue > GameManager.Instance.SKILL_1_THRESHOLD)
-            {
-                fillImage.color = Color.green;
-                SetImageOpacity(skill1Image, 0.5f);
-                SetImageOpacity(skill2Image, 0.5f);
-            }
-            else if (hpBar.value / hpBar.maxValue <= GameManager.Instance.SKILL_1_THRESHOLD && hpBar.value / hpBar.maxValue > GameManager.Instance.SKILL_2_THRESHOLD)
-            {
-                fillImage.color = Color.yellow;
-                SetImageOpacity(skill1Image, 1);
-                SetImageOpacity(skill2Image, 0.5f);
-            }
-            else if (hpBar.value / hpBar.maxValue <= GameManager.Instance.SKILL_2_THRESHOLD)
-            {
-                fillImage.color = Color.red;
-                SetImageOpacity(skill1Image, 0.5f);
-            }
-        }
+        //if (fillImage != null)
+        //{
+        //    if (hpBar.value / hpBar.maxValue > GameManager.Instance.SKILL_1_THRESHOLD)
+        //    {
+        //        fillImage.color = Color.green;
+        //    }
+        //    else if (hpBar.value / hpBar.maxValue <= GameManager.Instance.SKILL_1_THRESHOLD && hpBar.value / hpBar.maxValue > GameManager.Instance.SKILL_2_THRESHOLD)
+        //    {
+        //        fillImage.color = Color.yellow;
+        //    }
+        //    else if (hpBar.value / hpBar.maxValue <= GameManager.Instance.SKILL_2_THRESHOLD)
+        //    {
+        //        fillImage.color = Color.red;
+        //    }
+        //}
     }
 
     public void UpdateXPBar(int currentXP, int maxXP)
