@@ -6,7 +6,7 @@ using Unity.Physics;
 using Unity.Transforms;
 using UnityEngine;
 
-//[BurstCompile]
+[BurstCompile]
 [UpdateAfter(typeof(PlayerMovementSystem))]
 public partial struct PawPrintPoisonerSystem : ISystem
 {
@@ -70,7 +70,7 @@ public partial struct PawPrintPoisonerSystem : ISystem
         int damagePerTick = levelData.damagePerTick;
         float cloudRadius = levelData.cloudRadius;
         float maximumCloudDuration = levelData.maximumCloudDuration;
-        float bonusMoveSpeedPerTargetInTheCloudModifier = levelData.bonusMoveSpeedPerTargetInTheCloud;
+        float bonusMoveSpeedPerTargetInTheCloudModifier = levelData.bonusMoveSpeedPerTargetInTheCloudModifier;
 
         // Update distance traveled
         PlayerMovementComponent playerMovementComponent = entityManager.GetComponentData<PlayerMovementComponent>(player);

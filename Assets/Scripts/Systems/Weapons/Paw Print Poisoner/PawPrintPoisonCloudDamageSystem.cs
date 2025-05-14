@@ -6,7 +6,7 @@ using Unity.Transforms;
 using UnityEngine;
 using Unity.Mathematics;
 
-//[BurstCompile]
+[BurstCompile]
 [UpdateAfter(typeof(PawPrintPoisonCloudExistingSystem))]
 public partial struct PawPrintPoisonCloudDamageSystem : ISystem
 {
@@ -31,7 +31,7 @@ public partial struct PawPrintPoisonCloudDamageSystem : ISystem
                 physicsWorldSingleton.SphereCastAll(transform.ValueRO.Position, cloud.ValueRO.cloudRadius / 2, float3.zero, 1,
                     ref hits, CollisionFilter.Default);
 
-                DebugDrawSphere(transform.ValueRO.Position, cloud.ValueRO.cloudRadius / 2, Color.magenta);
+                //DebugDrawSphere(transform.ValueRO.Position, cloud.ValueRO.cloudRadius / 2, Color.magenta);
 
                 int damage = cloud.ValueRO.damagePerTick;
                 foreach (var enemy in hits)
@@ -43,7 +43,6 @@ public partial struct PawPrintPoisonCloudDamageSystem : ISystem
                     ecb.AddComponent(enemy.Entity, new DamageEventComponent { damageAmount = damage });
 
                     double elapsedTime = SystemAPI.Time.ElapsedTime;
-                    Debug.Log($"enemy {enemy.Entity.Index} - {damage} hp, cloud {cloudEntity.Index} time: {elapsedTime}");
                 }
 
                 cloud.ValueRW.tickTimer = cloud.ValueRO.tick;
