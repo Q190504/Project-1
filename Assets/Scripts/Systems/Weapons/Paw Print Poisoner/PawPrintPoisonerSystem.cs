@@ -23,6 +23,7 @@ public partial struct PawPrintPoisonerSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
+        if (!GameManager.Instance.GetGameState()) return;
 
         if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
         {

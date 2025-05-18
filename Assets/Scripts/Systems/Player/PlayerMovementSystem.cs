@@ -28,6 +28,8 @@ public partial struct PlayerMovementSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
+        if (!GameManager.Instance.GetGameState()) return;
+
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
         #region Checking

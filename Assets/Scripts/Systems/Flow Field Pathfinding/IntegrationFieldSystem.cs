@@ -1,7 +1,6 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Entities.UniversalDelegates;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
@@ -14,6 +13,8 @@ public partial struct IntegrationFieldSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
+        if (!GameManager.Instance.GetGameState()) return;
+
         foreach (var (grid, pathBuffer) in SystemAPI.Query<RefRO<FlowFieldGridDataComponent>, DynamicBuffer<GridNode>>())
         {
             for (int i = 0; i < pathBuffer.Length; i++)

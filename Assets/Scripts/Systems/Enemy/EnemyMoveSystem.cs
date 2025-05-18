@@ -21,6 +21,8 @@ public partial struct EnemyMoveSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
+        if (!GameManager.Instance.GetGameState()) return;
+
         if (gridQuery.IsEmpty)
         {
             Debug.Log("Can't find grid in EnemyMoveSystem!");

@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] IntPublisherSO enemiesKilledPublisher;
 
     private bool hasGameStarted = false;
+    [SerializeField] VoidPublisherSO endGamePublisher;
 
     private double timeSinceStartPlaying = 0;
     [SerializeField] DoublePublisherSO timePublisher;
@@ -45,7 +46,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         // TO DO: Remove
-        StartGame();
+        //StartGame();
     }
 
     // Update is called once per frame
@@ -81,6 +82,7 @@ public class GameManager : MonoBehaviour
     public void EndGame()
     {
         hasGameStarted = false;
+        endGamePublisher.RaiseEvent();
     }
 
     public float3 GetPlayerInitialPosition()
@@ -92,5 +94,10 @@ public class GameManager : MonoBehaviour
         }
 
         return playerInitalPosition.gameObject.transform.position;
+    }
+
+    public bool GetGameState()
+    {
+        return hasGameStarted;
     }
 }

@@ -13,6 +13,8 @@ public partial struct RadiantFieldMoveSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
+        if (!GameManager.Instance.GetGameState()) return;
+
         var deltaTime = SystemAPI.Time.DeltaTime;
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))

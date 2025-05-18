@@ -13,6 +13,8 @@ public partial struct EnemyHealthSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
+        if (!GameManager.Instance.GetGameState()) return;
+
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
         var enemyEntitiesToReturn = new NativeList<Entity>(Allocator.Temp);

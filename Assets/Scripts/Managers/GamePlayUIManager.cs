@@ -11,8 +11,10 @@ public class GamePlayUIManager : MonoBehaviour
 
     [Header("Panels")]
     public GameObject titlePanel;
+    public GameObject endGamePanel;
     public GameObject settingPanel;
     public GameObject audioSettingPanel;
+    public GameObject creditPanel;
 
     [Header("Texts")]
     public TMP_Text timeText;
@@ -94,13 +96,15 @@ public class GamePlayUIManager : MonoBehaviour
         SetSettingPanel(false);
 
         // TO DO: Set to false
-        //SetTitlePanel(true);
-        SetTitlePanel(false);
+        SetTitlePanel(true);
+        //SetTitlePanel(false);
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (!GameManager.Instance.GetGameState()) return;
+
         playerInput = entityManager.GetComponentData<PlayerInputComponent>(player);
 
         if (playerInput.isEscPressed)
@@ -253,5 +257,15 @@ public class GamePlayUIManager : MonoBehaviour
     public void SetEnemyKilled(int enemyKilled)
     {
         enemyKilledText.text = enemyKilled.ToString();
+    }
+
+    public void SetCreditPanel(bool status)
+    {
+        creditPanel.SetActive(status);
+    }
+
+    public void SetEndGamePanel(bool status)
+    {
+        endGamePanel.SetActive(status);
     }
 }

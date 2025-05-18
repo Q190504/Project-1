@@ -14,6 +14,8 @@ public partial struct SlimeBeamSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
+        if (!GameManager.Instance.GetGameState()) return;
+
         float deltaTime = SystemAPI.Time.DeltaTime;
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 

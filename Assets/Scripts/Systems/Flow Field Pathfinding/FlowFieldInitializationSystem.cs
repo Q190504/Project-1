@@ -7,6 +7,8 @@ public partial struct FlowFieldInitializationSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
+        if (!GameManager.Instance.GetGameState()) return;
+
         // Track Initialization Progress
         if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker))
         {
