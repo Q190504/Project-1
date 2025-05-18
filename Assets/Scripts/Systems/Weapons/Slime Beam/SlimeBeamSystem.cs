@@ -1,5 +1,8 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+
+[BurstCompile]
 public partial struct SlimeBeamSystem : ISystem
 {
     private EntityManager entityManager;
