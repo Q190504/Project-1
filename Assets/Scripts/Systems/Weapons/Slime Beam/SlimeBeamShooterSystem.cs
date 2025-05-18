@@ -24,7 +24,7 @@ public partial struct SlimeBeamShooterSystem : ISystem
 
         if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
         {
-            Debug.Log($"Cant Found Player Entity in SlimeBeamSystem!");
+            Debug.Log($"Cant Found Player Entity in SlimeBeamShooterSystem!");
             return;
         }
 
@@ -54,7 +54,6 @@ public partial struct SlimeBeamShooterSystem : ISystem
 
             if(level == 5) //max level
             {
-                //TO DO: Only spawn once, do not return beams
                 for (int beamCount = 0; beamCount < 4; beamCount++)
                     PerformSingleBeam(entity, spawnOffsetPositon, damage, beamCount, ecb);
 
