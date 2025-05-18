@@ -9,6 +9,15 @@ public class GamePlayUIManager : MonoBehaviour
 {
     private static GamePlayUIManager _instance;
 
+    [Header("Panels")]
+    public GameObject settingPanel;
+    public GameObject audioSettingPanel;
+
+    [Header("Buttons")]
+    public Button continueButton;
+    public Button homeButton;
+    public Button openAudioSettingButton;
+
     [Header("Bars")]
     public Slider hpBar;
     public TMP_Text hpText;
@@ -49,6 +58,7 @@ public class GamePlayUIManager : MonoBehaviour
 
     private Entity player;
     private EntityManager entityManager;
+    PlayerInputComponent playerInput;
 
     public static GamePlayUIManager Instance
     {
@@ -74,14 +84,25 @@ public class GamePlayUIManager : MonoBehaviour
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
         EntityQuery playerQuery = entityManager.CreateEntityQuery(typeof(PlayerTagComponent));
-        if (playerQuery.CalculateEntityCount() > 0)
-            player = playerQuery.GetSingletonEntity();
+        if (playerQuery.CalculateEntityCount() == 0)
+        {
+            Debug.LogError("[GamePlayUIManager] Player not found in the scene.");
+            return;
+        }
+        player = playerQuery.GetSingletonEntity();
+
+        SetSettingPanel(false);
     }
 
     // Update is called once per frame
     void Update()
     {
+        playerInput = entityManager.GetComponentData<PlayerInputComponent>(player);
 
+        if (playerInput.isEscPressed)
+        {
+            SetSettingPanel(!settingPanel.activeSelf);
+        }
     }
 
     public void UpdateHPBar(int currentHP, int maxHP)
@@ -128,7 +149,7 @@ public class GamePlayUIManager : MonoBehaviour
 
     public void SetSkill2ImageOpacity(bool status)
     {
-        if(status)
+        if (status)
             SetImageOpacity(skill2Image, 1);
         else
             SetImageOpacity(skill2Image, 0.5f);
@@ -203,5 +224,15 @@ public class GamePlayUIManager : MonoBehaviour
     {
         Destroy(effectImageList[imageIndex].gameObject);
         imageIndex = -1;
+    }
+
+    public void SetSettingPanel(bool status)
+    {
+        settingPanel.SetActive(status);
+    }
+
+    public void SetAudioSettingPanel(bool status)
+    {
+        audioSettingPanel.SetActive(status);
     }
 }
