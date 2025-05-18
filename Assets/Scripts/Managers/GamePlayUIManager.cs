@@ -10,6 +10,7 @@ public class GamePlayUIManager : MonoBehaviour
     private static GamePlayUIManager _instance;
 
     [Header("Panels")]
+    public GameObject titlePanel;
     public GameObject settingPanel;
     public GameObject audioSettingPanel;
 
@@ -92,6 +93,10 @@ public class GamePlayUIManager : MonoBehaviour
         player = playerQuery.GetSingletonEntity();
 
         SetSettingPanel(false);
+
+        // TO DO: Set to false
+        //titlePanel.SetActive(true);
+        titlePanel.SetActive(false);
     }
 
     // Update is called once per frame
