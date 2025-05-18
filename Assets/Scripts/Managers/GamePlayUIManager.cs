@@ -17,8 +17,11 @@ public class GamePlayUIManager : MonoBehaviour
     public GameObject creditPanel;
 
     [Header("Texts")]
-    public TMP_Text timeText;
-    public TMP_Text enemyKilledText;
+    public TMP_Text inGameTimeText;
+    public TMP_Text inGameEnemyKilledText;
+    public TMP_Text endGamePanelTitleText;
+    public TMP_Text endGameTimeText;
+    public TMP_Text endGameEnemyKilledText;
 
     [Header("Bars")]
     public Slider hpBar;
@@ -98,6 +101,8 @@ public class GamePlayUIManager : MonoBehaviour
         // TO DO: Set to false
         SetTitlePanel(true);
         //SetTitlePanel(false);
+
+        CloseEndGamePanel();
     }
 
     // Update is called once per frame
@@ -251,12 +256,12 @@ public class GamePlayUIManager : MonoBehaviour
 
     public void SetTime(double time)
     {
-        timeText.text = $"{(int)time / 60:D2} : {(int)time % 60:D2}";
+        inGameTimeText.text = $"{(int)time / 60:D2} : {(int)time % 60:D2}";
     }
 
     public void SetEnemyKilled(int enemyKilled)
     {
-        enemyKilledText.text = enemyKilled.ToString();
+        inGameEnemyKilledText.text = enemyKilled.ToString();
     }
 
     public void SetCreditPanel(bool status)
@@ -264,8 +269,27 @@ public class GamePlayUIManager : MonoBehaviour
         creditPanel.SetActive(status);
     }
 
-    public void SetEndGamePanel(bool status)
+    public void OpenEndGamePanel(bool result)
     {
-        endGamePanel.SetActive(status);
+        if (result)
+        {
+           endGamePanelTitleText.text = "VICTORY";
+        }
+        else
+        {
+            endGamePanelTitleText.text = "DEFEATED";
+        }
+
+        endGameTimeText.text = inGameTimeText.text;
+        endGameEnemyKilledText.text = inGameEnemyKilledText.text;
+
+        endGamePanel.SetActive(true);
+    }
+
+    public void CloseEndGamePanel()
+    {
+        endGameTimeText.text = "00 : 00";
+        endGameEnemyKilledText.text = "0";
+        endGamePanel.SetActive(false);
     }
 }
