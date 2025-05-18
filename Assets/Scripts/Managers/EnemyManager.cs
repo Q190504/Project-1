@@ -144,29 +144,38 @@ public class EnemyManager : MonoBehaviour
 
         for (int i = 0; i < enemyPrepare; i++)
         {
-            Entity slimeBulletInstance = entityManager.Instantiate(enemyPrefab);
-            entityManager.AddComponent<Disabled>(slimeBulletInstance);
-            inactiveEnemies.Enqueue(slimeBulletInstance);
+            Entity enemy = entityManager.Instantiate(enemyPrefab);
+            entityManager.AddComponent<Disabled>(enemy);
+            inactiveEnemies.Enqueue(enemy);
             enemyCount++;
         }
     }
+
     public Entity Take()
     {
         if (inactiveEnemies.IsEmpty())
             PrepareEnemy();
 
-        Entity slimeBulletInstance = inactiveEnemies.Dequeue();
+        Entity enemy = inactiveEnemies.Dequeue();
         enemyCount--;
-        entityManager.RemoveComponent<Disabled>(slimeBulletInstance);
-        return slimeBulletInstance;
+        entityManager.RemoveComponent<Disabled>(enemy);
+        return enemy;
     }
 
-    public void Return(Entity bullet)
+    public void Return(Entity enemy)
     {
-        if (!entityManager.Exists(bullet)) return;
+        if (!entityManager.Exists(enemy)) return;
 
-        entityManager.AddComponent<Disabled>(bullet);
-        inactiveEnemies.Enqueue(bullet);
+        if (entityManager.HasComponent<StunTimerComponent>(enemy))
+            entityManager.RemoveComponent<StunTimerComponent>(enemy);
+        if (entityManager.HasComponent<SlowedByRadiantFieldTag>(enemy))
+            entityManager.RemoveComponent<SlowedByRadiantFieldTag>(enemy);
+        if (entityManager.HasComponent<SlowedBySlimeBulletTag>(enemy))
+            entityManager.RemoveComponent<SlowedBySlimeBulletTag>(enemy);
+
+        entityManager.AddComponent<Disabled>(enemy);
+
+        inactiveEnemies.Enqueue(enemy);
         enemyCount++;
     }
 }
