@@ -28,8 +28,6 @@ public partial struct PlayerMovementSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!GameManager.Instance.GetGameState()) return;
-
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
         #region Checking
@@ -106,9 +104,11 @@ public partial struct PlayerMovementSystem : ISystem
             }
         }
 
-
         float3 targetVelocity;
-        if (playerTagComponent.isStunned)
+
+        if (!GameManager.Instance.GetGameState())
+            targetVelocity = float3.zero; 
+        else if(playerTagComponent.isStunned)
             targetVelocity = float3.zero;
         else if (playerTagComponent.isFrenzing)
             targetVelocity = new float3(playerInput.moveInput.x, playerInput.moveInput.y, 0)

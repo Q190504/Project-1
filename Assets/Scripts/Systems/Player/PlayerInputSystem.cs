@@ -30,6 +30,8 @@ public partial struct PlayerInputSystem : ISystem
 
         foreach (var playerInput in SystemAPI.Query<RefRW<PlayerInputComponent>>())
         {
+            if (GameManager.Instance.GetGameState() == false) return;
+
             playerInput.ValueRW.moveInput = movement;
             //playerInput.ValueRW.isShootingPressed = isShooting;
             playerInput.ValueRW.isCPressed = isPressingCKey;

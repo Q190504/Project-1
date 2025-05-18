@@ -12,8 +12,6 @@ public partial struct FlowFieldDebugSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
-        if (!GameManager.Instance.GetGameState()) return;
-
         EntityQuery gridQuery = state.EntityManager.CreateEntityQuery(typeof(FlowFieldGridDataComponent), typeof(GridNode));
 
         if (gridQuery.IsEmpty)

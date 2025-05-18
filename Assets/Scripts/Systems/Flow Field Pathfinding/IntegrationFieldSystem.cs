@@ -13,8 +13,6 @@ public partial struct IntegrationFieldSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!GameManager.Instance.GetGameState()) return;
-
         foreach (var (grid, pathBuffer) in SystemAPI.Query<RefRO<FlowFieldGridDataComponent>, DynamicBuffer<GridNode>>())
         {
             for (int i = 0; i < pathBuffer.Length; i++)

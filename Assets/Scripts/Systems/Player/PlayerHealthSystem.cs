@@ -60,6 +60,7 @@ public partial struct PlayerHealthSystem : ISystem
                 {
                     //onDie action
                     Debug.Log("Player Died!");
+                    GameManager.Instance.EndGame(false);
                 }
 
                 ecb.RemoveComponent<DamageEventComponent>(playerEntity);

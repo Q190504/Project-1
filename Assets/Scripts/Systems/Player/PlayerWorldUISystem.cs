@@ -7,8 +7,6 @@ public partial struct PlayerWorldUISystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
-        if (!GameManager.Instance.GetGameState()) return;
-
         var ecb = new EntityCommandBuffer(state.WorldUpdateAllocator);
 
         foreach (var (uiPrefab, entity) in SystemAPI.Query<PlayerWorldUIPrefab>().WithNone<PlayerWorldUI>().WithEntityAccess())

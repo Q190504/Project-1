@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] IntPublisherSO enemiesKilledPublisher;
 
     private bool hasGameStarted = false;
-    [SerializeField] VoidPublisherSO endGamePublisher;
+    [SerializeField] BoolPublisherSO endGamePublisher;
 
     private double timeSinceStartPlaying = 0;
     [SerializeField] DoublePublisherSO timePublisher;
@@ -79,10 +79,10 @@ public class GameManager : MonoBehaviour
         hasGameStarted = true;
     }
 
-    public void EndGame()
+    public void EndGame(bool result)
     {
         hasGameStarted = false;
-        endGamePublisher.RaiseEvent();
+        endGamePublisher.RaiseEvent(result);
     }
 
     public float3 GetPlayerInitialPosition()
