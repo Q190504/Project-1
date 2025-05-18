@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Events;
 
-public class FloatEventListener : MonoBehaviour
+public class DoubleEventListener : MonoBehaviour
 {
-    [SerializeField] private UnityEvent<float> EventResponse;
-    [SerializeField] private FloatPublisherSO publisher;
+    [SerializeField] private UnityEvent<double> EventResponse;
+    [SerializeField] private DoublePublisherSO publisher;
 
     private void OnEnable()
     {
@@ -16,7 +16,7 @@ public class FloatEventListener : MonoBehaviour
         publisher.OnEventRaised -= Respond;
     }
 
-    private void Respond(float value)
+    private void Respond(double value)
     {
         EventResponse?.Invoke(value);
     }

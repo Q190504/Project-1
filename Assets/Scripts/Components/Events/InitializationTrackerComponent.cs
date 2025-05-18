@@ -3,7 +3,8 @@ using UnityEngine;
 
 public struct InitializationTrackerComponent : IComponentData 
 {
-    public bool healthSystemInitialized;
+    public bool playerHealthSystemInitialized;
+    public bool playerPositionSystemInitialized;
     public bool xpSystemInitialized;
     public bool weaponSystemInitialized;
     public bool flowFieldSystemInitialized;

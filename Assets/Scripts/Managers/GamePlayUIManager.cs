@@ -14,10 +14,9 @@ public class GamePlayUIManager : MonoBehaviour
     public GameObject settingPanel;
     public GameObject audioSettingPanel;
 
-    [Header("Buttons")]
-    public Button continueButton;
-    public Button homeButton;
-    public Button openAudioSettingButton;
+    [Header("Texts")]
+    public TMP_Text timeText;
+    public TMP_Text enemyKilledText;
 
     [Header("Bars")]
     public Slider hpBar;
@@ -95,8 +94,8 @@ public class GamePlayUIManager : MonoBehaviour
         SetSettingPanel(false);
 
         // TO DO: Set to false
-        //titlePanel.SetActive(true);
-        titlePanel.SetActive(false);
+        //SetTitlePanel(true);
+        SetTitlePanel(false);
     }
 
     // Update is called once per frame
@@ -239,5 +238,20 @@ public class GamePlayUIManager : MonoBehaviour
     public void SetAudioSettingPanel(bool status)
     {
         audioSettingPanel.SetActive(status);
+    }
+
+    public void SetTitlePanel(bool status)
+    {
+        titlePanel.SetActive(status);
+    }
+
+    public void SetTime(double time)
+    {
+        timeText.text = $"{(int)time / 60:D2} : {(int)time % 60:D2}";
+    }
+
+    public void SetEnemyKilled(int enemyKilled)
+    {
+        enemyKilledText.text = enemyKilled.ToString();
     }
 }

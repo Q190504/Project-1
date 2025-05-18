@@ -177,5 +177,7 @@ public class EnemyManager : MonoBehaviour
 
         inactiveEnemies.Enqueue(enemy);
         enemyCount++;
+
+        GameManager.Instance.AddEnemyKilled();
     }
 }

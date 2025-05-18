@@ -27,14 +27,14 @@ public partial struct PlayerHealthSystem : ISystem
             // Track Initialization Progress
             if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker))
             {
-                if (!tracker.healthSystemInitialized)
+                if (!tracker.playerHealthSystemInitialized)
                 {
                     var playerHealth = SystemAPI.GetComponent<PlayerHealthComponent>(player);
 
                     UpdateHPBar(playerHealth.currentHealth, playerHealth.maxHealth);
 
                     // Update tracker
-                    tracker.healthSystemInitialized = true;
+                    tracker.playerHealthSystemInitialized = true;
                     ecb.SetComponent(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), tracker);
                 }
             }
