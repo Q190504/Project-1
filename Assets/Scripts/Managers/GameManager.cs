@@ -45,14 +45,13 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // TO DO: Remove
-        //StartGame();
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(!hasGameStarted) return;
+        if (!hasGameStarted) return;
         AddTime();
     }
 
@@ -66,6 +65,12 @@ public class GameManager : MonoBehaviour
     {
         timeSinceStartPlaying += Time.deltaTime;
         timePublisher.RaiseEvent(timeSinceStartPlaying);
+
+        // Win if reach 15 minutes
+        if ((int)timeSinceStartPlaying / 60 == 15 && (int)timeSinceStartPlaying % 60 == 0)
+        {
+            EndGame(true);
+        }
     }
 
     public void StartGame()
@@ -87,7 +92,7 @@ public class GameManager : MonoBehaviour
 
     public float3 GetPlayerInitialPosition()
     {
-        if(playerInitalPosition == null)
+        if (playerInitalPosition == null)
         {
             Debug.LogError("Player initial position is not set in GameManager.");
             return float3.zero;

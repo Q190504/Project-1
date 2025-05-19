@@ -98,9 +98,7 @@ public class GamePlayUIManager : MonoBehaviour
 
         SetSettingPanel(false);
 
-        // TO DO: Set to false
         SetTitlePanel(true);
-        //SetTitlePanel(false);
 
         CloseEndGamePanel();
     }
@@ -291,5 +289,14 @@ public class GamePlayUIManager : MonoBehaviour
         endGameTimeText.text = "00 : 00";
         endGameEnemyKilledText.text = "0";
         endGamePanel.SetActive(false);
+    }
+
+    public void OnStartGame()
+    {
+        SetSettingPanel(false);
+
+        SetTitlePanel(false);
+
+        CloseEndGamePanel();
     }
 }

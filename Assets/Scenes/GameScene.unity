@@ -6835,7 +6835,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c26ae07fecb79c439c5fa21ebecc62e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  setGameStateSO: {fileID: 11400000, guid: 4f50fb2923ccf2b4a8dae90a703b9050, type: 2}
+  setGameStateSO: {fileID: 11400000, guid: e7063971faa35dc4f97136c4f7bba067, type: 2}
 --- !u!114 &674677626
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8104,6 +8104,7 @@ GameObject:
   - component: {fileID: 922116004}
   - component: {fileID: 922116006}
   - component: {fileID: 922116007}
+  - component: {fileID: 922116008}
   m_Layer: 0
   m_Name: GamePlayUIManager
   m_TagString: Untagged
@@ -8275,8 +8276,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 922116002}
         m_TargetAssemblyTypeName: GamePlayUIManager, Assembly-CSharp
-        m_MethodName: SetTitlePanel
-        m_Mode: 6
+        m_MethodName: OnStartGame
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -8314,6 +8315,34 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   publisher: {fileID: 11400000, guid: 56428737d052c1f46bb975ea4ba8b5ba, type: 2}
+--- !u!114 &922116008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 922116000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4d67c870696e604e92e17f2f06b7f05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EventResponse:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 922116002}
+        m_TargetAssemblyTypeName: GamePlayUIManager, Assembly-CSharp
+        m_MethodName: SetTitlePanel
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  publisher: {fileID: 11400000, guid: e7063971faa35dc4f97136c4f7bba067, type: 2}
 --- !u!1 &955689985
 GameObject:
   m_ObjectHideFlags: 0
