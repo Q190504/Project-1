@@ -5,10 +5,8 @@ using Unity.Physics;
 using Unity.Transforms;
 using UnityEngine;
 using Unity.Mathematics;
-using System;
-using UnityEngine.UIElements;
 
-//[BurstCompile]
+[BurstCompile]
 [UpdateAfter(typeof(GameInitializationSystem))]
 [UpdateAfter(typeof(PawPrintPoisonCloudExistingSystem))]
 [UpdateAfter(typeof(PawPrintPoisonerSystem))]
