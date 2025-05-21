@@ -77,7 +77,7 @@ public class GameManager : MonoBehaviour
         timePublisher.RaiseEvent(timeSinceStartPlaying);
 
         // Win if reach 15 minutes
-        if ((int)timeSinceStartPlaying / 60 == 0 && (int)timeSinceStartPlaying % 60 == 7)
+        if ((int)timeSinceStartPlaying / 60 == 15 && (int)timeSinceStartPlaying % 60 == 0)
         {
             EndGame(true);
         }

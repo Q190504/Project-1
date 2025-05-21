@@ -4170,7 +4170,7 @@ MonoBehaviour:
   cooldownTime: 10
   stunPlayerTime: 1.5
   hpHealPrecentPerBullet: 1.25
-  bulletSpeedWhenSummoned: 20
+  bulletSpeedWhenSummoned: 30
 --- !u!114 &1711749698
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -54,8 +54,8 @@ struct SlimeBulletDamageEnemyJob : ITriggerEventsJob
 
             var bulletComponent = slimeBulletLookup[bulletEntity];
 
-            // Skip if already hit this enemy or stopped moving
-            if (!bulletComponent.isAbleToMove || bulletComponent.lastHitEnemy == enemyEntity)
+            // Skip if  (stopped moving and not being summoned) or already hit this enemy 
+            if ((!bulletComponent.isAbleToMove && !bulletComponent.isBeingSummoned)|| bulletComponent.lastHitEnemy == enemyEntity)
                 return;
 
             // Deal damage
@@ -66,9 +66,12 @@ struct SlimeBulletDamageEnemyJob : ITriggerEventsJob
 
             ecb.AddComponent(enemyEntity, new DamageEventComponent { damageAmount = damage });
 
-            // Reduce damage for future hits
-            bulletComponent.remainingDamage = (int)(damage * bulletComponent.passthroughDamageModifier);
-            bulletComponent.lastHitEnemy = enemyEntity;
+            // Reduce damage for future hits if the bullet is not being summoned
+            if(!bulletComponent.isBeingSummoned)
+            {
+                bulletComponent.remainingDamage = (int)(damage * bulletComponent.passthroughDamageModifier);
+                bulletComponent.lastHitEnemy = enemyEntity;
+            }
 
             ecb.SetComponent(bulletEntity, bulletComponent);
         }

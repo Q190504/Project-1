@@ -75,7 +75,7 @@ public partial struct SlimeReclaimSystem : ISystem
                     }
                 }
                 else
-                    GamePlayUIManager.Instance.SetSkill1ImageOpacity(false);
+                    GamePlayUIManager.Instance.SetSkill2ImageOpacity(false);
             }
             else
             {

@@ -32,7 +32,11 @@ public partial struct SlimeFrenzySystem : ISystem
             if (cooldownTimer <= 0)
             {
                 GamePlayUIManager.Instance.SetSkill1CooldownUI(false);
-                GamePlayUIManager.Instance.SetSkill1ImageOpacity(true);
+
+                if(!isFrenzyActive)
+                    GamePlayUIManager.Instance.SetSkill1ImageOpacity(true);
+                else
+                    GamePlayUIManager.Instance.SetSkill1ImageOpacity(false);
 
                 if (playerInput.isCPressed
                 && CheckPlayerHealth(playerHealthComponent.currentHealth, playerHealthComponent.maxHealth))
