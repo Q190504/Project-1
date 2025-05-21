@@ -30,12 +30,14 @@ public partial struct PlayerHealthSystem : ISystem
                 var playerHealth = SystemAPI.GetComponent<PlayerHealthComponent>(player);
 
                 playerHealth.currentHealth = playerHealth.maxHealth;
+                state.EntityManager.SetComponentData(player, playerHealth);
+
                 UpdateHPBar(playerHealth.currentHealth, playerHealth.maxHealth);
 
                 // Update tracker
                 tracker.playerHealthSystemInitialized = true;
 
-                ecb.SetComponent(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), tracker);
+                state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), tracker);
             }
         }
 
