@@ -9,6 +9,20 @@ public class GamePlayUIManager : MonoBehaviour
 {
     private static GamePlayUIManager _instance;
 
+    [Header("Panels")]
+    public GameObject titlePanel;
+    public GameObject endGamePanel;
+    public GameObject settingPanel;
+    public GameObject audioSettingPanel;
+    public GameObject creditPanel;
+
+    [Header("Texts")]
+    public TMP_Text inGameTimeText;
+    public TMP_Text inGameEnemyKilledText;
+    public TMP_Text endGamePanelTitleText;
+    public TMP_Text endGameTimeText;
+    public TMP_Text endGameEnemyKilledText;
+
     [Header("Bars")]
     public Slider hpBar;
     public TMP_Text hpText;
@@ -49,6 +63,7 @@ public class GamePlayUIManager : MonoBehaviour
 
     private Entity player;
     private EntityManager entityManager;
+    PlayerInputComponent playerInput;
 
     public static GamePlayUIManager Instance
     {
@@ -74,14 +89,32 @@ public class GamePlayUIManager : MonoBehaviour
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
         EntityQuery playerQuery = entityManager.CreateEntityQuery(typeof(PlayerTagComponent));
-        if (playerQuery.CalculateEntityCount() > 0)
-            player = playerQuery.GetSingletonEntity();
+        if (playerQuery.CalculateEntityCount() == 0)
+        {
+            Debug.LogError("[GamePlayUIManager] Player not found in the scene.");
+            return;
+        }
+        player = playerQuery.GetSingletonEntity();
+
+        SetSettingPanel(false);
+
+        SetTitlePanel(true);
+
+        CloseEndGamePanel();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (GameManager.Instance.IsPlaying())
+        {
+            playerInput = entityManager.GetComponentData<PlayerInputComponent>(player);
 
+            if (playerInput.isEscPressed)
+            {
+                SetSettingPanel(!settingPanel.activeSelf);
+            }
+        }
     }
 
     public void UpdateHPBar(int currentHP, int maxHP)
@@ -128,7 +161,7 @@ public class GamePlayUIManager : MonoBehaviour
 
     public void SetSkill2ImageOpacity(bool status)
     {
-        if(status)
+        if (status)
             SetImageOpacity(skill2Image, 1);
         else
             SetImageOpacity(skill2Image, 0.5f);
@@ -203,5 +236,68 @@ public class GamePlayUIManager : MonoBehaviour
     {
         Destroy(effectImageList[imageIndex].gameObject);
         imageIndex = -1;
+    }
+
+    public void SetSettingPanel(bool status)
+    {
+        settingPanel.SetActive(status);
+    }
+
+    public void SetAudioSettingPanel(bool status)
+    {
+        audioSettingPanel.SetActive(status);
+    }
+
+    public void SetTitlePanel(bool status)
+    {
+        titlePanel.SetActive(status);
+    }
+
+    public void SetTime(double time)
+    {
+        inGameTimeText.text = $"{(int)time / 60:D2} : {(int)time % 60:D2}";
+    }
+
+    public void SetEnemyKilled(int enemyKilled)
+    {
+        inGameEnemyKilledText.text = enemyKilled.ToString();
+    }
+
+    public void SetCreditPanel(bool status)
+    {
+        creditPanel.SetActive(status);
+    }
+
+    public void OpenEndGamePanel(bool result)
+    {
+        if (result)
+        {
+           endGamePanelTitleText.text = "VICTORY";
+        }
+        else
+        {
+            endGamePanelTitleText.text = "DEFEATED";
+        }
+
+        endGameTimeText.text = inGameTimeText.text;
+        endGameEnemyKilledText.text = inGameEnemyKilledText.text;
+
+        endGamePanel.SetActive(true);
+    }
+
+    public void CloseEndGamePanel()
+    {
+        endGameTimeText.text = "00 : 00";
+        endGameEnemyKilledText.text = "0";
+        endGamePanel.SetActive(false);
+    }
+
+    public void OnStartGame()
+    {
+        SetSettingPanel(false);
+
+        SetTitlePanel(false);
+
+        CloseEndGamePanel();
     }
 }

@@ -20,6 +20,8 @@ public partial struct SlimeBulletSlowEnemySystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
+        if (!GameManager.Instance.IsPlaying()) return;
+
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
         // Temporarily track enemies that should remain slowed

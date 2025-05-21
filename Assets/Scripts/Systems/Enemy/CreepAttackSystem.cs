@@ -18,6 +18,8 @@ public partial struct CreepAttackSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
+        if (!GameManager.Instance.IsPlaying()) return;
+
         var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 

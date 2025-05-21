@@ -26,6 +26,8 @@ public class EnemySpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!GameManager.Instance.IsPlaying()) return;
+
         if (playerEntity == Entity.Null) return;
 
         LocalTransform playerTransform = entityManager.GetComponentData<LocalTransform>(playerEntity);

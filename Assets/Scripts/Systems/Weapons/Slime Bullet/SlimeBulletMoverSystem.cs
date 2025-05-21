@@ -14,6 +14,11 @@ public partial struct SlimeBulletMoverSystem : ISystem
 
         foreach (var (localTransform, slimeBulletComponent, physicsVelocity, entity) in SystemAPI.Query<RefRW<LocalTransform>, RefRW<SlimeBulletComponent>, RefRW<PhysicsVelocity>>().WithEntityAccess())
         {
+            if (!GameManager.Instance.IsPlaying())
+            {
+                slimeBulletComponent.ValueRW.isAbleToMove = false;
+            }
+
             if (slimeBulletComponent.ValueRO.isAbleToMove)
             {
                 float3 targetVelocity = new float3(slimeBulletComponent.ValueRO.moveDirection.x, slimeBulletComponent.ValueRO.moveDirection.y, 0) * slimeBulletComponent.ValueRO.moveSpeed;

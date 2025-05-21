@@ -7,6 +7,7 @@ using Unity.Transforms;
 using UnityEngine;
 
 [BurstCompile]
+[UpdateAfter(typeof(ResetWeaponSystem))]
 [UpdateAfter(typeof(PlayerMovementSystem))]
 public partial struct PawPrintPoisonerSystem : ISystem
 {
@@ -23,7 +24,6 @@ public partial struct PawPrintPoisonerSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-
         if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
         {
             Debug.Log($"Cant Found Player Entity in PawPrintPoisonerSystem!");
@@ -38,6 +38,24 @@ public partial struct PawPrintPoisonerSystem : ISystem
 
         var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+
+        // Clean up all old clouds from the previous game
+        if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker) && !tracker.hasCleanCloudList && GameManager.Instance.IsInitializing())
+        {
+            if (!clouds.IsEmpty)
+                clouds.Clear();
+
+            // Update tracker
+            tracker.hasCleanCloudList = true;
+            ecb.SetComponent(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), tracker);
+        }
+
+        //Game has not started yet
+        if(!GameManager.Instance.IsPlaying())
+        {
+            return;
+        }
+
         float deltaTime = SystemAPI.Time.DeltaTime;
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
@@ -52,7 +70,7 @@ public partial struct PawPrintPoisonerSystem : ISystem
         // Determine pawPrintPoisonerComponent level
         int level = pawPrintPoisoner.level;
 
-        if (level <= 0) // is active
+        if (level <= 0) // is inactive
         {
             return;
         }
@@ -94,7 +112,7 @@ public partial struct PawPrintPoisonerSystem : ISystem
                     break;
                 }
             }
-            
+
             // If the player is in any existing cloud, do not create a new one
             if (!isNotInCloud)
             {

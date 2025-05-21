@@ -17,6 +17,8 @@ public partial struct SlimeReclaimSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
+        if (!GameManager.Instance.IsPlaying()) return;
+
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
         {

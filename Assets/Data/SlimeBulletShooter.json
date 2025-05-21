@@ -23,7 +23,7 @@
       "minimumDistanceBetweenBullets": 0.25,
       "maximumDistanceBetweenBullets": 0.45,
       "passthroughDamageModifier": 0.6,
-      "moveSpeed": 13,
+      "moveSpeed": 20,
       "existDuration": 8,
       "slowModifier": 0,
       "slowRadius": 0

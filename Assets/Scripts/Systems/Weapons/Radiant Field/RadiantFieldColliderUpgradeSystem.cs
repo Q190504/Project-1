@@ -7,6 +7,7 @@ using Unity.Burst;
 using Unity.Transforms;
 
 [BurstCompile]
+[UpdateAfter(typeof(GameInitializationSystem))]
 public partial struct RadiantFieldColliderUpgradeSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
@@ -16,9 +17,11 @@ public partial struct RadiantFieldColliderUpgradeSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+        if (!GameManager.Instance.IsPlaying()) return;
 
-        foreach (var (weapon, localTransform, entity) in SystemAPI.Query<RefRW<RadiantFieldComponent>, RefRW<LocalTransform>>().WithEntityAccess())
+        //EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+
+        foreach (var (weapon, localTransform) in SystemAPI.Query<RefRW<RadiantFieldComponent>, RefRW<LocalTransform>>())
         {
             ref var radiantField = ref weapon.ValueRW;
             var blobData = radiantField.Data;

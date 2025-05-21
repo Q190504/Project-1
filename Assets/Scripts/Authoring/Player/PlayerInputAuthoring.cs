@@ -4,10 +4,6 @@ using UnityEngine;
 
 public class PlayerInputAuthoring : MonoBehaviour
 {
-    public float2 moveInput;
-    public bool isShootingPressed;
-    public bool isSkillPressed;
-
     class PlayerInputBaker : Baker<PlayerInputAuthoring>
     {
         public override void Bake(PlayerInputAuthoring authoring)
@@ -24,4 +20,5 @@ public struct PlayerInputComponent : IComponentData
     public bool isShootingPressed;
     public bool isCPressed;
     public bool isSpacePressed;
+    public bool isEscPressed;
 }

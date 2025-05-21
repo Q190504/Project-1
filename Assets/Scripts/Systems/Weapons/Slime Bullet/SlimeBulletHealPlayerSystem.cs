@@ -11,30 +11,30 @@ public partial struct SlimeBulletHealPlayerSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        return;
+        if (!GameManager.Instance.IsPlaying()) return;
 
-        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
-        NativeList<Entity> bulletsToReturn = new NativeList<Entity>(Allocator.TempJob);
+        //var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        //var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+        //NativeList<Entity> bulletsToReturn = new NativeList<Entity>(Allocator.TempJob);
 
-        var job = new SlimeBulletHealPlayerJob
-        {
-            slimeBulletLookup = SystemAPI.GetComponentLookup<SlimeBulletComponent>(true),
-            slimeReclaimComponentLookup = SystemAPI.GetComponentLookup<SlimeReclaimComponent>(true),
-            playerLookup = SystemAPI.GetComponentLookup<PlayerHealthComponent>(true),
-            ecb = ecb,
-            bulletsToReturn = bulletsToReturn,
-        };
+        //var job = new SlimeBulletHealPlayerJob
+        //{
+        //    slimeBulletLookup = SystemAPI.GetComponentLookup<SlimeBulletComponent>(true),
+        //    slimeReclaimComponentLookup = SystemAPI.GetComponentLookup<SlimeReclaimComponent>(true),
+        //    playerLookup = SystemAPI.GetComponentLookup<PlayerHealthComponent>(true),
+        //    ecb = ecb,
+        //    bulletsToReturn = bulletsToReturn,
+        //};
 
-        state.Dependency = job.Schedule(SystemAPI.GetSingleton<SimulationSingleton>(), state.Dependency);
-        state.Dependency.Complete();
+        //state.Dependency = job.Schedule(SystemAPI.GetSingleton<SimulationSingleton>(), state.Dependency);
+        //state.Dependency.Complete();
 
-        foreach (var bullet in bulletsToReturn)
-        {
-            ProjectilesManager.Instance.ReturnSlimeBullet(bullet, ecb);
-        }
+        //foreach (var bullet in bulletsToReturn)
+        //{
+        //    ProjectilesManager.Instance.ReturnSlimeBullet(bullet, ecb);
+        //}
 
-        bulletsToReturn.Dispose();
+        //bulletsToReturn.Dispose();
     }
 }
 

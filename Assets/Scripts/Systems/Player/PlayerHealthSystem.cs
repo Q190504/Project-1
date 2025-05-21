@@ -19,26 +19,31 @@ public partial struct PlayerHealthSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        var ecbSingleton = SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        if (SystemAPI.TryGetSingletonEntity<PlayerHealthComponent>(out Entity player))
+        if (SystemAPI.TryGetSingletonEntity<PlayerHealthComponent>(out Entity player) && GameManager.Instance.IsInitializing())
         {
             // Track Initialization Progress
-            if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker))
+            if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker) && !tracker.playerHealthSystemInitialized)
             {
-                if (!tracker.healthSystemInitialized)
-                {
-                    var playerHealth = SystemAPI.GetComponent<PlayerHealthComponent>(player);
+                var playerHealth = SystemAPI.GetComponent<PlayerHealthComponent>(player);
 
-                    UpdateHPBar(playerHealth.currentHealth, playerHealth.maxHealth);
+                playerHealth.currentHealth = playerHealth.maxHealth;
+                state.EntityManager.SetComponentData(player, playerHealth);
 
-                    // Update tracker
-                    tracker.healthSystemInitialized = true;
-                    ecb.SetComponent(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), tracker);
-                }
+                UpdateHPBar(playerHealth.currentHealth, playerHealth.maxHealth);
+
+                // Update tracker
+                tracker.playerHealthSystemInitialized = true;
+
+                state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), tracker);
             }
         }
+
+        // Game has ended
+        if(!GameManager.Instance.IsPlaying())
+            return;
 
         foreach (var (playerHealth, playerEntity) in SystemAPI.Query<RefRW<PlayerHealthComponent>>().WithEntityAccess())
         {
@@ -58,6 +63,7 @@ public partial struct PlayerHealthSystem : ISystem
                 {
                     //onDie action
                     Debug.Log("Player Died!");
+                    GameManager.Instance.EndGame(false);
                 }
 
                 ecb.RemoveComponent<DamageEventComponent>(playerEntity);

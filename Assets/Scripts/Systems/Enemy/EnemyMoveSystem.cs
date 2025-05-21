@@ -35,17 +35,22 @@ public partial struct EnemyMoveSystem : ISystem
 
         foreach (var (localTransform, enemyTag, physicsVelocity, entity) in SystemAPI.Query<RefRW<LocalTransform>, RefRO<EnemyTagComponent>, RefRW<PhysicsVelocity>>().WithEntityAccess())
         {
-            int x = (int)(localTransform.ValueRO.Position.x / cellSize);
-            int y = (int)(localTransform.ValueRO.Position.y / cellSize);
-            int index = x + y * width;
-
-            if (index >= 0 && index < pathBuffer.Length)
+            if (!GameManager.Instance.IsPlaying())
+                physicsVelocity.ValueRW.Linear = float3.zero;
+            else
             {
-                float2 flowDirection = pathBuffer[index].vector;
+                int x = (int)(localTransform.ValueRO.Position.x / cellSize);
+                int y = (int)(localTransform.ValueRO.Position.y / cellSize);
+                int index = x + y * width;
 
-                float3 movement = new float3(flowDirection.x, flowDirection.y, 0) * 2f;
+                if (index >= 0 && index < pathBuffer.Length)
+                {
+                    float2 flowDirection = pathBuffer[index].vector;
 
-                physicsVelocity.ValueRW.Linear = movement;
+                    float3 movement = new float3(flowDirection.x, flowDirection.y, 0) * 2f;
+
+                    physicsVelocity.ValueRW.Linear = movement;
+                }
             }
         }
     }

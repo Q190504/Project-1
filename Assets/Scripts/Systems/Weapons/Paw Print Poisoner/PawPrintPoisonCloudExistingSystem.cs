@@ -13,6 +13,8 @@ public partial struct PawPrintPoisonCloudExistingSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
+        if (!GameManager.Instance.IsPlaying()) return;
+
         var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 

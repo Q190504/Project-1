@@ -2,10 +2,12 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
+using Unity.Transforms;
 using UnityEngine;
 
 [BurstCompile]
 [UpdateAfter(typeof(PawPrintPoisonCloudBoostSpeedSystem))]
+[UpdateAfter(typeof(GameInitializationSystem))]
 public partial struct PlayerMovementSystem : ISystem
 {
     private EntityManager entityManager;
@@ -38,7 +40,7 @@ public partial struct PlayerMovementSystem : ISystem
         }
         else
         {
-            playerTagComponent = entityManager.GetComponentData<PlayerTagComponent>(player);
+            playerTagComponent = entityManager.GetComponentData<PlayerTagComponent>(player);            
         }
 
         if (!entityManager.HasComponent<PlayerInputComponent>(player))
@@ -86,8 +88,28 @@ public partial struct PlayerMovementSystem : ISystem
         var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
+        // Track Initialization Progress
+        if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker))
+        {
+            if (!tracker.playerPositionSystemInitialized)
+            {
+                LocalTransform playerTransform = entityManager.GetComponentData<LocalTransform>(player);
+
+                playerTransform.Position = GameManager.Instance.GetPlayerInitialPosition();
+
+                ecb.SetComponent(player, playerTransform);
+
+                // Update tracker
+                tracker.playerPositionSystemInitialized = true;
+                ecb.SetComponent(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), tracker);
+            }
+        }
+
         float3 targetVelocity;
-        if (playerTagComponent.isStunned)
+
+        if (!GameManager.Instance.IsPlaying())
+            targetVelocity = float3.zero; 
+        else if(playerTagComponent.isStunned)
             targetVelocity = float3.zero;
         else if (playerTagComponent.isFrenzing)
             targetVelocity = new float3(playerInput.moveInput.x, playerInput.moveInput.y, 0)
