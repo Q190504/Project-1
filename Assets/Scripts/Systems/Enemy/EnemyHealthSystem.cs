@@ -10,12 +10,12 @@ public partial struct EnemyHealthSystem : ISystem
         state.RequireForUpdate<EnemyHealthComponent>();
     }
 
-
     public void OnUpdate(ref SystemState state)
     {
-        if (!GameManager.Instance.GetGameState()) return;
+        if (!GameManager.Instance.IsPlaying()) return;
 
-        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        var ecbSingleton = SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>();
+        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         var enemyEntitiesToReturn = new NativeList<Entity>(Allocator.Temp);
 
@@ -29,30 +29,20 @@ public partial struct EnemyHealthSystem : ISystem
 
                 if (enemyHealth.ValueRO.currentHealth <= 0)
                 {
-                    // Queue structural changes with ECB.
-                    ecb.AddComponent<Disabled>(enemyEntity);
-                    ecb.SetComponent(enemyEntity, new EnemyHealthComponent
-                    {
-                        currentHealth = enemyHealth.ValueRO.maxHealth,
-                        maxHealth = enemyHealth.ValueRO.maxHealth,
-                    });
-
                     // Collect the entity to return later.
                     enemyEntitiesToReturn.Add(enemyEntity);
+                    GameManager.Instance.AddEnemyKilled();
                 }
 
                 ecb.RemoveComponent<DamageEventComponent>(enemyEntity);
             }
         }
 
-        ecb.Playback(state.EntityManager);
-        ecb.Dispose();
-
-
         for (int i = 0; i < enemyEntitiesToReturn.Length; i++)
         {
-            EnemyManager.Instance.Return(enemyEntitiesToReturn[i]);
+            EnemyManager.Instance.Return(enemyEntitiesToReturn[i], ecb);
         }
+
         enemyEntitiesToReturn.Dispose();
     }
 }

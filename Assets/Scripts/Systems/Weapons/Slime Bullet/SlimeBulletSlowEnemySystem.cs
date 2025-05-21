@@ -20,7 +20,7 @@ public partial struct SlimeBulletSlowEnemySystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!GameManager.Instance.GetGameState()) return;
+        if (!GameManager.Instance.IsPlaying()) return;
 
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 

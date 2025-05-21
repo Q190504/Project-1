@@ -7,6 +7,7 @@ using Unity.Burst;
 using Unity.Transforms;
 
 [BurstCompile]
+[UpdateAfter(typeof(GameInitializationSystem))]
 public partial struct SlimeBeamShooterSystem : ISystem
 {
     private EntityManager entityManager;
@@ -19,7 +20,7 @@ public partial struct SlimeBeamShooterSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!GameManager.Instance.GetGameState()) return;
+        if (!GameManager.Instance.IsPlaying()) return;
 
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
         float deltaTime = SystemAPI.Time.DeltaTime;

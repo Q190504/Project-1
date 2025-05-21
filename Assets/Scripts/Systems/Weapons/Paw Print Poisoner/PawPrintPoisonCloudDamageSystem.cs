@@ -5,19 +5,36 @@ using Unity.Physics;
 using Unity.Transforms;
 using UnityEngine;
 using Unity.Mathematics;
+using System;
+using UnityEngine.UIElements;
 
-[BurstCompile]
+//[BurstCompile]
+[UpdateAfter(typeof(GameInitializationSystem))]
 [UpdateAfter(typeof(PawPrintPoisonCloudExistingSystem))]
+[UpdateAfter(typeof(PawPrintPoisonerSystem))]
 public partial struct PawPrintPoisonCloudDamageSystem : ISystem
 {
+    private EntityManager entityManager;
+
     public void OnCreate(ref SystemState state)
     {
+        entityManager = state.EntityManager;
         state.RequireForUpdate<PawPrintPoisonCloudComponent>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!GameManager.Instance.GetGameState()) return;
+        if (!GameManager.Instance.IsPlaying()) return;
+
+        if (!SystemAPI.TryGetSingletonEntity<PawPrintPoisonerComponent>(out var pawPrintPoisoner))
+        {
+            Debug.Log($"Cant Found Paw Print Poisoner Entity in PawPrintPoisonCloudDamageSystem!");
+            return;
+        }
+
+        PawPrintPoisonerComponent pawPrintPoisonerComponent = SystemAPI.GetSingleton<PawPrintPoisonerComponent>();
+        if (pawPrintPoisonerComponent.level == 0)
+            return;
 
         var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
@@ -28,10 +45,17 @@ public partial struct PawPrintPoisonCloudDamageSystem : ISystem
             cloud.ValueRW.tickTimer -= SystemAPI.Time.DeltaTime;
             if (cloud.ValueRW.tickTimer <= 0)
             {
-                NativeList<ColliderCastHit> hits = new NativeList<ColliderCastHit>(Allocator.Temp);
+                NativeList<DistanceHit> hits = new NativeList<DistanceHit>(Allocator.Temp);
 
-                physicsWorldSingleton.SphereCastAll(transform.ValueRO.Position, cloud.ValueRO.cloudRadius / 2, float3.zero, 1,
-                    ref hits, CollisionFilter.Default);
+                CollisionFilter filter = new CollisionFilter
+                {
+                    BelongsTo = 1 << 4,
+                    CollidesWith = 1 << 3,
+                    GroupIndex = 0
+                };
+
+                physicsWorldSingleton.OverlapSphere(transform.ValueRO.Position, cloud.ValueRO.cloudRadius / 2,
+                ref hits, filter);
 
                 //DebugDrawSphere(transform.ValueRO.Position, cloud.ValueRO.cloudRadius / 2, Color.magenta);
 
@@ -48,6 +72,7 @@ public partial struct PawPrintPoisonCloudDamageSystem : ISystem
                 }
 
                 cloud.ValueRW.tickTimer = cloud.ValueRO.tick;
+
                 hits.Dispose();
             }
         }

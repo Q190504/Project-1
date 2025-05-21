@@ -19,14 +19,14 @@ public class EnemyManager : MonoBehaviour
     private NativeQueue<Entity> inactiveEnemies;
     private int enemyCount = 0;
 
-    public int enemiesPerWave; // Number of enemies per wave
+    [SerializeField] private int enemiesPerWave; // Number of enemies per wave
     private int enemiesToSpawnCounter;
 
-    public float initialDelay; // Time before the first wave
-    public float waveInterval; // Time between waves
+    [SerializeField] private float firstWaveDelay; // Time before the first wave
+    [SerializeField] private float waveInterval; // Time between waves
     private float waveTimer;
-    public float spawnDelay; // Delay between spawning each enemy in a wave
-    private float delayTimer = 0;
+    [SerializeField] private float individualEnemyDelay;   // Delay between spawning each enemy in a wave
+    private float individualEnemyDelayTimer;
 
     public static EnemyManager Instance
     {
@@ -74,9 +74,7 @@ public class EnemyManager : MonoBehaviour
             Debug.LogError("Enemy prefab not found! Make sure it's baked correctly.");
         }
 
-        waveTimer = initialDelay; 
-        delayTimer = 0;
-        enemiesToSpawnCounter = enemiesPerWave;
+        Initialize();
         PrepareEnemy();
     }
 
@@ -85,7 +83,7 @@ public class EnemyManager : MonoBehaviour
     {
         if (waveTimer <= 0)
         {
-            if (delayTimer <= 0 && enemiesToSpawnCounter > 0)
+            if (individualEnemyDelayTimer <= 0 && enemiesToSpawnCounter > 0)
             {
                 foreach (EnemySpawner enemySpawner in SpawnerList)
                 {
@@ -95,23 +93,23 @@ public class EnemyManager : MonoBehaviour
 
                         enemiesToSpawnCounter--;
 
-                        if(enemiesToSpawnCounter == 0)
+                        if (enemiesToSpawnCounter == 0)
                             break;
                     }
                 }
 
-                delayTimer = spawnDelay;
+                individualEnemyDelayTimer = individualEnemyDelay;
             }
             else
             {
-                delayTimer -= Time.deltaTime;
+                individualEnemyDelayTimer -= Time.deltaTime;
             }
 
             // Reset wave when all enemies have spawned
             if (enemiesToSpawnCounter <= 0)
             {
                 waveTimer = waveInterval;
-                enemiesToSpawnCounter = enemiesPerWave; 
+                enemiesToSpawnCounter = enemiesPerWave;
             }
         }
         else
@@ -122,6 +120,9 @@ public class EnemyManager : MonoBehaviour
 
     public void SpawnEnemy(Vector3 position)
     {
+        if (!GameManager.Instance.IsPlaying())
+            return;
+
         Entity enemyInstance = Take();
 
         // Set the enemy position
@@ -135,6 +136,14 @@ public class EnemyManager : MonoBehaviour
         entityManager.SetComponentData(enemyInstance, new EnemyTargetComponent
         {
             targetEntity = player,
+        });
+
+        EnemyHealthComponent enemyHealthComponent = entityManager.GetComponentData<EnemyHealthComponent>(enemyInstance);
+
+        entityManager.SetComponentData(enemyInstance, new EnemyHealthComponent
+        {
+            currentHealth = enemyHealthComponent.maxHealth,
+            maxHealth = enemyHealthComponent.maxHealth,
         });
     }
 
@@ -162,22 +171,30 @@ public class EnemyManager : MonoBehaviour
         return enemy;
     }
 
-    public void Return(Entity enemy)
+    public void Return(Entity enemy, EntityCommandBuffer ecb)
     {
         if (!entityManager.Exists(enemy)) return;
 
         if (entityManager.HasComponent<StunTimerComponent>(enemy))
-            entityManager.RemoveComponent<StunTimerComponent>(enemy);
+            ecb.RemoveComponent<StunTimerComponent>(enemy);
         if (entityManager.HasComponent<SlowedByRadiantFieldTag>(enemy))
-            entityManager.RemoveComponent<SlowedByRadiantFieldTag>(enemy);
+            ecb.RemoveComponent<SlowedByRadiantFieldTag>(enemy);
         if (entityManager.HasComponent<SlowedBySlimeBulletTag>(enemy))
-            entityManager.RemoveComponent<SlowedBySlimeBulletTag>(enemy);
+            ecb.RemoveComponent<SlowedBySlimeBulletTag>(enemy);
+        if (entityManager.HasComponent<DamageEventComponent>(enemy))
+            ecb.RemoveComponent<DamageEventComponent>(enemy);
 
-        entityManager.AddComponent<Disabled>(enemy);
+        ecb.AddComponent<Disabled>(enemy);
 
         inactiveEnemies.Enqueue(enemy);
         enemyCount++;
+    }
 
-        GameManager.Instance.AddEnemyKilled();
+    public void Initialize()
+    {
+        waveTimer = firstWaveDelay;
+        individualEnemyDelayTimer = 0;
+        enemiesToSpawnCounter = enemiesPerWave;
+        individualEnemyDelayTimer = 0;
     }
 }

@@ -106,13 +106,14 @@ public class GamePlayUIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!GameManager.Instance.GetGameState()) return;
-
-        playerInput = entityManager.GetComponentData<PlayerInputComponent>(player);
-
-        if (playerInput.isEscPressed)
+        if (GameManager.Instance.IsPlaying())
         {
-            SetSettingPanel(!settingPanel.activeSelf);
+            playerInput = entityManager.GetComponentData<PlayerInputComponent>(player);
+
+            if (playerInput.isEscPressed)
+            {
+                SetSettingPanel(!settingPanel.activeSelf);
+            }
         }
     }
 

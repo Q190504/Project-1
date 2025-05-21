@@ -6,7 +6,7 @@
     {
       "damagePerTick": 0,
       "cooldown": 0,
-      "radius": 0,
+      "radius": 1,
       "slowModifier": 0
     },
     {

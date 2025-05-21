@@ -35,7 +35,7 @@ public partial struct EnemyMoveSystem : ISystem
 
         foreach (var (localTransform, enemyTag, physicsVelocity, entity) in SystemAPI.Query<RefRW<LocalTransform>, RefRO<EnemyTagComponent>, RefRW<PhysicsVelocity>>().WithEntityAccess())
         {
-            if (!GameManager.Instance.GetGameState())
+            if (!GameManager.Instance.IsPlaying())
                 physicsVelocity.ValueRW.Linear = float3.zero;
             else
             {

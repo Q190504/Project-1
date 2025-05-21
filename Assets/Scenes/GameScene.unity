@@ -7685,9 +7685,9 @@ MonoBehaviour:
   - {fileID: 657537700}
   - {fileID: 1620067691}
   enemiesPerWave: 5
-  initialDelay: 2
+  firstWaveDelay: 2
   waveInterval: 5
-  spawnDelay: 0.5
+  individualEnemyDelay: 0.2
 --- !u!4 &827541386
 Transform:
   m_ObjectHideFlags: 0

@@ -21,7 +21,7 @@ public partial struct PawPrintPoisonCloudBoostSpeedSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!GameManager.Instance.GetGameState()) return;
+        if (!GameManager.Instance.IsPlaying()) return;
 
         if (!SystemAPI.TryGetSingletonEntity<PawPrintPoisonerComponent>(out pawPrintPoisoner))
         {

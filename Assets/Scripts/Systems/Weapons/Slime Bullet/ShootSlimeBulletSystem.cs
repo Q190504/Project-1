@@ -5,6 +5,7 @@ using Unity.Transforms;
 using UnityEngine;
 
 [BurstCompile]
+[UpdateAfter(typeof(GameInitializationSystem))]
 public partial struct ShootSlimeBulletSystem : ISystem
 {
     private EntityManager entityManager;
@@ -17,7 +18,7 @@ public partial struct ShootSlimeBulletSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!GameManager.Instance.GetGameState()) return;
+        if (!GameManager.Instance.IsPlaying()) return;
 
         float deltaTime = SystemAPI.Time.DeltaTime;
         var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();

@@ -7,6 +7,7 @@ using UnityEngine;
 
 [BurstCompile]
 [UpdateAfter(typeof(PawPrintPoisonCloudBoostSpeedSystem))]
+[UpdateAfter(typeof(GameInitializationSystem))]
 public partial struct PlayerMovementSystem : ISystem
 {
     private EntityManager entityManager;
@@ -106,7 +107,7 @@ public partial struct PlayerMovementSystem : ISystem
 
         float3 targetVelocity;
 
-        if (!GameManager.Instance.GetGameState())
+        if (!GameManager.Instance.IsPlaying())
             targetVelocity = float3.zero; 
         else if(playerTagComponent.isStunned)
             targetVelocity = float3.zero;
