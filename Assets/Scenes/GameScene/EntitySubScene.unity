@@ -4203,7 +4203,7 @@ MonoBehaviour:
   cooldownTime: 5
   fireRateReductionPercent: 0.75
   bonusDamagePercent: 0.4
-  bonusMovementSpeedPercent: 0.2
+  bonusMovementSpeedPercent: 0.4
   hpCostPerShotPercent: 2
 --- !u!114 &1711749699
 MonoBehaviour:
