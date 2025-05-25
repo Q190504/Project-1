@@ -146,4 +146,9 @@ public class GameManager : MonoBehaviour
     {
         needToReset = value;
     }
+
+    public void ExitGame()
+    {
+        Application.Quit();
+    }
 }

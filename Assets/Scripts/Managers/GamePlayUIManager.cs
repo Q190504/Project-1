@@ -15,6 +15,7 @@ public class GamePlayUIManager : MonoBehaviour
     public GameObject settingPanel;
     public GameObject audioSettingPanel;
     public GameObject creditPanel;
+    public GameObject comfirmExitPanel;
 
     [Header("Texts")]
     public TMP_Text inGameTimeText;
@@ -101,6 +102,8 @@ public class GamePlayUIManager : MonoBehaviour
         SetTitlePanel(true);
 
         CloseEndGamePanel();
+
+        SetConfirmExitPanel(false);
     }
 
     // Update is called once per frame
@@ -299,5 +302,12 @@ public class GamePlayUIManager : MonoBehaviour
         SetTitlePanel(false);
 
         CloseEndGamePanel();
+
+        SetConfirmExitPanel(false);
+    }
+
+    public void SetConfirmExitPanel(bool status)
+    {
+       comfirmExitPanel.SetActive(status);
     }
 }
