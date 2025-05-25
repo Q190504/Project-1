@@ -16,6 +16,9 @@ public class PickupExperienceOrbAuthoring : MonoBehaviour
             {
                 pickupRadius = authoring.pickupRadius,
                 pullForce = authoring.pullForce,
+                currentLevel = 1,
+                maxLevel = 3,
+                increment = 0.25f,
             });
         }
     }
@@ -25,4 +28,7 @@ public struct PickupExperienceOrbComponent : IComponentData
 {
     public int pickupRadius;
     public float pullForce;
+    public int currentLevel;
+    public int maxLevel;
+    public float increment;
 }
