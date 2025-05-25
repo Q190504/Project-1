@@ -28,6 +28,10 @@ public partial struct CleanProjectilesSystem : ISystem
                 ProjectilesManager.Instance.ReturnPoisonCloud(poisonCloudEntity, ecb);
             }
 
+            foreach (var (_, experienceOrbEntity) in SystemAPI.Query<RefRO<ExperienceOrbComponent>>().WithEntityAccess())
+            {
+                XPManager.Instance.Return(experienceOrbEntity, ecb);
+            }
 
             // Update tracker
             tracker.hasCleanProjectiles = true;

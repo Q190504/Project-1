@@ -18,6 +18,7 @@ public class GamePlayUIManager : MonoBehaviour
     public GameObject comfirmExitPanel;
 
     [Header("Texts")]
+    public TMP_Text currentLevelText;
     public TMP_Text inGameTimeText;
     public TMP_Text inGameEnemyKilledText;
     public TMP_Text endGamePanelTitleText;
@@ -40,10 +41,15 @@ public class GamePlayUIManager : MonoBehaviour
 
     [Header("Weapons")]
     public Image basicWeaponImage;
+    public TMP_Text basicWeaponLevel;
     public Image weapon1Image;
+    public TMP_Text weapon1Level;
     public Image weapon2Image;
+    public TMP_Text weapon2Level;
     public Image weapon3Image;
+    public TMP_Text weapon3Level;
     public Image weapon4Image;
+    public TMP_Text weapon4Level;
 
     [Header("Stats")]
     public Image stats1;
@@ -146,12 +152,13 @@ public class GamePlayUIManager : MonoBehaviour
         //}
     }
 
-    public void UpdateXPBar(int currentXP, int maxXP)
+    public void UpdateXPBar(int currentLevel, int experience, int experienceToNextLevel)
     {
-        xpBar.maxValue = currentXP;
-        xpBar.value = maxXP;
+        currentLevelText.text = currentLevel.ToString();
+        xpBar.maxValue = experienceToNextLevel;
+        xpBar.value = experience;
 
-        hpText.text = $"{xpBar.value} / {xpBar.maxValue}";
+        xpText.text = $"{xpBar.value} / {xpBar.maxValue}";
     }
 
     // Set opacity (0 = fully transparent, 1 = fully opaque)
