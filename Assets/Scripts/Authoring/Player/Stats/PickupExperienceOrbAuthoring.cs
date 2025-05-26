@@ -6,6 +6,10 @@ public class PickupExperienceOrbAuthoring : MonoBehaviour
     public int pickupRadius;
     public float pullForce;
 
+    public int currentLevel;
+    public int maxLevel;
+    public float increment;
+
     public class Baker : Baker<PickupExperienceOrbAuthoring>
     {
         public override void Bake(PickupExperienceOrbAuthoring authoring)
@@ -15,10 +19,11 @@ public class PickupExperienceOrbAuthoring : MonoBehaviour
             AddComponent(entity, new PickupExperienceOrbComponent
             {
                 pickupRadius = authoring.pickupRadius,
-                pullForce = authoring.pullForce,
-                currentLevel = 1,
-                maxLevel = 3,
-                increment = 0.25f,
+                pullForce = authoring.pullForce, 
+
+                currentLevel = authoring.currentLevel,
+                maxLevel = authoring.maxLevel,
+                increment = authoring.increment,
             });
         }
     }
@@ -27,7 +32,8 @@ public class PickupExperienceOrbAuthoring : MonoBehaviour
 public struct PickupExperienceOrbComponent : IComponentData
 {
     public int pickupRadius;
-    public float pullForce;
+    public float pullForce; 
+
     public int currentLevel;
     public int maxLevel;
     public float increment;

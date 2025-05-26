@@ -46,18 +46,22 @@ public class GamePlayUIManager : MonoBehaviour
     public TMP_Text weapon1Level;
     public Image weapon2Image;
     public TMP_Text weapon2Level;
-    public Image weapon3Image;
-    public TMP_Text weapon3Level;
-    public Image weapon4Image;
-    public TMP_Text weapon4Level;
+    //public Image weapon3Image;
+    //public TMP_Text weapon3Level;
+    //public Image weapon4Image;
+    //public TMP_Text weapon4Level;
 
     [Header("Stats")]
     public Image stats1;
+    public TMP_Text stats1Level;
     public Image stats2;
+    public TMP_Text stats2Level;
     public Image stats3;
-    public Image stats4;
-    public Image stats5;
-
+    public TMP_Text stats3Level;
+    //public Image stats4;
+    //public TMP_Text stats4Level;
+    //public Image stats5;
+    //public TMP_Text stats5Level;
 
     [Header("Effects")]
     public GameObject effectImagePrefab;

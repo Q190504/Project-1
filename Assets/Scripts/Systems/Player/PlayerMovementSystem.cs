@@ -14,7 +14,7 @@ public partial struct PlayerMovementSystem : ISystem
     private Entity player;
     private PlayerTagComponent playerTagComponent;
     private PlayerInputComponent playerInput;
-    private PlayerMovementComponent playerMovement;
+    private PlayerMovementSpeedComponent playerMovement;
     private PhysicsVelocity physicsVelocity;
     private SlimeFrenzyComponent slimeFrenzyComponent;
 
@@ -22,7 +22,7 @@ public partial struct PlayerMovementSystem : ISystem
     {
         state.RequireForUpdate<PlayerTagComponent>();
         state.RequireForUpdate<PlayerInputComponent>();
-        state.RequireForUpdate<PlayerMovementComponent>();
+        state.RequireForUpdate<PlayerMovementSpeedComponent>();
         state.RequireForUpdate<PhysicsVelocity>();
         state.RequireForUpdate<SlimeFrenzyComponent>();
     }
@@ -53,14 +53,14 @@ public partial struct PlayerMovementSystem : ISystem
             playerInput = entityManager.GetComponentData<PlayerInputComponent>(player);
         }
 
-        if (!entityManager.HasComponent<PlayerMovementComponent>(player))
+        if (!entityManager.HasComponent<PlayerMovementSpeedComponent>(player))
         {
             Debug.Log($"Cant Found Player Movement Component in PlayerMovementSystem!");
             return;
         }
         else
         {
-            playerMovement = entityManager.GetComponentData<PlayerMovementComponent>(player);
+            playerMovement = entityManager.GetComponentData<PlayerMovementSpeedComponent>(player);
         }
 
         if (!entityManager.HasComponent<PhysicsVelocity>(player))

@@ -4085,11 +4085,15 @@ GameObject:
   - component: {fileID: 1711749688}
   - component: {fileID: 1711749693}
   - component: {fileID: 1711749692}
+  - component: {fileID: 1711749703}
+  - component: {fileID: 1711749704}
+  - component: {fileID: 1711749705}
+  - component: {fileID: 1711749706}
+  - component: {fileID: 1711749702}
   - component: {fileID: 1711749701}
   - component: {fileID: 1711749689}
   - component: {fileID: 1711749697}
   - component: {fileID: 1711749698}
-  - component: {fileID: 1711749702}
   - component: {fileID: 1711749700}
   - component: {fileID: 1711749699}
   m_Layer: 6
@@ -4136,8 +4140,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9645bd16c406ff042bd6a4d70f2690cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentHealth: 10
-  maxHealth: 10
+  currentHealth: 100
+  maxHealth: 100
+  currentLevel: 1
+  maxLevel: 5
+  increment: 150
 --- !u!114 &1711749693
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4150,8 +4157,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 834eccd38d7cd4042a5da8449ba51630, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
+  baseSpeed: 0
   smoothTime: 0.2
+  currentLevel: 1
+  maxLevel: 5
+  increment: 0.09
 --- !u!4 &1711749695
 Transform:
   m_ObjectHideFlags: 0
@@ -4425,6 +4435,73 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pickupRadius: 5
   pullForce: 2
+  currentLevel: 1
+  maxLevel: 5
+  increment: 0.35
+--- !u!114 &1711749703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711749687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83c9fbc425eea2a47b5c586616ce2c05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  genericDamageModifierValue: 0
+  currentLevel: 1
+  maxLevel: 5
+  increment: 0.1
+--- !u!114 &1711749704
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711749687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21e3b335a23011941b624a0b2c41ed56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  armorVaule: 0
+  currentLevel: 1
+  maxLevel: 5
+  increment: 8
+--- !u!114 &1711749705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711749687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 425a8c412c66a1d45802e9aebc90ff18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  abilityHasteValue: 0
+  currentLevel: 1
+  maxLevel: 5
+  increment: 10
+--- !u!114 &1711749706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711749687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699028809f29ea040a0964e8372e029e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthRegenValue: 4
+  currentLevel: 1
+  maxLevel: 5
+  increment: 4
 --- !u!1 &1791217995
 GameObject:
   m_ObjectHideFlags: 0

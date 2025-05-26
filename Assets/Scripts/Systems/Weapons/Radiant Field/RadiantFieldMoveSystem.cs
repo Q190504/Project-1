@@ -26,7 +26,7 @@ public partial struct RadiantFieldMoveSystem : ISystem
         foreach (var (localTransform, radiantFieldComponent) in SystemAPI.Query<RefRW<LocalTransform>, RefRO<RadiantFieldComponent>>())
         {
             float3 playerPosition = entityManager.GetComponentData<LocalTransform>(player).Position;
-            float smoothTime = entityManager.GetComponentData<PlayerMovementComponent>(player).smoothTime;
+            float smoothTime = entityManager.GetComponentData<PlayerMovementSpeedComponent>(player).smoothTime;
 
             float followSpeed = 15f / smoothTime;
 
