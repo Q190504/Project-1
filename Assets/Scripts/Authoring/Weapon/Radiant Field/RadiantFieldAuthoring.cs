@@ -56,7 +56,7 @@ public class RadiantFieldAuthoring : MonoBehaviour
             AddComponent(radiantFieldEntity, new RadiantFieldComponent
             {
                 Data = blobReference,
-                timer = 2f,
+                timer = 0f,
                 timeBetween = weapon.timeBetween,
                 currentLevel = 0,
                 previousLevel = -1,

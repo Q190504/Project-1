@@ -20,6 +20,7 @@ public partial struct PawPrintPoisonerSystem : ISystem
     {
         state.RequireForUpdate<PawPrintPoisonerComponent>();
         clouds = new NativeList<Entity>(24, Allocator.Persistent); // Initialize the list with a capacity of the maximum number of clouds
+        entityManager = state.EntityManager;
     }
 
     public void OnUpdate(ref SystemState state)
@@ -36,11 +37,26 @@ public partial struct PawPrintPoisonerSystem : ISystem
             return;
         }
 
+        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+        AbilityHasteComponent abilityHasteComponent;
+        float abilityHaste = 0;
+        if (SystemAPI.HasComponent<AbilityHasteComponent>(player))
+        {
+            abilityHasteComponent = entityManager.GetComponentData<AbilityHasteComponent>(player);
+            abilityHaste = abilityHasteComponent.abilityHasteValue;
+        }
+        else
+        {
+            Debug.Log($"Cant Found Ability Haste Component in PawPrintPoisonerSystem!");
+        }
+
         var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         // Clean up all old clouds from the previous game
-        if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker) && !tracker.hasCleanCloudList && GameManager.Instance.IsInitializing())
+        if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker)
+            && !tracker.hasCleanCloudList 
+            && GameManager.Instance.IsInitializing())
         {
             if (!clouds.IsEmpty)
                 clouds.Clear();
@@ -57,7 +73,6 @@ public partial struct PawPrintPoisonerSystem : ISystem
         }
 
         float deltaTime = SystemAPI.Time.DeltaTime;
-        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
         PawPrintPoisonerComponent pawPrintPoisoner = entityManager.GetComponentData<PawPrintPoisonerComponent>(pawPrintPoisonerEntity);
 
@@ -76,7 +91,9 @@ public partial struct PawPrintPoisonerSystem : ISystem
         }
 
         // Take Paw Print Poisoner's data
-        float cooldown = pawPrintPoisoner.cooldown;
+        float baseCooldownTime = pawPrintPoisoner.cooldown;
+        float finalCooldownTime = baseCooldownTime * (100 / (100 + abilityHaste));
+
         float tick = pawPrintPoisoner.tick;
         float distanceToCreateACloud = pawPrintPoisoner.distanceToCreateACloud;
         float distanceTraveled = pawPrintPoisoner.distanceTraveled;
@@ -140,7 +157,7 @@ public partial struct PawPrintPoisonerSystem : ISystem
             if (!clouds.Contains(cloudEntity))
                 clouds.Add(cloudEntity);
 
-            pawPrintPoisoner.timer = cooldown; // Reset timer
+            pawPrintPoisoner.timer = finalCooldownTime; // Reset timer
             distanceTraveled = 0; // Reset distance traveled
         }
 

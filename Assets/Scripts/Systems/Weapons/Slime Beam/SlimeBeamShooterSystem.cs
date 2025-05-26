@@ -15,20 +15,33 @@ public partial struct SlimeBeamShooterSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
-        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+        entityManager = state.EntityManager;
     }
 
     public void OnUpdate(ref SystemState state)
     {
         if (!GameManager.Instance.IsPlaying()) return;
 
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
         float deltaTime = SystemAPI.Time.DeltaTime;
 
         if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
         {
             Debug.Log($"Cant Found Player Entity in SlimeBeamShooterSystem!");
             return;
+        }
+
+        AbilityHasteComponent abilityHasteComponent;
+        float abilityHaste = 0;
+        if (SystemAPI.HasComponent<AbilityHasteComponent>(player))
+        {
+            abilityHasteComponent = entityManager.GetComponentData<AbilityHasteComponent>(player);
+            abilityHaste = abilityHasteComponent.abilityHasteValue;
+        }
+        else
+        {
+            Debug.Log($"Cant Found Ability Haste Component in SlimeBeamShooterSystem!");
         }
 
         foreach (var (weapon, entity) in SystemAPI.Query<RefRW<SlimeBeamShooterComponent>>().WithEntityAccess())
@@ -51,7 +64,12 @@ public partial struct SlimeBeamShooterSystem : ISystem
             ref var levelData = ref blobData.Value.Levels[level];
 
             int damage = levelData.damage;
-            float cooldown = levelData.cooldown;
+
+
+            float baseCooldownTime = levelData.cooldown;
+            float finalCooldownTime = baseCooldownTime * (100 / (100 + abilityHaste));
+
+
             float timeBetween = levelData.timeBetween;
             float spawnOffsetPositon = beamShooter.spawnOffsetPositon;
 
@@ -60,7 +78,7 @@ public partial struct SlimeBeamShooterSystem : ISystem
                 for (int beamCount = 0; beamCount < 4; beamCount++)
                     PerformSingleBeam(entity, spawnOffsetPositon, damage, beamCount, ecb);
 
-                beamShooter.timer = cooldown; // Reset timer
+                beamShooter.timer = finalCooldownTime; // Reset timer
             }
             else
             {
@@ -73,17 +91,13 @@ public partial struct SlimeBeamShooterSystem : ISystem
                     beamShooter.beamCount++;
                     beamShooter.timeBetween = 0f;
                 }
-
-                if (beamShooter.beamCount >= 4)
+                else if (beamShooter.beamCount >= 4)
                 {
                     beamShooter.beamCount = 0;
-                    beamShooter.timer = cooldown; // Reset timer
+                    beamShooter.timer = finalCooldownTime; // Reset timer
                 }
             }
         }
-
-        ecb.Playback(entityManager);
-        ecb.Dispose();
     }
 
     private void PerformSingleBeam(Entity entity, float spawnOffsetPositon, int damage, int beamCount, EntityCommandBuffer ecb)

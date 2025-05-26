@@ -41,7 +41,19 @@ public partial struct ShootSlimeBulletSystem : ISystem
             Debug.LogError("Cant find SlimeFrenzyComponent in ShootSlimeBulletSystem");
             return;
         }
-        
+
+        AbilityHasteComponent abilityHasteComponent;
+        float abilityHaste = 0;
+        if (SystemAPI.HasComponent<AbilityHasteComponent>(player))
+        {
+            abilityHasteComponent = entityManager.GetComponentData<AbilityHasteComponent>(player);
+            abilityHaste = abilityHasteComponent.abilityHasteValue;
+        }
+        else
+        {
+            Debug.Log($"Cant Found Ability Haste Component in ShootSlimeBulletSystem!");
+        }
+
         foreach (var (weapon, shooterEntity) in SystemAPI.Query<RefRW<SlimeBulletShooterComponent>>().WithEntityAccess())
         {
             ref var shooter = ref weapon.ValueRW;
@@ -58,7 +70,11 @@ public partial struct ShootSlimeBulletSystem : ISystem
             ref var levelData = ref blobData.Value.Levels[levelIndex];
 
             int damage = levelData.damage;
-            float cooldown = levelData.cooldown;
+
+
+            float baseCooldownTime = levelData.cooldown;
+            float finalCooldownTime = baseCooldownTime * (100 / (100 + abilityHaste));
+
             int bulletCount = levelData.bulletCount;
             int bulletRemaining = bulletCount;
             float minimumDistance = levelData.minimumDistance;
@@ -71,14 +87,14 @@ public partial struct ShootSlimeBulletSystem : ISystem
             float slowRadius = levelData.slowRadius;
 
             Shoot(
-                ecb, shooterEntity, damage, cooldown, bulletCount, bulletRemaining,
+                ecb, shooterEntity, damage, finalCooldownTime, bulletCount, bulletRemaining,
                 minimumDistance, minDistBetweenBullets, maxDistBetweenBullets,
                 passthroughDamageModifier, moveSpeed, existDuration,
                 slowModifier, slowRadius, playerTagComponent.isFrenzing,
                 slimeFrenzyComponent.bonusDamagePercent
             );
 
-            shooter.timer = cooldown; // Reset timer
+            shooter.timer = finalCooldownTime; // Reset timer
         }
     }
 

@@ -1327,7 +1327,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1711749695}
@@ -1376,7 +1376,7 @@ SpriteRenderer:
   m_SortingLayerID: -2118592341
   m_SortingLayer: 4
   m_SortingOrder: 10
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_Sprite: {fileID: -7317611472884909742, guid: 987e790e59bbf69439a4a389cdf9b611, type: 3}
   m_Color: {r: 0.39607844, g: 0.7921569, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -2172,7 +2172,7 @@ GameObject:
   - component: {fileID: 805546568}
   - component: {fileID: 805546569}
   - component: {fileID: 805546570}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Radiant Field
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4140,7 +4140,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9645bd16c406ff042bd6a4d70f2690cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseMaxHealth: 100
+  baseMaxHealth: 10
   currentLevel: 0
   maxLevel: 5
   increment: 150
@@ -4365,7 +4365,7 @@ MonoBehaviour:
       m_Value:
         Category00: 0
         Category01: 1
-        Category02: 0
+        Category02: 1
         Category03: 1
         Category04: 0
         Category05: 0
