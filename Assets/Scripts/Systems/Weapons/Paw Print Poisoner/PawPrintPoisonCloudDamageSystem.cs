@@ -58,15 +58,17 @@ public partial struct PawPrintPoisonCloudDamageSystem : ISystem
                 //DebugDrawSphere(transform.ValueRO.Position, cloud.ValueRO.cloudRadius / 2, Color.magenta);
 
                 int damage = cloud.ValueRO.damagePerTick;
-                foreach (var enemy in hits)
+
+                if(damage > 0)
                 {
-                    // Check if the hit entity is an enemy
-                    if (!SystemAPI.HasComponent<EnemyTagComponent>(enemy.Entity))
-                        continue;
+                    foreach (var enemy in hits)
+                    {
+                        // Check if the hit entity is an enemy
+                        if (!SystemAPI.HasComponent<EnemyTagComponent>(enemy.Entity))
+                            continue;
 
-                    ecb.AddComponent(enemy.Entity, new DamageEventComponent { damageAmount = damage });
-
-                    double elapsedTime = SystemAPI.Time.ElapsedTime;
+                        ecb.AddComponent(enemy.Entity, new DamageEventComponent { damageAmount = damage });
+                    }
                 }
 
                 cloud.ValueRW.tickTimer = cloud.ValueRO.tick;

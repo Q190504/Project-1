@@ -37,19 +37,6 @@ public partial struct PawPrintPoisonerSystem : ISystem
             return;
         }
 
-        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-        AbilityHasteComponent abilityHasteComponent;
-        float abilityHaste = 0;
-        if (SystemAPI.HasComponent<AbilityHasteComponent>(player))
-        {
-            abilityHasteComponent = entityManager.GetComponentData<AbilityHasteComponent>(player);
-            abilityHaste = abilityHasteComponent.abilityHasteValue;
-        }
-        else
-        {
-            Debug.Log($"Cant Found Ability Haste Component in PawPrintPoisonerSystem!");
-        }
-
         var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
@@ -71,6 +58,35 @@ public partial struct PawPrintPoisonerSystem : ISystem
         {
             return;
         }
+
+        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+
+        // Get Ability Haste
+        AbilityHasteComponent abilityHasteComponent;
+        float abilityHaste = 0;
+        if (SystemAPI.HasComponent<AbilityHasteComponent>(player))
+        {
+            abilityHasteComponent = entityManager.GetComponentData<AbilityHasteComponent>(player);
+            abilityHaste = abilityHasteComponent.abilityHasteValue;
+        }
+        else
+        {
+            Debug.Log($"Cant Found Ability Haste Component in PawPrintPoisonerSystem!");
+        }
+
+        // Get Generic Damage Modifier
+        GenericDamageModifierComponent genericDamageModifierComponent;
+        float genericDamageModifier = 0;
+        if (SystemAPI.HasComponent<GenericDamageModifierComponent>(player))
+        {
+            genericDamageModifierComponent = entityManager.GetComponentData<GenericDamageModifierComponent>(player);
+            genericDamageModifier = genericDamageModifierComponent.genericDamageModifierValue;
+        }
+        else
+        {
+            Debug.Log($"Cant find Generic Damage Modifier Component in PawPrintPoisonCloudDamageSystem!");
+        }
+
 
         float deltaTime = SystemAPI.Time.DeltaTime;
 
@@ -102,7 +118,10 @@ public partial struct PawPrintPoisonerSystem : ISystem
 
         // Take cloud's level data
         ref var levelData = ref blobData.Value.Levels[level];
+
         int damagePerTick = levelData.damagePerTick;
+        int finalDamagePerTick = (int)(damagePerTick * (1 + genericDamageModifier));
+
         float cloudRadius = levelData.cloudRadius;
         float maximumCloudDuration = levelData.maximumCloudDuration;
         float bonusMoveSpeedPerTargetInTheCloudModifier = levelData.bonusMoveSpeedPerTargetInTheCloudModifier;
@@ -150,7 +169,7 @@ public partial struct PawPrintPoisonerSystem : ISystem
             Entity cloudEntity = ProjectilesManager.Instance.TakePoisonCloud(ecb);
 
             // Set the cloud's stats
-            SetCloudStats(ecb, cloudEntity, tick, damagePerTick, cloudRadius, maximumCloudDuration,
+            SetCloudStats(ecb, cloudEntity, tick, finalDamagePerTick, cloudRadius, maximumCloudDuration,
                 bonusMoveSpeedPerTargetInTheCloudModifier);
 
             // Add this cloud to the list of clouds

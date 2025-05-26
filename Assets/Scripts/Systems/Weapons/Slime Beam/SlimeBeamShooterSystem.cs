@@ -44,6 +44,19 @@ public partial struct SlimeBeamShooterSystem : ISystem
             Debug.Log($"Cant Found Ability Haste Component in SlimeBeamShooterSystem!");
         }
 
+        // Get Generic Damage Modifier
+        GenericDamageModifierComponent genericDamageModifierComponent;
+        float genericDamageModifier = 0;
+        if (SystemAPI.HasComponent<GenericDamageModifierComponent>(player))
+        {
+            genericDamageModifierComponent = entityManager.GetComponentData<GenericDamageModifierComponent>(player);
+            genericDamageModifier = genericDamageModifierComponent.genericDamageModifierValue;
+        }
+        else
+        {
+            Debug.Log($"Cant find Generic Damage Modifier Component in PawPrintPoisonCloudDamageSystem!");
+        }
+
         foreach (var (weapon, entity) in SystemAPI.Query<RefRW<SlimeBeamShooterComponent>>().WithEntityAccess())
         {
             ref var beamShooter = ref weapon.ValueRW;
@@ -63,12 +76,11 @@ public partial struct SlimeBeamShooterSystem : ISystem
 
             ref var levelData = ref blobData.Value.Levels[level];
 
-            int damage = levelData.damage;
-
+            int baseDamage = levelData.damage;
+            int finalDamage = (int)(baseDamage * (1 + genericDamageModifier));
 
             float baseCooldownTime = levelData.cooldown;
             float finalCooldownTime = baseCooldownTime * (100 / (100 + abilityHaste));
-
 
             float timeBetween = levelData.timeBetween;
             float spawnOffsetPositon = beamShooter.spawnOffsetPositon;
@@ -76,7 +88,7 @@ public partial struct SlimeBeamShooterSystem : ISystem
             if(level == 5) //max level
             {
                 for (int beamCount = 0; beamCount < 4; beamCount++)
-                    PerformSingleBeam(entity, spawnOffsetPositon, damage, beamCount, ecb);
+                    PerformSingleBeam(entity, spawnOffsetPositon, finalDamage, beamCount, ecb);
 
                 beamShooter.timer = finalCooldownTime; // Reset timer
             }
@@ -86,7 +98,7 @@ public partial struct SlimeBeamShooterSystem : ISystem
 
                 if (beamShooter.timeBetween >= timeBetween && beamShooter.beamCount < 4)
                 {
-                    PerformSingleBeam(entity, spawnOffsetPositon, damage, beamShooter.beamCount, ecb);
+                    PerformSingleBeam(entity, spawnOffsetPositon, finalDamage, beamShooter.beamCount, ecb);
 
                     beamShooter.beamCount++;
                     beamShooter.timeBetween = 0f;
@@ -130,8 +142,7 @@ public partial struct SlimeBeamShooterSystem : ISystem
         {
             damage = damage,
             hasDealDamageToEnemies = false,
-            existDuration = 0.2f,
-            timer = 0.3f,
+            timer = 0.1f,
         });
     }
 

@@ -8,7 +8,7 @@ using Unity.Transforms;
 
 [BurstCompile]
 [UpdateAfter(typeof(GameInitializationSystem))]
-public partial struct RadiantFieldColliderUpgradeSystem : ISystem
+public partial struct RadiantFieldUpgradeSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {

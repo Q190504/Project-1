@@ -42,6 +42,7 @@ public partial struct ShootSlimeBulletSystem : ISystem
             return;
         }
 
+        // Get Ability Haste
         AbilityHasteComponent abilityHasteComponent;
         float abilityHaste = 0;
         if (SystemAPI.HasComponent<AbilityHasteComponent>(player))
@@ -53,6 +54,20 @@ public partial struct ShootSlimeBulletSystem : ISystem
         {
             Debug.Log($"Cant Found Ability Haste Component in ShootSlimeBulletSystem!");
         }
+
+        // Get Generic Damage Modifier
+        GenericDamageModifierComponent genericDamageModifierComponent;
+        float genericDamageModifier = 0;
+        if (SystemAPI.HasComponent<GenericDamageModifierComponent>(player))
+        {
+            genericDamageModifierComponent = entityManager.GetComponentData<GenericDamageModifierComponent>(player);
+            genericDamageModifier = genericDamageModifierComponent.genericDamageModifierValue;
+        }
+        else
+        {
+            Debug.Log($"Cant find Generic Damage Modifier Component in PawPrintPoisonCloudDamageSystem!");
+        }
+
 
         foreach (var (weapon, shooterEntity) in SystemAPI.Query<RefRW<SlimeBulletShooterComponent>>().WithEntityAccess())
         {
@@ -69,8 +84,8 @@ public partial struct ShootSlimeBulletSystem : ISystem
    
             ref var levelData = ref blobData.Value.Levels[levelIndex];
 
-            int damage = levelData.damage;
-
+            int baseDamage = levelData.damage;
+            int finalDamage = (int)(baseDamage * (1 + genericDamageModifier));
 
             float baseCooldownTime = levelData.cooldown;
             float finalCooldownTime = baseCooldownTime * (100 / (100 + abilityHaste));
@@ -87,7 +102,7 @@ public partial struct ShootSlimeBulletSystem : ISystem
             float slowRadius = levelData.slowRadius;
 
             Shoot(
-                ecb, shooterEntity, damage, finalCooldownTime, bulletCount, bulletRemaining,
+                ecb, shooterEntity, finalDamage, finalCooldownTime, bulletCount, bulletRemaining,
                 minimumDistance, minDistBetweenBullets, maxDistBetweenBullets,
                 passthroughDamageModifier, moveSpeed, existDuration,
                 slowModifier, slowRadius, playerTagComponent.isFrenzing,
