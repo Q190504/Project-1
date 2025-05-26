@@ -22,16 +22,13 @@ public partial struct SlimeBeamShooterSystem : ISystem
     {
         if (!GameManager.Instance.IsPlaying()) return;
 
-        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
-        float deltaTime = SystemAPI.Time.DeltaTime;
-
         if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
         {
             Debug.Log($"Cant Found Player Entity in SlimeBeamShooterSystem!");
             return;
         }
 
+        // Get Ability Haste
         AbilityHasteComponent abilityHasteComponent;
         float abilityHaste = 0;
         if (SystemAPI.HasComponent<AbilityHasteComponent>(player))
@@ -56,6 +53,10 @@ public partial struct SlimeBeamShooterSystem : ISystem
         {
             Debug.Log($"Cant find Generic Damage Modifier Component in PawPrintPoisonCloudDamageSystem!");
         }
+
+        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+        float deltaTime = SystemAPI.Time.DeltaTime;
 
         foreach (var (weapon, entity) in SystemAPI.Query<RefRW<SlimeBeamShooterComponent>>().WithEntityAccess())
         {

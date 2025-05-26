@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class HealthRegenAuthoring : MonoBehaviour
 {
-    public float healthRegenValue;
+    public int healthRegenValue;
 
     public int currentLevel;
     public int maxLevel;
-    public float increment;
+    public int increment;
 
     public class Baker : Baker<HealthRegenAuthoring>
     {
@@ -29,9 +29,9 @@ public class HealthRegenAuthoring : MonoBehaviour
 
 public struct HealthRegenComponent : IComponentData
 {
-    public float healthRegenValue;
+    public int healthRegenValue;
 
     public int currentLevel;
     public int maxLevel;
-    public float increment;
+    public int increment;
 }

@@ -91,7 +91,6 @@ public partial struct PlayerHealthSystem : ISystem
                 }
 
                 ecb.RemoveComponent<DamageEventComponent>(player);
-                ecb.SetComponent(player, playerHealth);
             }
 
             //Heal
@@ -110,6 +109,8 @@ public partial struct PlayerHealthSystem : ISystem
 
                 ecb.RemoveComponent<HealEventComponent>(player);
             }
+
+            ecb.SetComponent(player, playerHealth);
         }
     }
 
