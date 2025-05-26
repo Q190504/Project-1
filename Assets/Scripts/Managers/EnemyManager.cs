@@ -74,8 +74,14 @@ public class EnemyManager : MonoBehaviour
             Debug.LogError("Enemy prefab not found! Make sure it's baked correctly.");
         }
 
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
         Initialize();
-        PrepareEnemy();
+
+        Initialize();
+        PrepareEnemy(ecb);
+
+        ecb.Playback(entityManager);
+        ecb.Dispose();
     }
 
     // Update is called once per frame
@@ -89,7 +95,13 @@ public class EnemyManager : MonoBehaviour
                 {
                     if (enemySpawner.IsPlayerAround)
                     {
-                        SpawnEnemy(new Vector3(enemySpawner.transform.position.x, enemySpawner.transform.position.y, 0));
+                        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+
+                        Vector3 spawnPosition = new Vector3(enemySpawner.transform.position.x, enemySpawner.transform.position.y, 0);
+                        SpawnEnemy(spawnPosition, ecb);
+
+                        ecb.Playback(entityManager);
+                        ecb.Dispose();
 
                         enemiesToSpawnCounter--;
 
@@ -118,12 +130,12 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    public void SpawnEnemy(Vector3 position)
+    public void SpawnEnemy(Vector3 position, EntityCommandBuffer ecb)
     {
         if (!GameManager.Instance.IsPlaying())
             return;
 
-        Entity enemyInstance = Take();
+        Entity enemyInstance = Take(ecb);
 
         // Set the enemy position
         entityManager.SetComponentData(enemyInstance, new LocalTransform
@@ -147,27 +159,27 @@ public class EnemyManager : MonoBehaviour
         });
     }
 
-    private void PrepareEnemy()
+    private void PrepareEnemy(EntityCommandBuffer ecb)
     {
         if (enemyPrefab == Entity.Null) return;
 
         for (int i = 0; i < enemyPrepare; i++)
         {
             Entity enemy = entityManager.Instantiate(enemyPrefab);
-            entityManager.AddComponent<Disabled>(enemy);
+            SetEnemyStatus(enemy, false, ecb, entityManager);
             inactiveEnemies.Enqueue(enemy);
             enemyCount++;
         }
     }
 
-    public Entity Take()
+    public Entity Take(EntityCommandBuffer ecb)
     {
         if (inactiveEnemies.IsEmpty())
-            PrepareEnemy();
+            PrepareEnemy(ecb);
 
         Entity enemy = inactiveEnemies.Dequeue();
         enemyCount--;
-        entityManager.RemoveComponent<Disabled>(enemy);
+        SetEnemyStatus(enemy, true, ecb, entityManager);
         return enemy;
     }
 
@@ -184,7 +196,7 @@ public class EnemyManager : MonoBehaviour
         if (entityManager.HasComponent<DamageEventComponent>(enemy))
             ecb.RemoveComponent<DamageEventComponent>(enemy);
 
-        ecb.AddComponent<Disabled>(enemy);
+        SetEnemyStatus(enemy, false, ecb, entityManager);
 
         inactiveEnemies.Enqueue(enemy);
         enemyCount++;
@@ -196,5 +208,37 @@ public class EnemyManager : MonoBehaviour
         individualEnemyDelayTimer = 0;
         enemiesToSpawnCounter = enemiesPerWave;
         individualEnemyDelayTimer = 0;
+    }
+
+    private void SetEnemyStatus(Entity root, bool status, EntityCommandBuffer ecb, EntityManager entityManager)
+    {
+        DynamicBuffer<Child> children;
+
+        if (status)
+        {
+            ecb.RemoveComponent<Disabled>(root);
+            if (entityManager.HasComponent<Child>(root))
+            {
+                children = entityManager.GetBuffer<Child>(root);
+                foreach (var child in children)
+                {
+                    ecb.RemoveComponent<Disabled>(child.Value);
+                }
+            }
+
+        }
+        else
+        {
+            ecb.AddComponent<Disabled>(root);
+
+            if (entityManager.HasComponent<Child>(root))
+            {
+                children = entityManager.GetBuffer<Child>(root);
+                foreach (var child in children)
+                {
+                    ecb.AddComponent<Disabled>(child.Value);
+                }
+            }
+        }
     }
 }
