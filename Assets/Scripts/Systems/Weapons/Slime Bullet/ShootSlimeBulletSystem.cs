@@ -24,7 +24,7 @@ public partial struct ShootSlimeBulletSystem : ISystem
         var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        if(!SystemAPI.TryGetSingleton<PlayerTagComponent>(out var playerTagComponent))
+        if (!SystemAPI.TryGetSingleton<PlayerTagComponent>(out var playerTagComponent))
         {
             Debug.LogError("Cant find PlayerTagComponent in ShootSlimeBulletSystem");
             return;
@@ -36,10 +36,18 @@ public partial struct ShootSlimeBulletSystem : ISystem
             return;
         }
 
+        // Get Frenzy data
+        float bonusDamagePercent = 0;
         if (!SystemAPI.TryGetSingleton<SlimeFrenzyComponent>(out var slimeFrenzyComponent))
         {
             Debug.LogError("Cant find SlimeFrenzyComponent in ShootSlimeBulletSystem");
             return;
+        }
+        else
+        {
+            slimeFrenzyComponent = entityManager.GetComponentData<SlimeFrenzyComponent>(player);
+            if (slimeFrenzyComponent.isActive)
+                bonusDamagePercent = slimeFrenzyComponent.bonusDamagePercent;
         }
 
         // Get Ability Haste
@@ -65,7 +73,7 @@ public partial struct ShootSlimeBulletSystem : ISystem
         }
         else
         {
-            Debug.Log($"Cant find Generic Damage Modifier Component in PawPrintPoisonCloudDamageSystem!");
+            Debug.Log($"Cant find Generic Damage Modifier Component in ShootSlimeBulletSystem!");
         }
 
 
@@ -81,11 +89,11 @@ public partial struct ShootSlimeBulletSystem : ISystem
 
             // Determine weapon level index 
             int levelIndex = shooter.level;
-   
+
             ref var levelData = ref blobData.Value.Levels[levelIndex];
 
             int baseDamage = levelData.damage;
-            int finalDamage = (int)(baseDamage * (1 + genericDamageModifier));
+            int finalDamage = (int)(baseDamage * (1 + genericDamageModifier + bonusDamagePercent));
 
             float baseCooldownTime = levelData.cooldown;
             float finalCooldownTime = baseCooldownTime * (100 / (100 + abilityHaste));
@@ -101,13 +109,10 @@ public partial struct ShootSlimeBulletSystem : ISystem
             float slowModifier = levelData.slowModifier;
             float slowRadius = levelData.slowRadius;
 
-            Shoot(
-                ecb, shooterEntity, finalDamage, finalCooldownTime, bulletCount, bulletRemaining,
+            Shoot(ecb, shooterEntity, finalDamage, finalCooldownTime, bulletCount, bulletRemaining,
                 minimumDistance, minDistBetweenBullets, maxDistBetweenBullets,
                 passthroughDamageModifier, moveSpeed, existDuration,
-                slowModifier, slowRadius, playerTagComponent.isFrenzing,
-                slimeFrenzyComponent.bonusDamagePercent
-            );
+                slowModifier, slowRadius);
 
             shooter.timer = finalCooldownTime; // Reset timer
         }
@@ -127,12 +132,10 @@ public partial struct ShootSlimeBulletSystem : ISystem
         float moveSpeed,
         float existDuration,
         float slowModifier,
-        float slowRadius,
-        bool isSlimeFrenzyActive,
-        float bonusDamagePercent)
+        float slowRadius)
     {
 
-        for (int i = 0; i < bulletRemaining; i++ )
+        for (int i = 0; i < bulletRemaining; i++)
         {
             // Spawn the bullet
             Entity bullet = ProjectilesManager.Instance.TakeSlimeBullet(ecb);
@@ -142,8 +145,7 @@ public partial struct ShootSlimeBulletSystem : ISystem
             float distance = minimumDistance + i * bonusDistance;
 
             SetBulletStats(ecb, bullet, damage, passthroughDamageModifier, cooldown,
-                distance, moveSpeed, existDuration, slowModifier, slowRadius,
-                isSlimeFrenzyActive, bonusDamagePercent);
+                distance, moveSpeed, existDuration, slowModifier, slowRadius);
 
 
             ////Damages player
@@ -174,12 +176,12 @@ public partial struct ShootSlimeBulletSystem : ISystem
             //{
             //    ecb.RemoveComponent<SlimeBulletShooterComponent>(entity);
             //}
-        }     
+        }
     }
 
-    private void SetBulletStats(EntityCommandBuffer ecb, Entity bullet, int damage, float passthroughDamageModifier, 
+    private void SetBulletStats(EntityCommandBuffer ecb, Entity bullet, int damage, float passthroughDamageModifier,
         float cooldown, float maxDistance, float moveSpeed, float existDuration, float slowModifier,
-        float slowRadius, bool isSlimeFrenzyActive, float bonusDamagePercent)
+        float slowRadius)
     {
         float3 playerPosition = entityManager.GetComponentData<LocalTransform>(player).Position;
 

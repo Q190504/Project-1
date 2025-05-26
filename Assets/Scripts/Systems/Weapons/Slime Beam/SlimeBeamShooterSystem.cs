@@ -51,7 +51,21 @@ public partial struct SlimeBeamShooterSystem : ISystem
         }
         else
         {
-            Debug.Log($"Cant find Generic Damage Modifier Component in PawPrintPoisonCloudDamageSystem!");
+            Debug.Log($"Cant find Generic Damage Modifier Component in SlimeBeamShooterSystem!");
+        }
+
+        // Get Frenzy data
+        SlimeFrenzyComponent slimeFrenzyComponent;
+        float bonusDamagePercent = 0;
+        if (SystemAPI.HasComponent<SlimeFrenzyComponent>(player))
+        {
+            slimeFrenzyComponent = entityManager.GetComponentData<SlimeFrenzyComponent>(player);
+            if (slimeFrenzyComponent.isActive)
+                bonusDamagePercent = slimeFrenzyComponent.bonusDamagePercent;
+        }
+        else
+        {
+            Debug.Log($"Cant find Slime Frenzy Component in SlimeBeamShooterSystem!");
         }
 
         var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
@@ -78,7 +92,7 @@ public partial struct SlimeBeamShooterSystem : ISystem
             ref var levelData = ref blobData.Value.Levels[level];
 
             int baseDamage = levelData.damage;
-            int finalDamage = (int)(baseDamage * (1 + genericDamageModifier));
+            int finalDamage = (int)(baseDamage * (1 + genericDamageModifier + bonusDamagePercent));
 
             float baseCooldownTime = levelData.cooldown;
             float finalCooldownTime = baseCooldownTime * (100 / (100 + abilityHaste));

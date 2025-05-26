@@ -6,15 +6,20 @@ using Unity.Collections;
 [BurstCompile]
 public partial struct FrenzySystem : ISystem
 {
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<SlimeFrenzyComponent>();
+    }
+
     public void OnUpdate(ref SystemState state)
     {
         if (!GameManager.Instance.IsPlaying()) return;
 
-        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+        var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        foreach (var (frenzyTimer, playerTag, entity) in
-                    SystemAPI.Query<RefRW<SlimeFrenzyTimerComponent>, RefRW<PlayerTagComponent>>().WithEntityAccess())
+        foreach (var (frenzyTimer, SlimeFrenzyComponent, entity) in
+                    SystemAPI.Query<RefRW<SlimeFrenzyTimerComponent>, RefRW<SlimeFrenzyComponent>>().WithEntityAccess())
         {
             frenzyTimer.ValueRW.timeRemaining -= SystemAPI.Time.DeltaTime;
 
@@ -22,16 +27,14 @@ public partial struct FrenzySystem : ISystem
             {
                 ecb.RemoveComponent<SlimeFrenzyTimerComponent>(entity);
 
-                if (SystemAPI.HasComponent<PlayerTagComponent>(entity))
-                    playerTag.ValueRW.isFrenzing = false;
+                SlimeFrenzyComponent.ValueRW.isActive = false;
 
                 // Remove the frenzy effect UI when frenzy expires
                 GamePlayUIManager.Instance.RemoveEffectImage(ref GamePlayUIManager.Instance.frenzyEffectIndex);
             }
             else
             {
-                if (SystemAPI.HasComponent<PlayerTagComponent>(entity))
-                    playerTag.ValueRW.isFrenzing = true;
+                SlimeFrenzyComponent.ValueRW.isActive = true;
 
                 //if hasn't Frenzy Effect Image yet
                 if (GamePlayUIManager.Instance.frenzyEffectIndex == -1)
@@ -41,8 +44,5 @@ public partial struct FrenzySystem : ISystem
                 GamePlayUIManager.Instance.UpdateEffectDurationUI(GamePlayUIManager.Instance.frenzyEffectIndex, frenzyTimer.ValueRO.timeRemaining, frenzyTimer.ValueRO.initialDuration);
             }
         }
-
-        ecb.Playback(state.EntityManager);
-        ecb.Dispose();
     }
 }

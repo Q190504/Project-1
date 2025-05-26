@@ -22,6 +22,7 @@ public class SlimeFrenzyAuthoring : MonoBehaviour
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
             AddComponent(entity, new SlimeFrenzyComponent
             {
+                isActive = false,
                 duration = authoring.duration,
                 cooldownTime = authoring.cooldownTime,
                 fireRateReductionPercent = authoring.fireRateReductionPercent,
@@ -35,6 +36,7 @@ public class SlimeFrenzyAuthoring : MonoBehaviour
 
 public struct SlimeFrenzyComponent : IComponentData
 {
+    public bool isActive;
     public float duration;
     public float cooldownTime;
     public float fireRateReductionPercent;

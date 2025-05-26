@@ -111,7 +111,7 @@ public partial struct PlayerMovementSystem : ISystem
             targetVelocity = float3.zero; 
         else if(playerTagComponent.isStunned)
             targetVelocity = float3.zero;
-        else if (playerTagComponent.isFrenzing)
+        else if (slimeFrenzyComponent.isActive)
             targetVelocity = new float3(playerInput.moveInput.x, playerInput.moveInput.y, 0)
                 * (playerMovement.totalSpeed + playerMovement.totalSpeed * slimeFrenzyComponent.bonusMovementSpeedPercent);
         else

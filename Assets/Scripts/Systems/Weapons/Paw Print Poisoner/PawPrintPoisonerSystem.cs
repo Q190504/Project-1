@@ -87,6 +87,20 @@ public partial struct PawPrintPoisonerSystem : ISystem
             Debug.Log($"Cant find Generic Damage Modifier Component in PawPrintPoisonCloudDamageSystem!");
         }
 
+        // Get Frenzy data
+        SlimeFrenzyComponent slimeFrenzyComponent;
+        float bonusDamagePercent = 0;
+        if (SystemAPI.HasComponent<SlimeFrenzyComponent>(player))
+        {
+            slimeFrenzyComponent = entityManager.GetComponentData<SlimeFrenzyComponent>(player);
+            if(slimeFrenzyComponent.isActive)
+                bonusDamagePercent = slimeFrenzyComponent.bonusDamagePercent;
+        }
+        else
+        {
+            Debug.Log($"Cant find Slime Frenzy Component in PawPrintPoisonCloudDamageSystem!");
+        }
+
 
         float deltaTime = SystemAPI.Time.DeltaTime;
 
@@ -120,7 +134,7 @@ public partial struct PawPrintPoisonerSystem : ISystem
         ref var levelData = ref blobData.Value.Levels[level];
 
         int damagePerTick = levelData.damagePerTick;
-        int finalDamagePerTick = (int)(damagePerTick * (1 + genericDamageModifier));
+        int finalDamagePerTick = (int)(damagePerTick * (1 + genericDamageModifier + bonusDamagePercent));
 
         float cloudRadius = levelData.cloudRadius;
         float maximumCloudDuration = levelData.maximumCloudDuration;

@@ -24,6 +24,7 @@ public partial struct RadiantFieldDamageSystem : ISystem
             Debug.LogError("Cant find Player Entity in RadiantFieldDamageSystem");
         }
 
+        // Get Generic Damage Modifier
         GenericDamageModifierComponent genericDamageModifierComponent;
         float genericDamageModifier = 0;
         if (SystemAPI.HasComponent<GenericDamageModifierComponent>(player))
@@ -34,6 +35,20 @@ public partial struct RadiantFieldDamageSystem : ISystem
         else
         {
             Debug.Log($"Cant find Generic Damage Modifier Component in RadiantFieldDamageSystem!");
+        }
+
+        // Get Frenzy data
+        SlimeFrenzyComponent slimeFrenzyComponent;
+        float bonusDamagePercent = 0;
+        if (SystemAPI.HasComponent<SlimeFrenzyComponent>(player))
+        {
+            slimeFrenzyComponent = entityManager.GetComponentData<SlimeFrenzyComponent>(player);
+            if (slimeFrenzyComponent.isActive)
+                bonusDamagePercent = slimeFrenzyComponent.bonusDamagePercent;
+        }
+        else
+        {
+            Debug.Log($"Cant find Slime Frenzy Component in RadiantFieldDamageSystem!");
         }
 
         var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
@@ -47,7 +62,8 @@ public partial struct RadiantFieldDamageSystem : ISystem
             enemyLookup = SystemAPI.GetComponentLookup<EnemyTagComponent>(true),
             ecb = ecb,
             currentTime = currentTime,
-            genericDamageModifier = genericDamageModifier
+            genericDamageModifier = genericDamageModifier,
+            bonusDamagePercent = bonusDamagePercent
         };
 
         state.Dependency = job.Schedule(SystemAPI.GetSingleton<SimulationSingleton>(), state.Dependency);
@@ -62,6 +78,7 @@ struct RadiantFieldDamageEnemyJob : ITriggerEventsJob
     public EntityCommandBuffer ecb;
     [ReadOnly] public double currentTime;
     [ReadOnly] public float genericDamageModifier;
+    [ReadOnly] public float bonusDamagePercent;
 
     public void Execute(TriggerEvent triggerEvent)
     {
@@ -92,11 +109,12 @@ struct RadiantFieldDamageEnemyJob : ITriggerEventsJob
             if (currentTime - radiantFieldComponent.lastTickTime < radiantFieldComponent.timeBetween)
                 return;
 
-            // Deal damage
+            // Calculate damage
             RadiantFieldLevelData currerntLevelData = radiantFieldComponent.Data.Value.Levels[radiantFieldComponent.currentLevel];
             int baseDamage = currerntLevelData.damagePerTick;
-            int finalDamage = (int)(baseDamage * (1 + genericDamageModifier));
+            int finalDamage = (int)(baseDamage * (1 + genericDamageModifier + bonusDamagePercent));
 
+            // Deal damage
             if (finalDamage > 0)
                 ecb.AddComponent(enemyEntity, new DamageEventComponent { damageAmount = finalDamage });
         }
