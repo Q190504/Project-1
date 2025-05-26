@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PickupExperienceOrbAuthoring : MonoBehaviour
 {
-    public int pickupRadius;
+    public float basePickupRadius;
     public float pullForce;
 
     public int currentLevel;
@@ -18,7 +18,8 @@ public class PickupExperienceOrbAuthoring : MonoBehaviour
 
             AddComponent(entity, new PickupExperienceOrbComponent
             {
-                pickupRadius = authoring.pickupRadius,
+                basePickupRadius = authoring.basePickupRadius,
+                pickupRadius = authoring.basePickupRadius,
                 pullForce = authoring.pullForce, 
 
                 currentLevel = authoring.currentLevel,
@@ -31,7 +32,8 @@ public class PickupExperienceOrbAuthoring : MonoBehaviour
 
 public struct PickupExperienceOrbComponent : IComponentData
 {
-    public int pickupRadius;
+    public float basePickupRadius;
+    public float pickupRadius;
     public float pullForce; 
 
     public int currentLevel;

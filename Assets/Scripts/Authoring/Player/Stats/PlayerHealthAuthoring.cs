@@ -3,12 +3,11 @@ using UnityEngine;
 
 public class PlayerHealthAuthoring : MonoBehaviour
 {
-    public int currentHealth;
-    public int maxHealth;
+    public int baseMaxHealth;
 
     public int currentLevel;
     public int maxLevel;
-    public float increment;
+    public int increment;
 
     public class PlayerHealthBaker : Baker<PlayerHealthAuthoring>
     {
@@ -16,12 +15,11 @@ public class PlayerHealthAuthoring : MonoBehaviour
         {
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
 
-            authoring.currentHealth = authoring.maxHealth;
-
             AddComponent(entity, new PlayerHealthComponent
             {
-                currentHealth = authoring.currentHealth,
-                maxHealth = authoring.maxHealth,
+                baseMaxHealth = authoring.baseMaxHealth,
+                currentHealth = authoring.baseMaxHealth,
+                maxHealth = authoring.baseMaxHealth,
 
                 currentLevel = authoring.currentLevel,
                 maxLevel = authoring.maxLevel,
@@ -33,10 +31,11 @@ public class PlayerHealthAuthoring : MonoBehaviour
 
 public struct PlayerHealthComponent : IComponentData
 {
+    public int baseMaxHealth;
     public int currentHealth;
     public int maxHealth;
 
     public int currentLevel;
     public int maxLevel;
-    public float increment;
+    public int increment;
 }

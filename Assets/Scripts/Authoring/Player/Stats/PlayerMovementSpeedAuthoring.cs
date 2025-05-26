@@ -20,6 +20,7 @@ public class PlayerMovementSpeedAuthoring : MonoBehaviour
             {
                 baseSpeed = authoring.baseSpeed,
                 currentSpeed = authoring.baseSpeed,
+                totalSpeed = authoring.baseSpeed,
                 smoothTime = authoring.smoothTime,
 
                 currentLevel = authoring.currentLevel,
@@ -34,6 +35,7 @@ public struct PlayerMovementSpeedComponent : IComponentData
 {
     public float baseSpeed;
     public float currentSpeed;
+    public float totalSpeed;
     public float smoothTime;
 
     public int currentLevel;

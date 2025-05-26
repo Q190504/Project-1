@@ -78,7 +78,7 @@ public partial struct PawPrintPoisonCloudBoostSpeedSystem : ISystem
                         entityManager.GetComponentData<PlayerMovementSpeedComponent>(player);
 
         float bonusMultiplier = 1f + (bonusPercentPerEnemy * enemiesInCloud);
-        playerMovement.currentSpeed = playerMovement.baseSpeed * bonusMultiplier;
+        playerMovement.totalSpeed = playerMovement.currentSpeed * bonusMultiplier;
 
         entityManager.SetComponentData(player, playerMovement);
 

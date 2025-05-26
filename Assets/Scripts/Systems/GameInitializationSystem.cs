@@ -22,6 +22,7 @@ public partial struct GameInitializationSystem : ISystem
             tracker.playerPositionSystemInitialized = false;
             tracker.playerHealthSystemInitialized = false;
             tracker.weaponSystemInitialized = false;
+            tracker.statsSystemInitialized = false;
             tracker.levelSystemInitialized = false;
             tracker.hasCleanEnemies = false;
             tracker.hasCleanProjectiles = false;

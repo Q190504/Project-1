@@ -15,10 +15,11 @@ public partial struct StartGameSystem : ISystem
     {
         if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker) && GameManager.Instance.IsInitializing())
         {
-            // TO DO: Add tracker.xpSystemInitialized
             if (tracker.playerPositionSystemInitialized
                 && tracker.playerHealthSystemInitialized
                 && tracker.weaponSystemInitialized
+                && tracker.levelSystemInitialized
+                && tracker.statsSystemInitialized
                 && tracker.hasCleanEnemies
                 && tracker.hasCleanProjectiles
                 && tracker.hasCleanCloudList)

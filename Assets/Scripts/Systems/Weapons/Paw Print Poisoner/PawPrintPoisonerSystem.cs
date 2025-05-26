@@ -92,7 +92,7 @@ public partial struct PawPrintPoisonerSystem : ISystem
 
         // Update distance traveled
         PlayerMovementSpeedComponent playerMovementComponent = entityManager.GetComponentData<PlayerMovementSpeedComponent>(player);
-        float playerCurrentSpeed = playerMovementComponent.currentSpeed;
+        float playerCurrentSpeed = playerMovementComponent.totalSpeed;
         float distanceThisFrame = playerCurrentSpeed * deltaTime;
         distanceTraveled += distanceThisFrame;
 

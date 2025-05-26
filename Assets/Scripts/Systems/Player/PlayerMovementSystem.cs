@@ -113,9 +113,9 @@ public partial struct PlayerMovementSystem : ISystem
             targetVelocity = float3.zero;
         else if (playerTagComponent.isFrenzing)
             targetVelocity = new float3(playerInput.moveInput.x, playerInput.moveInput.y, 0)
-                * (playerMovement.currentSpeed + playerMovement.currentSpeed * slimeFrenzyComponent.bonusMovementSpeedPercent);
+                * (playerMovement.totalSpeed + playerMovement.totalSpeed * slimeFrenzyComponent.bonusMovementSpeedPercent);
         else
-            targetVelocity = new float3(playerInput.moveInput.x, playerInput.moveInput.y, 0) * playerMovement.currentSpeed;
+            targetVelocity = new float3(playerInput.moveInput.x, playerInput.moveInput.y, 0) * playerMovement.totalSpeed;
 
         physicsVelocity.Linear = math.lerp(physicsVelocity.Linear, targetVelocity, playerMovement.smoothTime);
 
