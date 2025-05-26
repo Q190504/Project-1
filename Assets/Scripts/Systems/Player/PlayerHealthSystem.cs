@@ -5,9 +5,12 @@ using Unity.Burst;
 [BurstCompile]
 public partial struct PlayerHealthSystem : ISystem
 {
+    private EntityManager entityManager;
+
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<PlayerHealthComponent>();
+        entityManager = state.EntityManager;
 
         // Ensure InitializationTracker exists
         if (!SystemAPI.HasSingleton<InitializationTrackerComponent>())
@@ -45,45 +48,66 @@ public partial struct PlayerHealthSystem : ISystem
         if(!GameManager.Instance.IsPlaying())
             return;
 
-        foreach (var (playerHealth, playerEntity) in SystemAPI.Query<RefRW<PlayerHealthComponent>>().WithEntityAccess())
+        if (entityManager.HasComponent<PlayerHealthComponent>(player))
         {
-            //Take Damage
-            if (state.EntityManager.HasComponent<DamageEventComponent>(playerEntity))
-            {
-                var damage = state.EntityManager.GetComponentData<DamageEventComponent>(playerEntity);
-                playerHealth.ValueRW.currentHealth -= damage.damageAmount;
+            PlayerHealthComponent playerHealth = entityManager.GetComponentData<PlayerHealthComponent>(player);
 
-                if (playerHealth.ValueRO.currentHealth < 0)
-                    playerHealth.ValueRW.currentHealth = 0;
+            ArmorComponent armorComponent;
+            int armor = 0;
+            if (SystemAPI.HasComponent<ArmorComponent>(player))
+            {
+                armorComponent = entityManager.GetComponentData<ArmorComponent>(player);
+                armor = armorComponent.armorVaule;
+            }
+            else
+            {
+                Debug.Log($"Cant Found Ability Haste Component in PawPrintPoisonerSystem!");
+            }
+
+            //Take Damage
+            if (state.EntityManager.HasComponent<DamageEventComponent>(player))
+            {
+                // Calculate damage
+                DamageEventComponent damageEventComponent = state.EntityManager.GetComponentData<DamageEventComponent>(player);
+                int baseDamage = damageEventComponent.damageAmount;
+                int finalDamage = baseDamage - armor;
+                if(baseDamage - armor <= 0)
+                    finalDamage = 0;
+
+                // Apply damage
+                playerHealth.currentHealth -= finalDamage;
+
+                if (playerHealth.currentHealth < 0)
+                    playerHealth.currentHealth = 0;
 
                 //Update HP Bar
-                UpdateHPBar(playerHealth.ValueRO.currentHealth, playerHealth.ValueRO.maxHealth);
+                UpdateHPBar(playerHealth.currentHealth, playerHealth.maxHealth);
 
-                if (playerHealth.ValueRO.currentHealth <= 0)
+                if (playerHealth.currentHealth <= 0)
                 {
                     //onDie action
                     Debug.Log("Player Died!");
                     GameManager.Instance.EndGame(false);
                 }
 
-                ecb.RemoveComponent<DamageEventComponent>(playerEntity);
+                ecb.RemoveComponent<DamageEventComponent>(player);
             }
 
             //Heal
-            if (state.EntityManager.HasComponent<HealEventComponent>(playerEntity))
+            if (state.EntityManager.HasComponent<HealEventComponent>(player))
             {
-                var healEventComponent = state.EntityManager.GetComponentData<HealEventComponent>(playerEntity);
-                playerHealth.ValueRW.currentHealth += healEventComponent.healAmount;
+                var healEventComponent = state.EntityManager.GetComponentData<HealEventComponent>(player);
+                playerHealth.currentHealth += healEventComponent.healAmount;
 
-                if (playerHealth.ValueRO.currentHealth >= playerHealth.ValueRO.maxHealth)
+                if (playerHealth.currentHealth >= playerHealth.maxHealth)
                 {
-                    playerHealth.ValueRW.currentHealth = playerHealth.ValueRO.maxHealth;
+                    playerHealth.currentHealth = playerHealth.maxHealth;
                 }
 
                 //Update HP Bar
-                UpdateHPBar(playerHealth.ValueRO.currentHealth, playerHealth.ValueRO.maxHealth);
+                UpdateHPBar(playerHealth.currentHealth, playerHealth.maxHealth);
 
-                ecb.RemoveComponent<HealEventComponent>(playerEntity);
+                ecb.RemoveComponent<HealEventComponent>(player);
             }
         }
     }

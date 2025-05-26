@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class ArmorAuthoring : MonoBehaviour
 {
-    public float armorVaule;
+    public int armorVaule;
 
     public int currentLevel;
     public int maxLevel;
-    public float increment;
+    public int increment;
 
     public class Baker : Baker<ArmorAuthoring>
     {
@@ -29,9 +29,9 @@ public class ArmorAuthoring : MonoBehaviour
 
 public struct ArmorComponent : IComponentData
 {
-    public float armorVaule;
+    public int armorVaule;
 
     public int currentLevel;
     public int maxLevel;
-    public float increment;
+    public int increment;
 }
