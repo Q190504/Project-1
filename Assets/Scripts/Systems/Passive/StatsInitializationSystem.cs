@@ -40,7 +40,7 @@ public partial struct PassiveInitializationSystem : ISystem
                 healthComponent.ValueRW.currentHealth = healthComponent.ValueRO.maxHealth;
 
                 // Initialize armor
-                armorComponent.ValueRW.armorVaule = 0;
+                armorComponent.ValueRW.armorValue = 0;
 
                 // Initialize generic damage modifier
                 genericDamageModifierComponent.ValueRW.genericDamageModifierValue = 0;

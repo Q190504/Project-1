@@ -9,7 +9,7 @@ public class PlayerHealthAuthoring : MonoBehaviour
     {
         public override void Bake(PlayerHealthAuthoring authoring)
         {
-            Entity entity = GetEntity(TransformUsageFlags.Dynamic);
+            Entity entity = GetEntity(TransformUsageFlags.None);
 
             AddComponent(entity, new PlayerHealthComponent
             {

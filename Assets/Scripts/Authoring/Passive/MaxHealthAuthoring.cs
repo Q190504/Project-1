@@ -7,20 +7,24 @@ public class MaxHealthAuthoring : MonoBehaviour
     public int baseMaxHealth;
 
     public int currentLevel;
-    public int maxLevel;
     public int increment;
 
     public class Baker : Baker<MaxHealthAuthoring>
     {
         public override void Bake(MaxHealthAuthoring authoring)
         {
-            Entity entity = GetEntity(TransformUsageFlags.Dynamic);
+            Entity entity = GetEntity(TransformUsageFlags.None);
+
+            AddComponent(entity, new MaxHealthComponent
+            {
+                increment = authoring.increment,
+            });
 
             AddComponent(entity, new PassiveComponent
             {
                 ID = authoring.ID,
                 Level = authoring.currentLevel,
-                MaxLevel = authoring.maxLevel,
+                MaxLevel = 5,
                 DisplayName = "Max Health",
                 Description = "Increases the maximum health of the player.",
             });
@@ -30,6 +34,5 @@ public class MaxHealthAuthoring : MonoBehaviour
 
 public struct MaxHealthComponent : IComponentData
 {
-    public int level;
     public int increment;
 }

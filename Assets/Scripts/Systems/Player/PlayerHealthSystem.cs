@@ -57,7 +57,7 @@ public partial struct PlayerHealthSystem : ISystem
             if (SystemAPI.HasComponent<ArmorComponent>(player))
             {
                 armorComponent = entityManager.GetComponentData<ArmorComponent>(player);
-                armor = armorComponent.armorVaule;
+                armor = armorComponent.armorValue;
             }
             else
             {

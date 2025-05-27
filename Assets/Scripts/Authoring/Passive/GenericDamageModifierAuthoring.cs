@@ -13,7 +13,7 @@ public class GenericDamageModifierAuthoring : MonoBehaviour
     {
         public override void Bake(GenericDamageModifierAuthoring authoring)
         {
-            Entity entity = GetEntity(TransformUsageFlags.Dynamic);
+            Entity entity = GetEntity(TransformUsageFlags.None);
 
             AddComponent(entity, new GenericDamageModifierComponent
             {

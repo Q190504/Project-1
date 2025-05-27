@@ -15,7 +15,7 @@ public class PlayerMovementSpeedAuthoring : MonoBehaviour
     {
         public override void Bake(PlayerMovementSpeedAuthoring authoring)
         {
-            var entity = GetEntity(TransformUsageFlags.Dynamic);
+            var entity = GetEntity(TransformUsageFlags.None);
             AddComponent(entity, new PlayerMovementSpeedComponent
             {
                 baseSpeed = authoring.baseSpeed,

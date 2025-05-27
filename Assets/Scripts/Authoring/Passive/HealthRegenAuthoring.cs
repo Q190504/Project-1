@@ -13,7 +13,7 @@ public class HealthRegenAuthoring : MonoBehaviour
     {
         public override void Bake(HealthRegenAuthoring authoring)
         {
-            Entity entity = GetEntity(TransformUsageFlags.Dynamic);
+            Entity entity = GetEntity(TransformUsageFlags.None);
 
             AddComponent(entity, new HealthRegenComponent
             {

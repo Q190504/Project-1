@@ -14,7 +14,7 @@ public class PickupExperienceOrbAuthoring : MonoBehaviour
     {
         public override void Bake(PickupExperienceOrbAuthoring authoring)
         {
-            Entity entity = GetEntity(TransformUsageFlags.Dynamic);
+            Entity entity = GetEntity(TransformUsageFlags.None);
 
             AddComponent(entity, new PickupExperienceOrbComponent
             {

@@ -13,11 +13,11 @@ public class ArmorAuthoring : MonoBehaviour
     {
         public override void Bake(ArmorAuthoring authoring)
         {
-            Entity entity = GetEntity(TransformUsageFlags.Dynamic);
+            Entity entity = GetEntity(TransformUsageFlags.None);
 
             AddComponent(entity, new ArmorComponent
             {
-                armorVaule = authoring.armorVaule,
+                armorValue = authoring.armorVaule,
 
                 increment = authoring.increment,
             });
@@ -37,7 +37,7 @@ public class ArmorAuthoring : MonoBehaviour
 
 public struct ArmorComponent : IComponentData
 {
-    public int armorVaule;
+    public int armorValue;
 
     public int increment;
 }

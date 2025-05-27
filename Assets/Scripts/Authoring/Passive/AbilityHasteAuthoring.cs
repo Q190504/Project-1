@@ -13,7 +13,7 @@ public class AbilityHasteAuthoring : MonoBehaviour
     {
         public override void Bake(AbilityHasteAuthoring authoring)
         {
-            Entity entity = GetEntity(TransformUsageFlags.Dynamic);
+            Entity entity = GetEntity(TransformUsageFlags.None);
 
             AddComponent(entity, new AbilityHasteComponent
             {
