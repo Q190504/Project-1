@@ -30,13 +30,16 @@ public partial struct PlayerInputSystem : ISystem
 
         foreach (var playerInput in SystemAPI.Query<RefRW<PlayerInputComponent>>())
         {
-            if (GameManager.Instance.IsPlaying() == false) return;
+            // Can open setting panel when pausing or playing
+            if (GameManager.Instance.IsUpgrading() || GameManager.Instance.IsPlaying())
+               playerInput.ValueRW.isEscPressed = isPressingEscKey;
 
+            // If the game is not playing, don't update the player input
+            if (!GameManager.Instance.IsPlaying()) return;
             playerInput.ValueRW.moveInput = movement;
             //playerInput.ValueRW.isShootingPressed = isShooting;
             playerInput.ValueRW.isEPressed = isPressingEKey;
             playerInput.ValueRW.isRPressed = isPressingRKey;
-            playerInput.ValueRW.isEscPressed = isPressingEscKey;
         }
     }
 }

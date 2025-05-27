@@ -3,16 +3,19 @@ using Unity.Entities;
 using UnityEngine;
 
 [UpdateInGroup(typeof(SimulationSystemGroup))]
-public partial struct LevelUpSystem : ISystem
+public partial struct OpenUpgradePanelSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
         if (!GameManager.Instance.IsPlaying())
             return;
 
-        foreach (var playerSlots in
+        var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+
+        foreach (var (playerSlots, entity) in
                  SystemAPI.Query<RefRO<PlayerUpgradeSlots>>()
-                          .WithAll<LevelUpEvent>())
+                          .WithAll<PlayerLevelUpEvent>().WithEntityAccess())
         {
             // Pause game
             GameManager.Instance.TogglePauseGame();
@@ -21,10 +24,13 @@ public partial struct LevelUpSystem : ISystem
             NativeList<UpgradeOption> offerings
                 = UpgradeOfferingHelper.GenerateOfferings(playerSlots.ValueRO);
 
-            // 3. Open UI
-            GamePlayUIManager.Instance.OpenSelectPanel(offerings);
+            // Open UI
+            UpgradeOptionManager.Instance.SetTimer();
+            GamePlayUIManager.Instance.OpenUpgradePanel(offerings);
 
             offerings.Dispose();
+
+            ecb.RemoveComponent<PlayerLevelUpEvent>(entity);
         }
     }
 }

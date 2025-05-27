@@ -15,7 +15,7 @@ public partial struct AbilityHasteLevelUpSystem : ISystem
             AbilityHasteComponent component
                 = SystemAPI.GetComponent<AbilityHasteComponent>(entity);
 
-            if (state.EntityManager.HasComponent<LevelUpComponent>(entity))
+            if (state.EntityManager.HasComponent<AbilityHasteLevelUpEvent>(entity))
             {
                 PassiveComponent passiveComponent = SystemAPI.GetComponent<PassiveComponent>(entity);
                 component.abilityHasteValue += component.increment;
@@ -23,7 +23,7 @@ public partial struct AbilityHasteLevelUpSystem : ISystem
 
                 ecb.SetComponent(entity, component);
                 ecb.SetComponent(entity, passiveComponent);
-                ecb.RemoveComponent<LevelUpComponent>(entity);
+                ecb.RemoveComponent<AbilityHasteLevelUpEvent>(entity);
             }
         }
     }

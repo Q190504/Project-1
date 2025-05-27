@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-[CreateAssetMenu(fileName = "New Bullet Pulisher", menuName = "Scriptable Objects/Events/Bullet Publisher")]
+[CreateAssetMenu(fileName = "New Game Object Pulisher", menuName = "Scriptable Objects/Events/Game Object Publisher")]
 public class GameObjectPublisherSO : ScriptableObject
 {
-    public UnityAction<GameObject, string, int> OnEventRaised;
+    public UnityAction<GameObject> OnEventRaised;
 
-    public void RaiseEvent(GameObject obj, string tag="", int name=-1)
+    public void RaiseEvent(GameObject obj)
     {
-        OnEventRaised?.Invoke(obj, tag, name);
+        OnEventRaised?.Invoke(obj);
     }
 }

@@ -12,13 +12,13 @@ public partial struct PawPrintPosionerLevelUpSystem : ISystem
 
         if (SystemAPI.TryGetSingletonEntity<PawPrintPoisonerComponent>(out Entity entity))
         {
-            if (state.EntityManager.HasComponent<LevelUpComponent>(entity))
+            if (state.EntityManager.HasComponent<PawPrintPoisonerLevelUpEvent>(entity))
             {
                 WeaponComponent weaponComponent = SystemAPI.GetComponent<WeaponComponent>(entity);
                 weaponComponent.Level += 1;
 
                 ecb.SetComponent(entity, weaponComponent);
-                ecb.RemoveComponent<LevelUpComponent>(entity);
+                ecb.RemoveComponent<PawPrintPoisonerLevelUpEvent>(entity);
             }
         }
     }

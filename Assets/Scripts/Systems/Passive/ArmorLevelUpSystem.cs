@@ -15,7 +15,7 @@ public partial struct ArmorLevelUpSystem : ISystem
             ArmorComponent component
                 = SystemAPI.GetComponent<ArmorComponent>(entity);
 
-            if (state.EntityManager.HasComponent<LevelUpComponent>(entity))
+            if (state.EntityManager.HasComponent<ArmorLevelUpEvent>(entity))
             {
                 PassiveComponent passiveComponent = SystemAPI.GetComponent<PassiveComponent>(entity);
                 component.armorValue += component.increment;
@@ -23,7 +23,7 @@ public partial struct ArmorLevelUpSystem : ISystem
 
                 ecb.SetComponent(entity, component);
                 ecb.SetComponent(entity, passiveComponent);
-                ecb.RemoveComponent<LevelUpComponent>(entity);
+                ecb.RemoveComponent<ArmorLevelUpEvent>(entity);
             }
         }
     }

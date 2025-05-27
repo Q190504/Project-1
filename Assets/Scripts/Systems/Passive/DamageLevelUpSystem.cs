@@ -15,7 +15,7 @@ public partial struct DamageLevelUpSystem : ISystem
             GenericDamageModifierComponent component
                 = SystemAPI.GetComponent<GenericDamageModifierComponent>(entity);
 
-            if (state.EntityManager.HasComponent<LevelUpComponent>(entity))
+            if (state.EntityManager.HasComponent<DamageLevelUpEvent>(entity))
             {
                 PassiveComponent passiveComponent = SystemAPI.GetComponent<PassiveComponent>(entity);
                 component.genericDamageModifierValue += component.increment;
@@ -23,7 +23,7 @@ public partial struct DamageLevelUpSystem : ISystem
 
                 ecb.SetComponent(entity, component);
                 ecb.SetComponent(entity, passiveComponent);
-                ecb.RemoveComponent<LevelUpComponent>(entity);
+                ecb.RemoveComponent<DamageLevelUpEvent>(entity);
             }
         }
     }

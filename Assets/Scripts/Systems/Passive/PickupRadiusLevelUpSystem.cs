@@ -15,7 +15,7 @@ public partial struct PickupRadiusLevelUpSystem : ISystem
             PickupExperienceOrbComponent component
                 = SystemAPI.GetComponent<PickupExperienceOrbComponent>(entity);
 
-            if (state.EntityManager.HasComponent<LevelUpComponent>(entity))
+            if (state.EntityManager.HasComponent<PickupRadiusLevelUpEvent>(entity))
             {
                 PassiveComponent passiveComponent = SystemAPI.GetComponent<PassiveComponent>(entity);
                 component.pickupRadius *= (1 + component.increment);
@@ -23,7 +23,7 @@ public partial struct PickupRadiusLevelUpSystem : ISystem
 
                 ecb.SetComponent(entity, component);
                 ecb.SetComponent(entity, passiveComponent);
-                ecb.RemoveComponent<LevelUpComponent>(entity);
+                ecb.RemoveComponent<PickupRadiusLevelUpEvent>(entity);
             }
         }
     }

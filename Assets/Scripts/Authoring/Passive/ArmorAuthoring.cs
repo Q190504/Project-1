@@ -27,7 +27,7 @@ public class ArmorAuthoring : MonoBehaviour
                 ID = authoring.ID,
 
                 Level = authoring.currentLevel,
-                MaxLevel = 10,
+                MaxLevel = 5,
                 DisplayName = "Armor",
                 Description = "Reduces incoming damage.",
             });

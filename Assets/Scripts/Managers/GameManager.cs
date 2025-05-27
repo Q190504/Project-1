@@ -7,7 +7,7 @@ public enum GameState
 {
     NotStarted,
     Initializing,
-    Pausing,
+    Upgrading,
     Playing,
 }
 
@@ -118,6 +118,11 @@ public class GameManager : MonoBehaviour
         return gameState == GameState.Playing;
     }
 
+    public bool IsUpgrading()
+    {
+        return gameState == GameState.Upgrading;
+    }
+
     public bool IsNotStarted()
     {
         return gameState == GameState.NotStarted;
@@ -157,10 +162,10 @@ public class GameManager : MonoBehaviour
     {
         if (gameState == GameState.Playing)
         {
-            SetGameState(GameState.Pausing);
+            SetGameState(GameState.Upgrading);
             Time.timeScale = 0f; // Pause the game
         }
-        else if (gameState == GameState.Pausing)
+        else if (gameState == GameState.Upgrading)
         {
             SetGameState(GameState.Playing);
             Time.timeScale = 1f; // Resume the game

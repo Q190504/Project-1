@@ -9847,6 +9847,8 @@ GameObject:
   - component: {fileID: 922116007}
   - component: {fileID: 922116008}
   - component: {fileID: 922116009}
+  - component: {fileID: 922116010}
+  - component: {fileID: 922116011}
   m_Layer: 0
   m_Name: GamePlayUIManager
   m_TagString: Untagged
@@ -9882,7 +9884,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   titlePanel: {fileID: 1593691647}
-  selectPanel: {fileID: 1906108754}
+  upgradePanel: {fileID: 1906108754}
   endGamePanel: {fileID: 34624138}
   settingPanel: {fileID: 1902783206}
   audioSettingPanel: {fileID: 0}
@@ -9899,8 +9901,8 @@ MonoBehaviour:
   hpText: {fileID: 625670461}
   xpBar: {fileID: 1470844627}
   xpText: {fileID: 1452916238}
-  leftCountdownSlider: {fileID: 374454290}
-  rightCountdownSlider: {fileID: 903325090}
+  leftCountdownBar: {fileID: 374454290}
+  rightCountdownBar: {fileID: 903325090}
   skill1Image: {fileID: 1533457325}
   skill1CoodownImage: {fileID: 1194095088}
   skill1CoodownText: {fileID: 955689987}
@@ -9925,9 +9927,10 @@ MonoBehaviour:
   frenzyEffectIndex: -1
   frenzyEffectSprite: {fileID: -5906687731359168616, guid: d832e36fff4c7cc4eaa22921c39320cc, type: 3}
   effectsLayout: {fileID: 1113382833}
-  cardLayout: {fileID: 0}
-  statsCardPrefab: {fileID: 3001254477037058834, guid: ef668e35825f86b4d8f4c31f45e2c83e, type: 3}
-  weaponCardPrefab: {fileID: 40135964836769862, guid: 381f74dd998774b41b0718f71938fb63, type: 3}
+  cardLayout: {fileID: 94418579}
+  statsCardPrefab: {fileID: -6564784702441057703, guid: ef668e35825f86b4d8f4c31f45e2c83e, type: 3}
+  weaponCardPrefab: {fileID: 2220865243480083456, guid: 381f74dd998774b41b0718f71938fb63, type: 3}
+  addCardSO: {fileID: 11400000, guid: 0520119eaa8d5e144a41cfe0e34626f1, type: 2}
   damageIcon: {fileID: 0}
   maxHPIcon: {fileID: 0}
   moveSpeedIcon: {fileID: 0}
@@ -10134,7 +10137,75 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 922116002}
+        m_TargetAssemblyTypeName: GamePlayUIManager, Assembly-CSharp
+        m_MethodName: SetSelectPanel
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   publisher: {fileID: 11400000, guid: bef361ea8bced2149881922cac6f2981, type: 2}
+--- !u!114 &922116010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 922116000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4d67c870696e604e92e17f2f06b7f05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EventResponse:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 922116002}
+        m_TargetAssemblyTypeName: GamePlayUIManager, Assembly-CSharp
+        m_MethodName: CloseUpgradePanel
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  publisher: {fileID: 11400000, guid: 2605bd95cf9ccc84398753bcccc7263f, type: 2}
+--- !u!114 &922116011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 922116000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0f6e5163e9a87d4d93c4a8217865972, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EventResponse:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 922116002}
+        m_TargetAssemblyTypeName: GamePlayUIManager, Assembly-CSharp
+        m_MethodName: UpdateCountdown
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  publisher: {fileID: 11400000, guid: 82929148137a65b429d9260200f1493f, type: 2}
 --- !u!1 &941708848
 GameObject:
   m_ObjectHideFlags: 0
@@ -51494,6 +51565,7 @@ GameObject:
   - component: {fileID: 1522145078}
   - component: {fileID: 1522145080}
   - component: {fileID: 1522145081}
+  - component: {fileID: 1522145082}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -51588,6 +51660,34 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   publisher: {fileID: 11400000, guid: 7baa05628328bcc4183455c39b6411c5, type: 2}
+--- !u!114 &1522145082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1522145076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4d67c870696e604e92e17f2f06b7f05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EventResponse:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1522145078}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: TogglePauseGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  publisher: {fileID: 11400000, guid: 2605bd95cf9ccc84398753bcccc7263f, type: 2}
 --- !u!1 &1533457323
 GameObject:
   m_ObjectHideFlags: 0
@@ -52229,8 +52329,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 941708849}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -54024,12 +54124,12 @@ GameObject:
   - component: {fileID: 1906108757}
   - component: {fileID: 1906108756}
   m_Layer: 5
-  m_Name: Select Panel
+  m_Name: Upgrade Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1906108755
 RectTransform:
   m_ObjectHideFlags: 0
@@ -54247,6 +54347,110 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nodeSizeScale: 2.2
+--- !u!1 &1970843898
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1970843899}
+  - component: {fileID: 1970843900}
+  - component: {fileID: 1970843902}
+  - component: {fileID: 1970843901}
+  m_Layer: 0
+  m_Name: Upgrade Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1970843899
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1970843898}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1970843900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1970843898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45986d5c65718654e958e761f912914f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  totalTime: 30
+  updateCountdownSO: {fileID: 11400000, guid: 82929148137a65b429d9260200f1493f, type: 2}
+--- !u!114 &1970843901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1970843898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 705204c1f16c5ab4a93840df829ccc37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EventResponse:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1970843900}
+        m_TargetAssemblyTypeName: UpgradeOptionManager, Assembly-CSharp
+        m_MethodName: AddUpgradeOption
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  publisher: {fileID: 11400000, guid: 0520119eaa8d5e144a41cfe0e34626f1, type: 2}
+--- !u!114 &1970843902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1970843898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4d67c870696e604e92e17f2f06b7f05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EventResponse:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1970843900}
+        m_TargetAssemblyTypeName: UpgradeOptionManager, Assembly-CSharp
+        m_MethodName: ClearOption
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  publisher: {fileID: 11400000, guid: 2605bd95cf9ccc84398753bcccc7263f, type: 2}
 --- !u!1 &1975417893
 GameObject:
   m_ObjectHideFlags: 0
@@ -54431,7 +54635,7 @@ RectTransform:
   m_Father: {fileID: 2052296028}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -55303,9 +55507,10 @@ SceneRoots:
   - {fileID: 108756667}
   - {fileID: 1522145077}
   - {fileID: 922116001}
+  - {fileID: 1476228011}
+  - {fileID: 1970843899}
   - {fileID: 827541386}
   - {fileID: 2028360960}
-  - {fileID: 1476228011}
   - {fileID: 2010950038}
   - {fileID: 2087238804}
   - {fileID: 406217612}

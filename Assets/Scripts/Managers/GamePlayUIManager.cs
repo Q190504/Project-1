@@ -11,7 +11,7 @@ public class GamePlayUIManager : MonoBehaviour
 
     [Header("Panels")]
     public GameObject titlePanel;
-    public GameObject selectPanel;
+    public GameObject upgradePanel;
     public GameObject endGamePanel;
     public GameObject settingPanel;
     public GameObject audioSettingPanel;
@@ -33,8 +33,8 @@ public class GamePlayUIManager : MonoBehaviour
     public Slider xpBar;
     public TMP_Text xpText;
 
-    public Slider leftCountdownSlider;
-    public Slider rightCountdownSlider;
+    public Slider leftCountdownBar;
+    public Slider rightCountdownBar;
 
     [Header("Skills")]
     public Image skill1Image;
@@ -79,8 +79,9 @@ public class GamePlayUIManager : MonoBehaviour
 
     [Header("Cards")]
     public Transform cardLayout;
-    public SelectionCard statsCardPrefab;
-    public SelectionCard weaponCardPrefab;
+    public UpgradeCard statsCardPrefab;
+    public UpgradeCard weaponCardPrefab;
+    public GameObjectPublisherSO addCardSO;
 
     [Header("Stats Icon")]
     public Sprite damageIcon;
@@ -101,6 +102,9 @@ public class GamePlayUIManager : MonoBehaviour
     private EntityManager entityManager;
     PlayerInputComponent playerInput;
 
+    private Dictionary<PassiveType, Sprite> passiveIcons;
+    private Dictionary<WeaponType, Sprite> weaponIcons;
+
     public static GamePlayUIManager Instance
     {
         get
@@ -117,6 +121,25 @@ public class GamePlayUIManager : MonoBehaviour
             _instance = this;
         else
             Destroy(this.gameObject);
+
+        passiveIcons = new Dictionary<PassiveType, Sprite>
+        {
+            { PassiveType.Damage, damageIcon },
+            { PassiveType.MaxHealth, maxHPIcon },
+            { PassiveType.MoveSpeed, moveSpeedIcon },
+            { PassiveType.HealthRegen, healthRegenIcon },
+            { PassiveType.PickupRadius, pickupRadiusIcon },
+            { PassiveType.Armor, armorIcon },
+            { PassiveType.AbilityHaste, abilityHasteIcon }
+        };
+
+        weaponIcons = new Dictionary<WeaponType, Sprite>
+        {
+            { WeaponType.SlimeBulletShooter, slimeBulletShooterIcon },
+            { WeaponType.SlimeBeamShooter, slimeBeamShooterIcon },
+            { WeaponType.PawPrintPoisoner, pawPrintPoisonerIcon },
+            { WeaponType.RadiantField, radiantFieldIcon }
+        };
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -136,7 +159,7 @@ public class GamePlayUIManager : MonoBehaviour
         SetTitlePanel(true);
         CloseEndGamePanel();
         SetConfirmExitPanel(false);
-        SetSelectPanel(false);
+        CloseUpgradePanel();
     }
 
     // Update is called once per frame
@@ -332,12 +355,10 @@ public class GamePlayUIManager : MonoBehaviour
     public void OnStartGame()
     {
         SetSettingPanel(false);
-
         SetTitlePanel(false);
-
         CloseEndGamePanel();
-
         SetConfirmExitPanel(false);
+        CloseUpgradePanel();
     }
 
     public void SetConfirmExitPanel(bool status)
@@ -345,66 +366,62 @@ public class GamePlayUIManager : MonoBehaviour
         comfirmExitPanel.SetActive(status);
     }
 
-    public void OpenSelectPanel(NativeList<UpgradeOption> upgradeOptions)
+    public void OpenUpgradePanel(NativeList<UpgradeOption> upgradeOptions)
     {
-        if (cardLayout.childCount > 0)
-            foreach (Transform child in cardLayout)
-                Destroy(child.gameObject);
+        ClearCards();
 
         // Add cards
         foreach (var upgradeOption in upgradeOptions)
         {
-            AddCard(upgradeOption.Type, upgradeOption.CurrentLevel,
+            AddCard(upgradeOption.CardType, upgradeOption.WeaponType, upgradeOption.PassiveType, upgradeOption.CurrentLevel,
                 upgradeOption.DisplayName.ToString(), upgradeOption.Description.ToString());
         }
     }
 
-    public void SetSelectPanel(bool status)
+    public void CloseUpgradePanel()
     {
-        selectPanel.SetActive(status);
+        upgradePanel.SetActive(false);
+        ClearCards();
     }
 
-    public void AddCard(UpgradeType upgradeType, int level, string name, string description)
+    public void AddCard(UpgradeType upgradeType, WeaponType weaponType, PassiveType passiveType, int level, string name, string description)
     {
         Sprite image = null;
+        UpgradeCard upgradeCard = null;
 
         if (upgradeType == UpgradeType.Passive)
         {
-            SelectionCard statsCard = GameObject.Instantiate<SelectionCard>(statsCardPrefab, cardLayout);
-
-            //if(name == "Damage")
-            //    image = damageIcon;
-            //else if(name == "Max HP")
-            //    image = maxHPIcon;
-            //else if(name == "Move Speed")
-            //    image = moveSpeedIcon;
-            //else if(name == "Health Regen")
-            //    image = healthRegenIcon;
-            //else if(name == "Pickup Radius")
-            //    image = pickupRadiusIcon;
-            //else if(name == "Armor")
-            //    image = armorIcon;
-            //else if(name == "Ability Haste")
-            //    image = abilityHasteIcon;
-
-            statsCard.SetCardInfo(upgradeType, name, description, image, level);
+            upgradeCard = Instantiate(statsCardPrefab, cardLayout);
+            passiveIcons.TryGetValue(passiveType, out image);
         }
-        else if (upgradeType == UpgradeType.Passive)
+        else if (upgradeType == UpgradeType.Weapon)
         {
-            SelectionCard weaponCard = GameObject.Instantiate<SelectionCard>(weaponCardPrefab, cardLayout);
-
-            //if (name == "Slime Bullet Shooter")
-            //    image = slimeBulletShooterIcon;
-            //else if (name == "Slime Beam Shooter")
-            //    image = slimeBeamShooterIcon;
-            //else if (name == "Paw Print Poisoner")
-            //    image = pawPrintPoisonerIcon;
-            //else if (name == "Radiant Field")
-            //    image = radiantFieldIcon;
-            //else
-            //    Debug.LogError("[GamePlayUIManager] Unknown weapon name: " + name);
-
-            weaponCard.SetCardInfo(upgradeType, name, description, image, level);
+            upgradeCard = Instantiate(weaponCardPrefab, cardLayout);
+            weaponIcons.TryGetValue(weaponType, out image);
         }
+
+        if (image == null)
+            Debug.LogWarning($"[GamePlayUIManager] Unknown card name for image: {name}");
+
+        upgradeCard.SetCardInfo(upgradeType, weaponType, passiveType, name, description, image, level);
+        addCardSO.RaiseEvent(upgradeCard.gameObject);
+    }
+
+    public void ClearCards()
+    {
+        if (cardLayout.childCount > 0)
+            foreach (Transform child in cardLayout)
+                Destroy(child.gameObject);
+    }
+
+    public void UpdateCountdown(float timeLeft, float totalTime)
+    {
+        leftCountdownBar.maxValue = totalTime;
+        leftCountdownBar.value = timeLeft;
+
+        rightCountdownBar.maxValue = totalTime;
+        rightCountdownBar.value = timeLeft;
+
+        countdownSelectionText.text = $"{(int)timeLeft}";
     }
 }

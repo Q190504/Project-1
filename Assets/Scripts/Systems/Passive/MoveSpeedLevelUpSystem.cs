@@ -15,7 +15,7 @@ public partial struct MoveSpeedLevelUpSystem : ISystem
             PlayerMovementSpeedComponent component
                 = SystemAPI.GetComponent<PlayerMovementSpeedComponent>(entity);
 
-            if (state.EntityManager.HasComponent<LevelUpComponent>(entity))
+            if (state.EntityManager.HasComponent<MoveSpeedLevelUpEvent>(entity))
             {
                 PassiveComponent passiveComponent = SystemAPI.GetComponent<PassiveComponent>(entity);
                 component.currentSpeed *= (1 + component.increment);
@@ -23,7 +23,7 @@ public partial struct MoveSpeedLevelUpSystem : ISystem
 
                 ecb.SetComponent(entity, component);
                 ecb.SetComponent(entity, passiveComponent);
-                ecb.RemoveComponent<LevelUpComponent>(entity);
+                ecb.RemoveComponent<MoveSpeedLevelUpEvent>(entity);
             }
         }
     }

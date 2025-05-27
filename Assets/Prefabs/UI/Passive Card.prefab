@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2084718571056542508}
   - component: {fileID: 2559755010848991769}
   m_Layer: 5
-  m_Name: Stats Level
+  m_Name: Passive Level
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -149,7 +149,7 @@ GameObject:
   - component: {fileID: 572659053861050959}
   - component: {fileID: -6564784702441057703}
   m_Layer: 5
-  m_Name: Stats Card
+  m_Name: Passive Card
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -225,14 +225,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 3001254477037058834}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd6a3bfdd79e0e64e8e95b96eb9472b2, type: 3}
+  m_Script: {fileID: 11500000, guid: 10b55569903cb5d449893a750876bd73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardType: 0
+  upgradeType: 1
   level: {fileID: 2559755010848991769}
   cardName: {fileID: 7323723655520222773}
   cardImage: {fileID: 5071660165271621732}
   cardDescription: {fileID: 6106421965187362650}
+  onCardClickSO: {fileID: 11400000, guid: 2605bd95cf9ccc84398753bcccc7263f, type: 2}
 --- !u!1 &3092855060507702376
 GameObject:
   m_ObjectHideFlags: 0
@@ -245,7 +246,7 @@ GameObject:
   - component: {fileID: 1912842988769171549}
   - component: {fileID: 5071660165271621732}
   m_Layer: 5
-  m_Name: Stats Icon
+  m_Name: Passive Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -456,7 +457,7 @@ GameObject:
   - component: {fileID: 1814508936568176357}
   - component: {fileID: 7323723655520222773}
   m_Layer: 5
-  m_Name: Stats Name
+  m_Name: Passive Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

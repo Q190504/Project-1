@@ -15,7 +15,7 @@ public partial struct HealthRegenLevelUpSystem : ISystem
             HealthRegenComponent component
                 = SystemAPI.GetComponent<HealthRegenComponent>(entity);
 
-            if (state.EntityManager.HasComponent<LevelUpComponent>(entity))
+            if (state.EntityManager.HasComponent<HealthRegenLevelUpEvent>(entity))
             {
                 PassiveComponent passiveComponent = SystemAPI.GetComponent<PassiveComponent>(entity);
                 component.healthRegenValue += component.increment;
@@ -23,7 +23,7 @@ public partial struct HealthRegenLevelUpSystem : ISystem
 
                 ecb.SetComponent(entity, component);
                 ecb.SetComponent(entity, passiveComponent);
-                ecb.RemoveComponent<LevelUpComponent>(entity);
+                ecb.RemoveComponent<HealthRegenLevelUpEvent>(entity);
             }
         }
     }

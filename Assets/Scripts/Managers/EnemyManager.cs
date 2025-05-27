@@ -62,6 +62,8 @@ public class EnemyManager : MonoBehaviour
         EntityQuery playerQuery = entityManager.CreateEntityQuery(typeof(PlayerTagComponent));
         if (playerQuery.CalculateEntityCount() > 0)
             player = playerQuery.GetSingletonEntity();
+        else
+            Debug.LogError("Player entity not found in EnemyManager");
 
         // Get the baked entity prefab
         EntityQuery enemyPrefabQuery = entityManager.CreateEntityQuery(typeof(EnemyPrefabComponent));

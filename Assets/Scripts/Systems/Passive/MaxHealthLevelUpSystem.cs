@@ -15,7 +15,7 @@ public partial struct MaxHealthLevelUpSystem : ISystem
             MaxHealthComponent component
                 = SystemAPI.GetComponent<MaxHealthComponent>(entity);
 
-            if (state.EntityManager.HasComponent<LevelUpComponent>(entity))
+            if (state.EntityManager.HasComponent<MaxHealthLevelUpEvent>(entity))
             {
                 PassiveComponent passiveComponent = SystemAPI.GetComponent<PassiveComponent>(entity);
                 passiveComponent.Level += 1;
@@ -38,7 +38,7 @@ public partial struct MaxHealthLevelUpSystem : ISystem
                 }
 
                 ecb.SetComponent(entity, passiveComponent);
-                ecb.RemoveComponent<LevelUpComponent>(entity);
+                ecb.RemoveComponent<MaxHealthLevelUpEvent>(entity);
             }
         }
     }

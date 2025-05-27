@@ -69,6 +69,7 @@ public class PawPrintPoisonerAuthoring : MonoBehaviour
 
             AddComponent(entity, new WeaponComponent
             {
+                WeaponType = authoring.weaponId,
                 ID = weapon.id,
                 DisplayName = weapon.name,
                 Description = "Leaves a damaging poison cloud behind while moving.",

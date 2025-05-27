@@ -34,7 +34,7 @@ public static class UpgradeOfferingHelper
             NativeArray<Entity> passiveEntities = passiveQuery.ToEntityArray(Allocator.Temp);
             foreach (Entity passive in passiveEntities)
             {
-                var passiveComponent = entityManager.GetComponentData<WeaponComponent>(passive);
+                var passiveComponent = entityManager.GetComponentData<PassiveComponent>(passive);
 
                 // If the passive is in the player's slots and has a level less than 5, or if it's not in the slots
                 if (passiveComponent.Level < 5 && slots.PassiveIDs.Contains(passiveComponent.ID) ||
@@ -53,7 +53,8 @@ public static class UpgradeOfferingHelper
             var weaponComponent = entityManager.GetComponentData<WeaponComponent>(weapon);
             UpgradeOption option = new UpgradeOption
             {
-                Type = UpgradeType.Weapon,
+                CardType = UpgradeType.Weapon,
+                WeaponType = weaponComponent.WeaponType,
                 ID = weaponComponent.ID,
                 DisplayName = weaponComponent.DisplayName,
                 Description = weaponComponent.Description,
@@ -62,14 +63,15 @@ public static class UpgradeOfferingHelper
 
             combined.Add(option);
         }
-
+        
         // Add valid passives to the combined list
         foreach (var passive in validPassives)
         {
             var passiveComponent = entityManager.GetComponentData<PassiveComponent>(passive);
             UpgradeOption option = new UpgradeOption
             {
-                Type = UpgradeType.Passive,
+                CardType = UpgradeType.Passive,
+                PassiveType = passiveComponent.PassiveType,
                 ID = passiveComponent.ID,
                 DisplayName = passiveComponent.DisplayName,
                 Description = passiveComponent.Description,

@@ -89,14 +89,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 40135964836769862}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd6a3bfdd79e0e64e8e95b96eb9472b2, type: 3}
+  m_Script: {fileID: 11500000, guid: 10b55569903cb5d449893a750876bd73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardType: 1
+  upgradeType: 0
   level: {fileID: 6168632734242482064}
   cardName: {fileID: 8941865984309951170}
   cardImage: {fileID: 7411385066383652077}
   cardDescription: {fileID: 4531501812600337675}
+  onCardClickSO: {fileID: 11400000, guid: 2605bd95cf9ccc84398753bcccc7263f, type: 2}
 --- !u!1 &1467076415898811541
 GameObject:
   m_ObjectHideFlags: 0

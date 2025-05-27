@@ -12,13 +12,13 @@ public partial struct RadiantFieldLevelUpSystem : ISystem
 
         if (SystemAPI.TryGetSingletonEntity<RadiantFieldComponent>(out Entity entity))
         {
-            if (state.EntityManager.HasComponent<LevelUpComponent>(entity))
+            if (state.EntityManager.HasComponent<RadiantFieldLevelUpEvent>(entity))
             {
                 WeaponComponent weaponComponent = SystemAPI.GetComponent<WeaponComponent>(entity);
                 weaponComponent.Level += 1;
 
                 ecb.SetComponent(entity, weaponComponent);
-                ecb.RemoveComponent<LevelUpComponent>(entity);
+                ecb.RemoveComponent<RadiantFieldLevelUpEvent>(entity);
             }
         }
     }
