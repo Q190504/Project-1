@@ -63,37 +63,13 @@ public class RadiantFieldAuthoring : MonoBehaviour
                 lastTickTime = 0,
             });
 
-            //using var builder = new BlobBuilder(Allocator.Temp);
-            //{
-            //    ref var root = ref builder.ConstructRoot<RadiantFieldDataBlob>();
-
-            //    var levels = builder.Allocate(ref root.Levels, weapon.levels.Length);
-            //    for (int i = 0; i < weapon.levels.Length; i++)
-            //    {
-            //        var level = weapon.levels[i];
-            //        levels[i] = new RadiantFieldLevelData
-            //        {
-            //            damagePerTick = level.damagePerTick,
-            //            cooldown = level.cooldown,
-            //            radius = level.radius,
-            //            slowModifier = level.slowModifier,
-            //        };
-            //    }
-
-            //    var blob = builder.CreateBlobAssetReference<RadiantFieldDataBlob>(Allocator.Temp);
-
-            //    Entity radiantFieldEntity = GetEntity(TransformUsageFlags.Dynamic);
-
-            //    AddComponent(radiantFieldEntity, new RadiantFieldComponent
-            //    {
-            //        Data = blob,
-            //        timer = 2f,
-            //        timeBetween = weapon.timeBetween,
-            //        currentLevel = 0,
-            //        previousLevel = -1,
-            //        lastTickTime = 0,
-            //    });
-            //}
+            AddComponent(radiantFieldEntity, new WeaponComponent
+            {
+                ID = weapon.id,
+                DisplayName = weapon.name,
+                Description = "A solar field damages nearby enemies.",
+                Level = 0,
+            });
         }
     }
 }
@@ -112,7 +88,7 @@ public class RadiantFieldLevelJson
 [System.Serializable]
 public class RadiantFieldJson
 {
-    public string id;
+    public int id;
     public string name;
     public float timeBetween;
     public RadiantFieldLevelJson[] levels;

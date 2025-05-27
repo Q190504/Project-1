@@ -7,6 +7,7 @@ public enum GameState
 {
     NotStarted,
     Initializing,
+    Pausing,
     Playing,
 }
 
@@ -150,5 +151,19 @@ public class GameManager : MonoBehaviour
     public void ExitGame()
     {
         Application.Quit();
+    }
+
+    public void TogglePauseGame()
+    {
+        if (gameState == GameState.Playing)
+        {
+            SetGameState(GameState.Pausing);
+            Time.timeScale = 0f; // Pause the game
+        }
+        else if (gameState == GameState.Pausing)
+        {
+            SetGameState(GameState.Playing);
+            Time.timeScale = 1f; // Resume the game
+        }
     }
 }

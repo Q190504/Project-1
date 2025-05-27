@@ -11,6 +11,7 @@ public class GamePlayUIManager : MonoBehaviour
 
     [Header("Panels")]
     public GameObject titlePanel;
+    public GameObject selectPanel;
     public GameObject endGamePanel;
     public GameObject settingPanel;
     public GameObject audioSettingPanel;
@@ -19,6 +20,7 @@ public class GamePlayUIManager : MonoBehaviour
 
     [Header("Texts")]
     public TMP_Text currentLevelText;
+    public TMP_Text countdownSelectionText;
     public TMP_Text inGameTimeText;
     public TMP_Text inGameEnemyKilledText;
     public TMP_Text endGamePanelTitleText;
@@ -30,6 +32,9 @@ public class GamePlayUIManager : MonoBehaviour
     public TMP_Text hpText;
     public Slider xpBar;
     public TMP_Text xpText;
+
+    public Slider leftCountdownSlider;
+    public Slider rightCountdownSlider;
 
     [Header("Skills")]
     public Image skill1Image;
@@ -72,6 +77,26 @@ public class GamePlayUIManager : MonoBehaviour
     public Transform effectsLayout;
     private List<GameObject> effectImageList = new List<GameObject>();
 
+    [Header("Cards")]
+    public Transform cardLayout;
+    public SelectionCard statsCardPrefab;
+    public SelectionCard weaponCardPrefab;
+
+    [Header("Stats Icon")]
+    public Sprite damageIcon;
+    public Sprite maxHPIcon;
+    public Sprite moveSpeedIcon;
+    public Sprite healthRegenIcon;
+    public Sprite pickupRadiusIcon;
+    public Sprite armorIcon;
+    public Sprite abilityHasteIcon;
+
+    [Header("Weapon Icon")]
+    public Sprite slimeBulletShooterIcon;
+    public Sprite slimeBeamShooterIcon;
+    public Sprite pawPrintPoisonerIcon;
+    public Sprite radiantFieldIcon;
+
     private Entity player;
     private EntityManager entityManager;
     PlayerInputComponent playerInput;
@@ -108,12 +133,10 @@ public class GamePlayUIManager : MonoBehaviour
         player = playerQuery.GetSingletonEntity();
 
         SetSettingPanel(false);
-
         SetTitlePanel(true);
-
         CloseEndGamePanel();
-
         SetConfirmExitPanel(false);
+        SetSelectPanel(false);
     }
 
     // Update is called once per frame
@@ -286,7 +309,7 @@ public class GamePlayUIManager : MonoBehaviour
     {
         if (result)
         {
-           endGamePanelTitleText.text = "VICTORY";
+            endGamePanelTitleText.text = "VICTORY";
         }
         else
         {
@@ -319,6 +342,69 @@ public class GamePlayUIManager : MonoBehaviour
 
     public void SetConfirmExitPanel(bool status)
     {
-       comfirmExitPanel.SetActive(status);
+        comfirmExitPanel.SetActive(status);
+    }
+
+    public void OpenSelectPanel(NativeList<UpgradeOption> upgradeOptions)
+    {
+        if (cardLayout.childCount > 0)
+            foreach (Transform child in cardLayout)
+                Destroy(child.gameObject);
+
+        // Add cards
+        foreach (var upgradeOption in upgradeOptions)
+        {
+            AddCard(upgradeOption.Type, upgradeOption.CurrentLevel,
+                upgradeOption.DisplayName.ToString(), upgradeOption.Description.ToString());
+        }
+    }
+
+    public void SetSelectPanel(bool status)
+    {
+        selectPanel.SetActive(status);
+    }
+
+    public void AddCard(UpgradeType upgradeType, int level, string name, string description)
+    {
+        Sprite image = null;
+
+        if (upgradeType == UpgradeType.Passive)
+        {
+            SelectionCard statsCard = GameObject.Instantiate<SelectionCard>(statsCardPrefab, cardLayout);
+
+            //if(name == "Damage")
+            //    image = damageIcon;
+            //else if(name == "Max HP")
+            //    image = maxHPIcon;
+            //else if(name == "Move Speed")
+            //    image = moveSpeedIcon;
+            //else if(name == "Health Regen")
+            //    image = healthRegenIcon;
+            //else if(name == "Pickup Radius")
+            //    image = pickupRadiusIcon;
+            //else if(name == "Armor")
+            //    image = armorIcon;
+            //else if(name == "Ability Haste")
+            //    image = abilityHasteIcon;
+
+            statsCard.SetCardInfo(upgradeType, name, description, image, level);
+        }
+        else if (upgradeType == UpgradeType.Passive)
+        {
+            SelectionCard weaponCard = GameObject.Instantiate<SelectionCard>(weaponCardPrefab, cardLayout);
+
+            //if (name == "Slime Bullet Shooter")
+            //    image = slimeBulletShooterIcon;
+            //else if (name == "Slime Beam Shooter")
+            //    image = slimeBeamShooterIcon;
+            //else if (name == "Paw Print Poisoner")
+            //    image = pawPrintPoisonerIcon;
+            //else if (name == "Radiant Field")
+            //    image = radiantFieldIcon;
+            //else
+            //    Debug.LogError("[GamePlayUIManager] Unknown weapon name: " + name);
+
+            weaponCard.SetCardInfo(upgradeType, name, description, image, level);
+        }
     }
 }
