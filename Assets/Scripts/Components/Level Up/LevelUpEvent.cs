@@ -15,6 +15,7 @@ public struct PassiveComponent : IComponentData
 {
     public int ID;
     public int Level;
+    public int MaxLevel;
     public FixedString128Bytes DisplayName;
     public FixedString512Bytes Description;
 }

@@ -6,7 +6,7 @@ public struct InitializationTrackerComponent : IComponentData
     public bool playerHealthSystemInitialized;
     public bool playerPositionSystemInitialized;
     public bool levelSystemInitialized;
-    public bool statsSystemInitialized;
+    public bool passiveSystemInitialized;
     public bool weaponSystemInitialized;
     public bool flowFieldSystemInitialized;
     public bool hasCleanProjectiles;

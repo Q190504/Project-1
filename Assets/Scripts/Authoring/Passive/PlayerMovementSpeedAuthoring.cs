@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class PlayerMovementSpeedAuthoring : MonoBehaviour
 {
+    public int ID;
     public float baseSpeed;
     public float smoothTime;
 
     public int currentLevel;
-    public int maxLevel;
     public float increment;
 
     class PlayerMovementBaker : Baker<PlayerMovementSpeedAuthoring>
@@ -23,9 +23,16 @@ public class PlayerMovementSpeedAuthoring : MonoBehaviour
                 totalSpeed = authoring.baseSpeed,
                 smoothTime = authoring.smoothTime,
 
-                currentLevel = authoring.currentLevel,
-                maxLevel = authoring.maxLevel,
                 increment = authoring.increment,
+            });
+
+            AddComponent(entity, new PassiveComponent
+            {
+                 ID = authoring.ID,
+                 Level = authoring.currentLevel,
+                 MaxLevel = 5,
+                 DisplayName = "Movement Speed",
+                 Description = "Increase movement speed.",
             });
         }
     }
@@ -38,7 +45,5 @@ public struct PlayerMovementSpeedComponent : IComponentData
     public float totalSpeed;
     public float smoothTime;
 
-    public int currentLevel;
-    public int maxLevel;
     public float increment;
 }

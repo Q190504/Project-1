@@ -1,11 +1,12 @@
 using Unity.Burst;
 using Unity.Entities;
+using Unity.Physics;
 using Unity.Transforms;
 using UnityEngine;
 
 [BurstCompile]
 [UpdateAfter(typeof(GameInitializationSystem))]
-public partial struct StatsInitializationSystem : ISystem
+public partial struct PassiveInitializationSystem : ISystem
 {
     private EntityManager entityManager;
 
@@ -17,8 +18,13 @@ public partial struct StatsInitializationSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker) && !tracker.statsSystemInitialized)
+        if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker) && !tracker.passiveSystemInitialized)
         {
+            foreach (var passiveComponent in SystemAPI.Query<RefRW<PassiveComponent>>())
+            {
+                passiveComponent.ValueRW.Level = 0;
+            }
+
             if (SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out var player))
             {
                 RefRW<PlayerHealthComponent> healthComponent = SystemAPI.GetComponentRW<PlayerHealthComponent>(player);
@@ -30,37 +36,30 @@ public partial struct StatsInitializationSystem : ISystem
                 RefRW<HealthRegenComponent> healthRegenComponent = SystemAPI.GetComponentRW<HealthRegenComponent>(player);
 
                 // Initialize health
-                healthComponent.ValueRW.currentLevel = 0;
                 healthComponent.ValueRW.maxHealth = healthComponent.ValueRO.baseMaxHealth;
                 healthComponent.ValueRW.currentHealth = healthComponent.ValueRO.maxHealth;
 
                 // Initialize armor
-                armorComponent.ValueRW.currentLevel = 0;
                 armorComponent.ValueRW.armorVaule = 0;
 
                 // Initialize generic damage modifier
-                genericDamageModifierComponent.ValueRW.currentLevel = 0;
                 genericDamageModifierComponent.ValueRW.genericDamageModifierValue = 0;
 
                 // Initialize movement speed
-                movementSpeedComponent.ValueRW.currentLevel = 0;
                 movementSpeedComponent.ValueRW.currentSpeed = movementSpeedComponent.ValueRO.baseSpeed;
                 movementSpeedComponent.ValueRW.totalSpeed = movementSpeedComponent.ValueRO.currentSpeed;
 
                 // Initialize health regen
-                healthRegenComponent.ValueRW.currentLevel = 0;
                 healthRegenComponent.ValueRW.healthRegenValue = 0;
 
                 // Initialize ability haste
-                abilityHasteComponent.ValueRW.currentLevel = 0;
                 abilityHasteComponent.ValueRW.abilityHasteValue = 0;
 
                 // Initialize experience orb pickup
-                pickupExperienceOrbComponent.ValueRW.currentLevel = 0;
                 pickupExperienceOrbComponent.ValueRW.pickupRadius = pickupExperienceOrbComponent.ValueRO.basePickupRadius;
             }
 
-            tracker.statsSystemInitialized = true;
+            tracker.passiveSystemInitialized = true;
 
             // Update
             state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), tracker);

@@ -19,7 +19,7 @@ public partial struct StartGameSystem : ISystem
                 && tracker.playerHealthSystemInitialized
                 && tracker.weaponSystemInitialized
                 && tracker.levelSystemInitialized
-                && tracker.statsSystemInitialized
+                && tracker.passiveSystemInitialized
                 && tracker.hasCleanEnemies
                 && tracker.hasCleanProjectiles
                 && tracker.hasCleanCloudList)

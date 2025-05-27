@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class AbilityHasteAuthoring : MonoBehaviour
 {
+    public int ID;
     public float abilityHasteValue;
 
     public int currentLevel;
-    public int maxLevel;
     public float increment;
 
     public class Baker : Baker<AbilityHasteAuthoring>
@@ -19,9 +19,17 @@ public class AbilityHasteAuthoring : MonoBehaviour
             {
                 abilityHasteValue = authoring.abilityHasteValue,
 
-                currentLevel = authoring.currentLevel,
-                maxLevel = authoring.maxLevel,
                 increment = authoring.increment,
+            });
+
+            AddComponent(entity, new PassiveComponent
+            {
+                ID = authoring.ID,
+
+                Level = authoring.currentLevel,
+                MaxLevel = 5,
+                DisplayName = "Ability Haste",
+                Description = "Reduces the cooldown of all Weapons and Abilities.",
             });
         }
     }
@@ -31,7 +39,5 @@ public struct AbilityHasteComponent : IComponentData
 {
     public float abilityHasteValue;
 
-    public int currentLevel;
-    public int maxLevel;
     public float increment;
 }

@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class HealthRegenAuthoring : MonoBehaviour
 {
+    public int ID;
     public int healthRegenValue;
 
     public int currentLevel;
-    public int maxLevel;
     public int increment;
 
     public class Baker : Baker<HealthRegenAuthoring>
@@ -19,9 +19,16 @@ public class HealthRegenAuthoring : MonoBehaviour
             {
                 healthRegenValue = authoring.healthRegenValue,
 
-                currentLevel = authoring.currentLevel,
-                maxLevel = authoring.maxLevel,
                 increment = authoring.increment,
+            });
+
+            AddComponent(entity, new PassiveComponent
+            {
+                ID = authoring.ID,
+                Level = authoring.currentLevel,
+                MaxLevel = 5, 
+                DisplayName = "Health Regen",
+                Description = "Increases health every 0.5 second.",
             });
         }
     }
@@ -31,7 +38,5 @@ public struct HealthRegenComponent : IComponentData
 {
     public int healthRegenValue;
 
-    public int currentLevel;
-    public int maxLevel;
     public int increment;
 }

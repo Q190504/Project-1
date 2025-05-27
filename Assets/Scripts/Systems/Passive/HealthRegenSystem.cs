@@ -42,9 +42,9 @@ public partial struct HealthRegenSystem : ISystem
             // Get Health Regen
             HealthRegenComponent healthRegenComponent;
             int healthRegen = 0;
-            if (SystemAPI.HasComponent<HealthRegenComponent>(player))
+            if (SystemAPI.TryGetSingletonEntity<HealthRegenComponent>(out Entity healthRegenEntity))
             {
-                healthRegenComponent = entityManager.GetComponentData<HealthRegenComponent>(player);
+                healthRegenComponent = entityManager.GetComponentData<HealthRegenComponent>(healthRegenEntity);
                 healthRegen = healthRegenComponent.healthRegenValue;
             }
             else
@@ -56,10 +56,10 @@ public partial struct HealthRegenSystem : ISystem
             var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
             var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-
+            PassiveComponent passiveComponent = SystemAPI.GetComponent<PassiveComponent>(healthRegenEntity);
 
             // Disable if player is max health
-            if (healthRegenComponent.currentLevel <= 0
+            if (passiveComponent.Level <= 0
                 || playerHealthComponent.currentHealth == playerHealthComponent.maxHealth 
                 || healthRegen <= 0)
                 return;

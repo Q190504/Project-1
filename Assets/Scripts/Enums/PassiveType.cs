@@ -1,5 +1,5 @@
 using UnityEngine;
-public enum StatsType
+public enum PassiveType
 {
     MaxHealth,
     MoveSpeed,

@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class ArmorAuthoring : MonoBehaviour
 {
+    public int ID;
     public int armorVaule;
 
     public int currentLevel;
-    public int maxLevel;
     public int increment;
 
     public class Baker : Baker<ArmorAuthoring>
@@ -19,9 +19,17 @@ public class ArmorAuthoring : MonoBehaviour
             {
                 armorVaule = authoring.armorVaule,
 
-                currentLevel = authoring.currentLevel,
-                maxLevel = authoring.maxLevel,
                 increment = authoring.increment,
+            });
+
+            AddComponent(entity, new PassiveComponent
+            {
+                ID = authoring.ID,
+
+                Level = authoring.currentLevel,
+                MaxLevel = 10,
+                DisplayName = "Armor",
+                Description = "Reduces incoming damage.",
             });
         }
     }
@@ -31,7 +39,5 @@ public struct ArmorComponent : IComponentData
 {
     public int armorVaule;
 
-    public int currentLevel;
-    public int maxLevel;
     public int increment;
 }

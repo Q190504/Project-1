@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class GenericDamageModifierAuthoring : MonoBehaviour
 {
+    public int ID;
     public float genericDamageModifierValue;
 
     public int currentLevel;
-    public int maxLevel;
     public float increment;
 
     public class Baker : Baker<GenericDamageModifierAuthoring>
@@ -19,9 +19,16 @@ public class GenericDamageModifierAuthoring : MonoBehaviour
             {
                 genericDamageModifierValue = authoring.genericDamageModifierValue,
 
-                currentLevel = authoring.currentLevel,
-                maxLevel = authoring.maxLevel,
                 increment = authoring.increment,
+            });
+
+            AddComponent(entity, new PassiveComponent
+            {
+                ID = authoring.ID,
+                Level = authoring.currentLevel,
+                MaxLevel = 5,
+                DisplayName = "Damage",
+                Description = "Increases the damage dealt by abilities and attacks.",
             });
         }
     }
@@ -31,7 +38,5 @@ public struct GenericDamageModifierComponent : IComponentData
 {
     public float genericDamageModifierValue;
 
-    public int currentLevel;
-    public int maxLevel;
     public float increment;
 }
