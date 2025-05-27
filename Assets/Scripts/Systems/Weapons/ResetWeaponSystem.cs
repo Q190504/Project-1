@@ -21,9 +21,10 @@ public partial struct ResetWeaponSystem : ISystem
         {
             if (SystemAPI.TryGetSingleton<SlimeBulletShooterComponent>(out var slimeBulletShooterComponent))
             {
-                slimeBulletShooterComponent.level = 0;
+                WeaponComponent weaponComponent = SystemAPI.GetSingleton<WeaponComponent>();
+                weaponComponent.Level = 0;
 
-                int levelIndex = slimeBulletShooterComponent.level;
+                int levelIndex = weaponComponent.Level;
                 var blobData = slimeBulletShooterComponent.Data;
                 if (blobData.IsCreated && blobData.Value.Levels.Length > 0)
                 {
@@ -33,13 +34,15 @@ public partial struct ResetWeaponSystem : ISystem
                 }
 
                 state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<SlimeBulletShooterComponent>(), slimeBulletShooterComponent);
+                state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<WeaponComponent>(), slimeBulletShooterComponent);
             }
 
             if (SystemAPI.TryGetSingleton<SlimeBeamShooterComponent>(out var slimeBeamShooterComponent))
             {
-                slimeBeamShooterComponent.level = 0;
+                WeaponComponent weaponComponent = SystemAPI.GetSingleton<WeaponComponent>();
+                weaponComponent.Level = 0;
 
-                int levelIndex = slimeBeamShooterComponent.level;
+                int levelIndex = weaponComponent.Level;
                 var blobData = slimeBeamShooterComponent.Data;
                 if (blobData.IsCreated && blobData.Value.Levels.Length > 0)
                 {
@@ -49,13 +52,15 @@ public partial struct ResetWeaponSystem : ISystem
                 }
 
                 state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<SlimeBeamShooterComponent>(), slimeBeamShooterComponent);
+                state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<WeaponComponent>(), slimeBeamShooterComponent);
             }
 
             if (SystemAPI.TryGetSingleton<PawPrintPoisonerComponent>(out var pawPrintPoisonerComponent))
             {
-                pawPrintPoisonerComponent.level = 0;
+                WeaponComponent weaponComponent = SystemAPI.GetSingleton<WeaponComponent>();
+                weaponComponent.Level = 0;
 
-                int levelIndex = pawPrintPoisonerComponent.level;
+                int levelIndex = weaponComponent.Level;
 
                 pawPrintPoisonerComponent.distanceTraveled = 0f;
 
@@ -67,18 +72,21 @@ public partial struct ResetWeaponSystem : ISystem
                     pawPrintPoisonerComponent.timer = 0;
                 }
 
+                state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<SlimeBeamShooterComponent>(), pawPrintPoisonerComponent);
                 state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<PawPrintPoisonerComponent>(), pawPrintPoisonerComponent);
             }
 
             if (SystemAPI.TryGetSingleton<RadiantFieldComponent>(out var radiantFieldComponent))
             {
-                radiantFieldComponent.currentLevel = 0;
-                radiantFieldComponent.previousLevel = -1;
+                WeaponComponent weaponComponent = SystemAPI.GetSingleton<WeaponComponent>();
+                weaponComponent.Level = 0;
+
+                int levelIndex = weaponComponent.Level;
 
                 var blobData = radiantFieldComponent.Data;
                 if (blobData.IsCreated && blobData.Value.Levels.Length > 0)
                 {
-                    ref var levelData = ref blobData.Value.Levels[radiantFieldComponent.currentLevel];
+                    ref var levelData = ref blobData.Value.Levels[levelIndex];
 
                     radiantFieldComponent.timer = 0;
 
@@ -92,6 +100,7 @@ public partial struct ResetWeaponSystem : ISystem
                     localTransform.ValueRW.Scale = newRadius;
                 }
 
+                state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<SlimeBeamShooterComponent>(), radiantFieldComponent);
                 state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<RadiantFieldComponent>(), radiantFieldComponent);
             }
 

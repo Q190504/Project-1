@@ -62,52 +62,23 @@ public class SlimeBulletShooterAuthoring : MonoBehaviour
             // Register the Blob Asset to the Baker for de-duplication and reverting.
             AddBlobAsset<SlimeBulletShooterDataBlob>(ref blobReference, out var hash);
 
-            AddComponent(GetEntity(TransformUsageFlags.None), new SlimeBulletShooterComponent
+            Entity entity = GetEntity(TransformUsageFlags.None);
+
+            AddComponent(entity, new SlimeBulletShooterComponent
             {
                 Data = blobReference,
                 timer = 2f,
                 isSlimeFrenzyActive = false,
-                level = 0,
+                //level = 0,
             });
 
-            //using var builder = new BlobBuilder(Allocator.Temp);
-            //{
-            //    ref var root = ref builder.ConstructRoot<SlimeBulletShooterDataBlob>();
-
-            //    var levels = builder.Allocate(ref root.Levels, weapon.levels.Length);
-            //    for (int i = 0; i < weapon.levels.Length; i++)
-            //    {
-            //        var level = weapon.levels[i];
-
-            //        levels[i] = new SlimeBulletShooterLevelData
-            //        {
-            //            delay = level.delay,
-            //            damage = level.damage,
-            //            cooldown = level.cooldown,
-            //            bulletCount = level.bulletCount,
-            //            minimumDistance = level.minimumDistance,
-            //            minimumDistanceBetweenBullets = level.minimumDistanceBetweenBullets,
-            //            maximumDistanceBetweenBullets = level.maximumDistanceBetweenBullets,
-            //            previousDistance = 0f,
-            //            passthroughDamageModifier = level.passthroughDamageModifier,
-            //            moveSpeed = level.moveSpeed,
-            //            existDuration = level.existDuration,
-            //            bonusDamagePercent = level.bonusDamagePercent,
-            //            slowModifier = level.slowModifier,
-            //            slowRadius = level.slowRadius
-            //        };
-            //    }
-
-            //    var blob = builder.CreateBlobAssetReference<SlimeBulletShooterDataBlob>(Allocator.Temp);
-
-            //    AddComponent(GetEntity(TransformUsageFlags.None), new SlimeBulletShooterComponent
-            //    {
-            //        Data = blob,
-            //        timer = 2f,
-            //        isSlimeFrenzyActive = false,
-            //        level = 0,
-            //    });
-            //}
+            AddComponent(entity, new WeaponComponent
+            {
+                ID = weapon.id,
+                DisplayName = weapon.name,
+                Description = "Fires slime bullet in the target direction.",
+                Level = 0,
+            });
         }
     }
 }
@@ -135,14 +106,14 @@ public class SlimeBulletShooterLevelJson
 [System.Serializable]
 public class SlimeBulletShooterJson
 {
-    public string id;
+    public int id;
     public string name;
     public SlimeBulletShooterLevelJson[] levels;
 }
 
 public struct SlimeBulletShooterComponent : IComponentData
 {
-    public int level;
+    //public int level;
     public float timer;
     public bool isSlimeFrenzyActive;
     public BlobAssetReference<SlimeBulletShooterDataBlob> Data;

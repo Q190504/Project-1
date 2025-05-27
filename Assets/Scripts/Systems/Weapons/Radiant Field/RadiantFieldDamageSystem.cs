@@ -58,6 +58,7 @@ public partial struct RadiantFieldDamageSystem : ISystem
 
         var job = new RadiantFieldDamageEnemyJob
         {
+            weaponComponentLookup = SystemAPI.GetComponentLookup<WeaponComponent>(true),
             radiantFieldLookup = SystemAPI.GetComponentLookup<RadiantFieldComponent>(true),
             enemyLookup = SystemAPI.GetComponentLookup<EnemyTagComponent>(true),
             ecb = ecb,
@@ -73,6 +74,7 @@ public partial struct RadiantFieldDamageSystem : ISystem
 [BurstCompile]
 struct RadiantFieldDamageEnemyJob : ITriggerEventsJob
 {
+    [ReadOnly] public ComponentLookup<WeaponComponent> weaponComponentLookup;
     [ReadOnly] public ComponentLookup<RadiantFieldComponent> radiantFieldLookup;
     [ReadOnly] public ComponentLookup<EnemyTagComponent> enemyLookup;
     public EntityCommandBuffer ecb;
@@ -93,14 +95,15 @@ struct RadiantFieldDamageEnemyJob : ITriggerEventsJob
             Entity enemyEntity = entityAIsEnemy ? entityA : entityB;
             Entity radiantFieldEntity = entityAIsEnemy ? entityB : entityA;
 
-            if (!radiantFieldLookup.HasComponent(radiantFieldEntity))
+            if (!radiantFieldLookup.HasComponent(radiantFieldEntity) || !weaponComponentLookup.HasComponent(radiantFieldEntity))
             {
                 return;
             }
 
             var radiantFieldComponent = radiantFieldLookup[radiantFieldEntity];
+            var weaponComponent = weaponComponentLookup[radiantFieldEntity];
 
-            if (radiantFieldComponent.currentLevel <= 0) // is inactive
+            if (weaponComponent.Level <= 0) // is inactive
             {
                 return;
             }
@@ -110,7 +113,7 @@ struct RadiantFieldDamageEnemyJob : ITriggerEventsJob
                 return;
 
             // Calculate damage
-            RadiantFieldLevelData currerntLevelData = radiantFieldComponent.Data.Value.Levels[radiantFieldComponent.currentLevel];
+            RadiantFieldLevelData currerntLevelData = radiantFieldComponent.Data.Value.Levels[weaponComponent.Level];
             int baseDamage = currerntLevelData.damagePerTick;
             int finalDamage = (int)(baseDamage * (1 + genericDamageModifier + bonusDamagePercent));
 

@@ -76,8 +76,7 @@ public partial struct ShootSlimeBulletSystem : ISystem
             Debug.Log($"Cant find Generic Damage Modifier Component in ShootSlimeBulletSystem!");
         }
 
-
-        foreach (var (weapon, shooterEntity) in SystemAPI.Query<RefRW<SlimeBulletShooterComponent>>().WithEntityAccess())
+        foreach (var (weaponComponent, weapon, shooterEntity) in SystemAPI.Query<RefRO<WeaponComponent>, RefRW<SlimeBulletShooterComponent>>().WithEntityAccess())
         {
             ref var shooter = ref weapon.ValueRW;
 
@@ -88,7 +87,7 @@ public partial struct ShootSlimeBulletSystem : ISystem
             if (!blobData.IsCreated || blobData.Value.Levels.Length == 0) continue;
 
             // Determine weapon level index 
-            int levelIndex = shooter.level;
+            int levelIndex = weaponComponent.ValueRO.Level;
 
             ref var levelData = ref blobData.Value.Levels[levelIndex];
 

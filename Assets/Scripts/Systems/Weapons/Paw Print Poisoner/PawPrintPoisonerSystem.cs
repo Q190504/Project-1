@@ -104,7 +104,11 @@ public partial struct PawPrintPoisonerSystem : ISystem
 
         float deltaTime = SystemAPI.Time.DeltaTime;
 
-        PawPrintPoisonerComponent pawPrintPoisoner = entityManager.GetComponentData<PawPrintPoisonerComponent>(pawPrintPoisonerEntity);
+        PawPrintPoisonerComponent pawPrintPoisoner = 
+            entityManager.GetComponentData<PawPrintPoisonerComponent>(pawPrintPoisonerEntity);
+
+        WeaponComponent weaponComponent = 
+            entityManager.GetComponentData<WeaponComponent>(pawPrintPoisonerEntity);
 
         pawPrintPoisoner.timer -= deltaTime;
         if (pawPrintPoisoner.timer > 0) return;
@@ -113,7 +117,7 @@ public partial struct PawPrintPoisonerSystem : ISystem
         if (!blobData.IsCreated || blobData.Value.Levels.Length == 0) return;
 
         // Determine pawPrintPoisonerComponent level
-        int level = pawPrintPoisoner.level;
+        int level = weaponComponent.Level;
 
         if (level <= 0) // is inactive
         {

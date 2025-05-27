@@ -10,6 +10,8 @@ using Unity.Transforms;
 [UpdateAfter(typeof(GameInitializationSystem))]
 public partial struct RadiantFieldUpgradeSystem : ISystem
 {
+    int previousLevel;
+
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<RadiantFieldComponent>();
@@ -21,15 +23,14 @@ public partial struct RadiantFieldUpgradeSystem : ISystem
 
         //EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        foreach (var (weapon, localTransform) in SystemAPI.Query<RefRW<RadiantFieldComponent>, RefRW<LocalTransform>>())
+        foreach (var (weaponComponent, radiantFieldComponent, localTransform) in SystemAPI.Query<RefRO<WeaponComponent>, RefRW<RadiantFieldComponent>, RefRW<LocalTransform>>())
         {
-            ref var radiantField = ref weapon.ValueRW;
+            ref var radiantField = ref radiantFieldComponent.ValueRW;
             var blobData = radiantField.Data;
             if (!blobData.IsCreated || blobData.Value.Levels.Length == 0) continue;
 
             // Determine weapon level
-            int currentLevel = radiantField.currentLevel;
-            int previousLevel = radiantField.previousLevel;
+            int currentLevel = weaponComponent.ValueRO.Level;
 
             if (currentLevel <= 0) // is inactive
             {
@@ -46,7 +47,7 @@ public partial struct RadiantFieldUpgradeSystem : ISystem
             localTransform.ValueRW.Scale = newRadius;
 
             // Update tracker
-            radiantField.previousLevel = radiantField.currentLevel;
+            previousLevel = currentLevel;
         }
     }
 }

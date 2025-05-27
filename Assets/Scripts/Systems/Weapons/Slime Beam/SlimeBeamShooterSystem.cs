@@ -72,9 +72,10 @@ public partial struct SlimeBeamShooterSystem : ISystem
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
         float deltaTime = SystemAPI.Time.DeltaTime;
 
-        foreach (var (weapon, entity) in SystemAPI.Query<RefRW<SlimeBeamShooterComponent>>().WithEntityAccess())
+        foreach (var (weaponComponent, SlimeBeamShooter, entity) 
+            in SystemAPI.Query<RefRO<WeaponComponent>, RefRW<SlimeBeamShooterComponent>>().WithEntityAccess())
         {
-            ref var beamShooter = ref weapon.ValueRW;
+            ref var beamShooter = ref SlimeBeamShooter.ValueRW;
             beamShooter.timer -= deltaTime;
             if (beamShooter.timer > 0) continue;
 
@@ -82,7 +83,7 @@ public partial struct SlimeBeamShooterSystem : ISystem
             if (!blobData.IsCreated || blobData.Value.Levels.Length == 0) continue;
             
             // Determine weapon level
-            int level = beamShooter.level;
+            int level = weaponComponent.ValueRO.Level;
 
             if (level <= 0) // is active
             {

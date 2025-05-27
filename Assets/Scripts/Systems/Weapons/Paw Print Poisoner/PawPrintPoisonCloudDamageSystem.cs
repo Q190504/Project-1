@@ -30,8 +30,8 @@ public partial struct PawPrintPoisonCloudDamageSystem : ISystem
             return;
         }
 
-        PawPrintPoisonerComponent pawPrintPoisonerComponent = SystemAPI.GetSingleton<PawPrintPoisonerComponent>();
-        if (pawPrintPoisonerComponent.level == 0)
+        WeaponComponent weaponComponent = SystemAPI.GetSingleton<WeaponComponent>();
+        if (weaponComponent.Level == 0)
             return;
 
         var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();

@@ -31,7 +31,7 @@ public partial struct PawPrintPoisonCloudBoostSpeedSystem : ISystem
 
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
-        int currentLevel = entityManager.GetComponentData<PawPrintPoisonerComponent>(pawPrintPoisoner).level;
+        int currentLevel = entityManager.GetComponentData<WeaponComponent>(pawPrintPoisoner).Level;
         if (currentLevel < 5)
         {
             // Not max level, no effect

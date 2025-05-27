@@ -58,8 +58,8 @@ public class RadiantFieldAuthoring : MonoBehaviour
                 Data = blobReference,
                 timer = 0f,
                 timeBetween = weapon.timeBetween,
-                currentLevel = 0,
-                previousLevel = -1,
+                //currentLevel = 0,
+                //previousLevel = -1,
                 lastTickTime = 0,
             });
 
@@ -104,14 +104,13 @@ public struct RadiantFieldLevelData
 
 public struct RadiantFieldDataBlob
 {
-    public BlobString Name;
     public BlobArray<RadiantFieldLevelData> Levels;
 }
 
 public struct RadiantFieldComponent : IComponentData
 {
-    public int currentLevel;
-    public int previousLevel;
+    //public int currentLevel;
+    //public int previousLevel;
     public float timer;
     public float timeBetween;
     public double lastTickTime;
