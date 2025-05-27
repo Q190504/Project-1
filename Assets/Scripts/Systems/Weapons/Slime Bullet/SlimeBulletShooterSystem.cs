@@ -6,7 +6,7 @@ using UnityEngine;
 
 [BurstCompile]
 [UpdateAfter(typeof(GameInitializationSystem))]
-public partial struct ShootSlimeBulletSystem : ISystem
+public partial struct SlimeBulletShooterSystem : ISystem
 {
     private EntityManager entityManager;
     private Entity player;
