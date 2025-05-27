@@ -40,16 +40,16 @@ public class GamePlayUIManager : MonoBehaviour
     public TMP_Text skill2CoodownText;
 
     [Header("Weapons")]
-    public Image basicWeaponImage;
-    public TMP_Text basicWeaponLevel;
-    public Image weapon1Image;
-    public TMP_Text weapon1Level;
+    public Image weapon1Level;
+    public TMP_Text weapon1Image;
     public Image weapon2Image;
     public TMP_Text weapon2Level;
-    //public Image weapon3Image;
-    //public TMP_Text weapon3Level;
+    public Image weapon3Image;
+    public TMP_Text weapon3Level;
     //public Image weapon4Image;
     //public TMP_Text weapon4Level;
+    //public Image weapon5Image;
+    //public TMP_Text weapon5Level;
 
     [Header("Stats")]
     public Image stats1;

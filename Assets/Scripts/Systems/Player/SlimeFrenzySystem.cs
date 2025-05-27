@@ -54,7 +54,7 @@ public partial struct SlimeFrenzySystem : ISystem
                 else
                     GamePlayUIManager.Instance.SetSkill1ImageOpacity(false);
 
-                if (playerInput.isCPressed
+                if (playerInput.isEPressed
                 && CheckPlayerHealth(playerHealthComponent.currentHealth, playerHealthComponent.maxHealth))
                 {
                     // Apply frenzy effect

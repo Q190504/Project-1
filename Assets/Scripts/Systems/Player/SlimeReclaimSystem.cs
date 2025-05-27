@@ -70,7 +70,7 @@ public partial struct SlimeReclaimSystem : ISystem
                     //Update UI
                     GamePlayUIManager.Instance.SetSkill2ImageOpacity(true);
 
-                    if (playerInput.isSpacePressed)
+                    if (playerInput.isRPressed)
                     {
                         //// Apply stun effect
                         //if (!entityManager.HasComponent<StunTimerComponent>(player))
