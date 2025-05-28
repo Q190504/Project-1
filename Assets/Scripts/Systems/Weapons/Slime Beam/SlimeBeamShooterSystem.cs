@@ -29,11 +29,9 @@ public partial struct SlimeBeamShooterSystem : ISystem
         }
 
         // Get Ability Haste
-        AbilityHasteComponent abilityHasteComponent;
         float abilityHaste = 0;
-        if (SystemAPI.HasComponent<AbilityHasteComponent>(player))
+        if (SystemAPI.TryGetSingleton<AbilityHasteComponent>(out AbilityHasteComponent abilityHasteComponent))
         {
-            abilityHasteComponent = entityManager.GetComponentData<AbilityHasteComponent>(player);
             abilityHaste = abilityHasteComponent.abilityHasteValue;
         }
         else
@@ -42,11 +40,9 @@ public partial struct SlimeBeamShooterSystem : ISystem
         }
 
         // Get Generic Damage Modifier
-        GenericDamageModifierComponent genericDamageModifierComponent;
         float genericDamageModifier = 0;
-        if (SystemAPI.HasComponent<GenericDamageModifierComponent>(player))
+        if (SystemAPI.TryGetSingleton<GenericDamageModifierComponent>(out GenericDamageModifierComponent genericDamageModifierComponent))
         {
-            genericDamageModifierComponent = entityManager.GetComponentData<GenericDamageModifierComponent>(player);
             genericDamageModifier = genericDamageModifierComponent.genericDamageModifierValue;
         }
         else

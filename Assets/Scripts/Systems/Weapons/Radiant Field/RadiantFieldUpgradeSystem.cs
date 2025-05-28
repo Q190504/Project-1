@@ -21,9 +21,8 @@ public partial struct RadiantFieldUpgradeSystem : ISystem
     {
         if (!GameManager.Instance.IsPlaying()) return;
 
-        //EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
-
-        foreach (var (weaponComponent, radiantFieldComponent, localTransform) in SystemAPI.Query<RefRO<WeaponComponent>, RefRW<RadiantFieldComponent>, RefRW<LocalTransform>>())
+        foreach (var (weaponComponent, radiantFieldComponent, localTransform) 
+            in SystemAPI.Query<RefRO<WeaponComponent>, RefRW<RadiantFieldComponent>, RefRW<LocalTransform>>())
         {
             ref var radiantField = ref radiantFieldComponent.ValueRW;
             var blobData = radiantField.Data;

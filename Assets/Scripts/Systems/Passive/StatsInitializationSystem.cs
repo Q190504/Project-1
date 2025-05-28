@@ -28,12 +28,28 @@ public partial struct PassiveInitializationSystem : ISystem
             if (SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out var player))
             {
                 RefRW<PlayerHealthComponent> healthComponent = SystemAPI.GetComponentRW<PlayerHealthComponent>(player);
-                RefRW<ArmorComponent> armorComponent = SystemAPI.GetComponentRW<ArmorComponent>(player);
-                RefRW<GenericDamageModifierComponent> genericDamageModifierComponent = SystemAPI.GetComponentRW<GenericDamageModifierComponent>(player);
                 RefRW<PlayerMovementSpeedComponent> movementSpeedComponent = SystemAPI.GetComponentRW<PlayerMovementSpeedComponent>(player);
-                RefRW<AbilityHasteComponent> abilityHasteComponent = SystemAPI.GetComponentRW<AbilityHasteComponent>(player);
-                RefRW<PickupExperienceOrbComponent> pickupExperienceOrbComponent = SystemAPI.GetComponentRW<PickupExperienceOrbComponent>(player);
-                RefRW<HealthRegenComponent> healthRegenComponent = SystemAPI.GetComponentRW<HealthRegenComponent>(player);
+
+                // Armor
+                Entity armorEntity = SystemAPI.GetSingletonEntity<ArmorComponent>();
+                RefRW<ArmorComponent> armorComponent = SystemAPI.GetComponentRW<ArmorComponent>(armorEntity);
+
+                // Generic Damage Modifier
+                Entity damageEntity = SystemAPI.GetSingletonEntity<GenericDamageModifierComponent>();
+                RefRW<GenericDamageModifierComponent> genericDamageModifierComponent
+                    = SystemAPI.GetComponentRW<GenericDamageModifierComponent>(damageEntity);
+
+                // Ability Haste
+                Entity abilityHasteEntity = SystemAPI.GetSingletonEntity<AbilityHasteComponent>();
+                RefRW<AbilityHasteComponent> abilityHasteComponent = SystemAPI.GetComponentRW<AbilityHasteComponent>(abilityHasteEntity);
+                
+                // Pickup Radius for Experience Orbs
+                Entity pickupExperienceOrbEntity = SystemAPI.GetSingletonEntity<PickupExperienceOrbComponent>();
+                RefRW<PickupExperienceOrbComponent> pickupExperienceOrbComponent = SystemAPI.GetComponentRW<PickupExperienceOrbComponent>(pickupExperienceOrbEntity);
+
+                // Health Regen
+                Entity healthRegenEntity = SystemAPI.GetSingletonEntity<HealthRegenComponent>();
+                RefRW<HealthRegenComponent> healthRegenComponent = SystemAPI.GetComponentRW<HealthRegenComponent>(healthRegenEntity);
 
                 // Initialize health
                 healthComponent.ValueRW.maxHealth = healthComponent.ValueRO.baseMaxHealth;

@@ -15,7 +15,6 @@ public partial struct PlayerSuckExperienceOrbSystem : ISystem
     private LocalTransform playerPositionComponent;
     private PickupExperienceOrbComponent playerPickupRadiusComponent;
 
-
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<PlayerTagComponent>();
@@ -35,10 +34,14 @@ public partial struct PlayerSuckExperienceOrbSystem : ISystem
             Debug.Log($"Cant Found Player Entity in PlayerSuckExperienceOrbSystem!");
             return;
         }
+        else if (!SystemAPI.TryGetSingleton<PickupExperienceOrbComponent>(out playerPickupRadiusComponent))
+        {
+            Debug.Log($"Cant found Pickup Experience Orb Component in PlayerSuckExperienceOrbSystem!");
+            return;
+        }
         else
         {
             playerPositionComponent = entityManager.GetComponentData<LocalTransform>(player);
-            playerPickupRadiusComponent = entityManager.GetComponentData<PickupExperienceOrbComponent>(player);
         }
 
         #endregion

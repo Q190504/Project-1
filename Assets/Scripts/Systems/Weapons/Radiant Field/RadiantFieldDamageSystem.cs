@@ -25,11 +25,9 @@ public partial struct RadiantFieldDamageSystem : ISystem
         }
 
         // Get Generic Damage Modifier
-        GenericDamageModifierComponent genericDamageModifierComponent;
         float genericDamageModifier = 0;
-        if (SystemAPI.HasComponent<GenericDamageModifierComponent>(player))
+        if (SystemAPI.TryGetSingleton<GenericDamageModifierComponent>(out GenericDamageModifierComponent genericDamageModifierComponent))
         {
-            genericDamageModifierComponent = entityManager.GetComponentData<GenericDamageModifierComponent>(player);
             genericDamageModifier = genericDamageModifierComponent.genericDamageModifierValue;
         }
         else

@@ -64,7 +64,6 @@ public partial struct HealthRegenSystem : ISystem
                 || healthRegen <= 0)
                 return;
 
-
             ecb.AddComponent<HealEventComponent>(player, new HealEventComponent
             {
                 healAmount = healthRegen,

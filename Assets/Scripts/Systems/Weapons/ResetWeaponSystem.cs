@@ -17,11 +17,18 @@ public partial struct ResetWeaponSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker) && !tracker.weaponSystemInitialized)
+        if (!GameManager.Instance.IsInitializing())
+            return;
+
+        if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var initializationTrackerComponent) && !initializationTrackerComponent.weaponSystemInitialized)
         {
-            if (SystemAPI.TryGetSingleton<SlimeBulletShooterComponent>(out var slimeBulletShooterComponent))
+            if (SystemAPI.TryGetSingletonEntity<SlimeBulletShooterComponent>(out var slimeBulletShooterEntity))
             {
-                WeaponComponent weaponComponent = SystemAPI.GetSingleton<WeaponComponent>();
+                SlimeBulletShooterComponent slimeBulletShooterComponent
+                    = SystemAPI.GetComponent<SlimeBulletShooterComponent>(slimeBulletShooterEntity);
+
+                WeaponComponent weaponComponent = SystemAPI.GetComponent<WeaponComponent>(slimeBulletShooterEntity);
+
                 weaponComponent.Level = 0;
 
                 int levelIndex = weaponComponent.Level;
@@ -33,13 +40,16 @@ public partial struct ResetWeaponSystem : ISystem
                     slimeBulletShooterComponent.timer = levelData.cooldown;
                 }
 
-                state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<SlimeBulletShooterComponent>(), slimeBulletShooterComponent);
-                state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<WeaponComponent>(), slimeBulletShooterComponent);
+                state.EntityManager.SetComponentData(slimeBulletShooterEntity, slimeBulletShooterComponent);
+                state.EntityManager.SetComponentData(slimeBulletShooterEntity, slimeBulletShooterComponent);
             }
 
-            if (SystemAPI.TryGetSingleton<SlimeBeamShooterComponent>(out var slimeBeamShooterComponent))
+            if (SystemAPI.TryGetSingletonEntity<SlimeBeamShooterComponent>(out var slimeBeamShooterEntity))
             {
-                WeaponComponent weaponComponent = SystemAPI.GetSingleton<WeaponComponent>();
+                SlimeBeamShooterComponent slimeBeamShooterComponent
+                    = SystemAPI.GetComponent<SlimeBeamShooterComponent>(slimeBeamShooterEntity);
+
+                WeaponComponent weaponComponent = SystemAPI.GetComponent<WeaponComponent>(slimeBeamShooterEntity);
                 weaponComponent.Level = 0;
 
                 int levelIndex = weaponComponent.Level;
@@ -51,13 +61,17 @@ public partial struct ResetWeaponSystem : ISystem
                     slimeBeamShooterComponent.timer = levelData.cooldown;
                 }
 
-                state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<SlimeBeamShooterComponent>(), slimeBeamShooterComponent);
-                state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<WeaponComponent>(), slimeBeamShooterComponent);
+                state.EntityManager.SetComponentData(slimeBeamShooterEntity, slimeBeamShooterComponent);
+                state.EntityManager.SetComponentData(slimeBeamShooterEntity, slimeBeamShooterComponent);
             }
 
-            if (SystemAPI.TryGetSingleton<PawPrintPoisonerComponent>(out var pawPrintPoisonerComponent))
+            if (SystemAPI.TryGetSingletonEntity<PawPrintPoisonerComponent>(out var pawPrintPoisonerEntity))
             {
-                WeaponComponent weaponComponent = SystemAPI.GetSingleton<WeaponComponent>();
+                PawPrintPoisonerComponent pawPrintPoisonerComponent
+                    = SystemAPI.GetComponent<PawPrintPoisonerComponent>(pawPrintPoisonerEntity);
+
+                WeaponComponent weaponComponent = SystemAPI.GetComponent<WeaponComponent>(pawPrintPoisonerEntity);
+               
                 weaponComponent.Level = 0;
 
                 int levelIndex = weaponComponent.Level;
@@ -72,13 +86,17 @@ public partial struct ResetWeaponSystem : ISystem
                     pawPrintPoisonerComponent.timer = 0;
                 }
 
-                state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<SlimeBeamShooterComponent>(), pawPrintPoisonerComponent);
-                state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<PawPrintPoisonerComponent>(), pawPrintPoisonerComponent);
+                state.EntityManager.SetComponentData(pawPrintPoisonerEntity, pawPrintPoisonerComponent);
+                state.EntityManager.SetComponentData(pawPrintPoisonerEntity, pawPrintPoisonerComponent);
             }
 
-            if (SystemAPI.TryGetSingleton<RadiantFieldComponent>(out var radiantFieldComponent))
+            if (SystemAPI.TryGetSingletonEntity<RadiantFieldComponent>(out var radiantFieldEntity))
             {
-                WeaponComponent weaponComponent = SystemAPI.GetSingleton<WeaponComponent>();
+                RadiantFieldComponent radiantFieldComponent
+                    = SystemAPI.GetComponent<RadiantFieldComponent>(radiantFieldEntity);
+
+                WeaponComponent weaponComponent = SystemAPI.GetComponent<WeaponComponent>(radiantFieldEntity);
+
                 weaponComponent.Level = 0;
 
                 int levelIndex = weaponComponent.Level;
@@ -100,14 +118,15 @@ public partial struct ResetWeaponSystem : ISystem
                     localTransform.ValueRW.Scale = newRadius;
                 }
 
-                state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<SlimeBeamShooterComponent>(), radiantFieldComponent);
-                state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<RadiantFieldComponent>(), radiantFieldComponent);
+                state.EntityManager.SetComponentData(radiantFieldEntity, radiantFieldComponent);
+                state.EntityManager.SetComponentData(radiantFieldEntity, radiantFieldComponent);
             }
 
-            tracker.weaponSystemInitialized = true;
+            initializationTrackerComponent.weaponSystemInitialized = true;
 
             // Update
-            state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), tracker);
+            state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), 
+                initializationTrackerComponent);
         }
     }
 }

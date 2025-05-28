@@ -52,16 +52,14 @@ public partial struct PlayerHealthSystem : ISystem
         {
             PlayerHealthComponent playerHealth = entityManager.GetComponentData<PlayerHealthComponent>(player);
 
-            ArmorComponent armorComponent;
             int armor = 0;
-            if (SystemAPI.HasComponent<ArmorComponent>(player))
+            if (SystemAPI.TryGetSingleton<ArmorComponent>(out ArmorComponent armorComponent))
             {
-                armorComponent = entityManager.GetComponentData<ArmorComponent>(player);
                 armor = armorComponent.armorValue;
             }
             else
             {
-                Debug.Log($"Cant Found Ability Haste Component in PawPrintPoisonerSystem!");
+                Debug.Log($"Cant Found Armor Component in PawPrintPoisonerSystem!");
             }
 
             //Take Damage

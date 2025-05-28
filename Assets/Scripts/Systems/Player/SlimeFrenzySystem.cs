@@ -21,11 +21,9 @@ public partial struct SlimeFrenzySystem : ISystem
             return;
         }
 
-        AbilityHasteComponent abilityHasteComponent;
         float abilityHaste = 0;
-        if (SystemAPI.HasComponent<AbilityHasteComponent>(player))
+        if (SystemAPI.TryGetSingleton<AbilityHasteComponent>(out AbilityHasteComponent abilityHasteComponent))
         {
-            abilityHasteComponent = entityManager.GetComponentData<AbilityHasteComponent>(player);
             abilityHaste = abilityHasteComponent.abilityHasteValue;
         }
         else

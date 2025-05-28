@@ -62,11 +62,9 @@ public partial struct PawPrintPoisonerSystem : ISystem
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
         // Get Ability Haste
-        AbilityHasteComponent abilityHasteComponent;
         float abilityHaste = 0;
-        if (SystemAPI.HasComponent<AbilityHasteComponent>(player))
+        if (SystemAPI.TryGetSingleton<AbilityHasteComponent>(out AbilityHasteComponent abilityHasteComponent))
         {
-            abilityHasteComponent = entityManager.GetComponentData<AbilityHasteComponent>(player);
             abilityHaste = abilityHasteComponent.abilityHasteValue;
         }
         else
@@ -75,16 +73,14 @@ public partial struct PawPrintPoisonerSystem : ISystem
         }
 
         // Get Generic Damage Modifier
-        GenericDamageModifierComponent genericDamageModifierComponent;
         float genericDamageModifier = 0;
-        if (SystemAPI.HasComponent<GenericDamageModifierComponent>(player))
+        if (SystemAPI.TryGetSingleton<GenericDamageModifierComponent>(out GenericDamageModifierComponent genericDamageModifierComponent))
         {
-            genericDamageModifierComponent = entityManager.GetComponentData<GenericDamageModifierComponent>(player);
             genericDamageModifier = genericDamageModifierComponent.genericDamageModifierValue;
         }
         else
         {
-            Debug.Log($"Cant find Generic Damage Modifier Component in PawPrintPoisonCloudDamageSystem!");
+            Debug.Log($"Cant find Generic Damage Modifier Component in PawPrintPoisonerSystem!");
         }
 
         // Get Frenzy data

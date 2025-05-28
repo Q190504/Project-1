@@ -24,12 +24,6 @@ public partial struct SlimeBulletShooterSystem : ISystem
         var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        if (!SystemAPI.TryGetSingleton<PlayerTagComponent>(out var playerTagComponent))
-        {
-            Debug.LogError("Cant find PlayerTagComponent in ShootSlimeBulletSystem");
-            return;
-        }
-
         if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
         {
             Debug.Log($"Cant Found Player Entity in ShootSlimeBulletSystem!");
@@ -51,11 +45,9 @@ public partial struct SlimeBulletShooterSystem : ISystem
         }
 
         // Get Ability Haste
-        AbilityHasteComponent abilityHasteComponent;
         float abilityHaste = 0;
-        if (SystemAPI.HasComponent<AbilityHasteComponent>(player))
+        if (SystemAPI.TryGetSingleton<AbilityHasteComponent>(out AbilityHasteComponent abilityHasteComponent))
         {
-            abilityHasteComponent = entityManager.GetComponentData<AbilityHasteComponent>(player);
             abilityHaste = abilityHasteComponent.abilityHasteValue;
         }
         else
@@ -64,11 +56,10 @@ public partial struct SlimeBulletShooterSystem : ISystem
         }
 
         // Get Generic Damage Modifier
-        GenericDamageModifierComponent genericDamageModifierComponent;
+        ;
         float genericDamageModifier = 0;
-        if (SystemAPI.HasComponent<GenericDamageModifierComponent>(player))
+        if (SystemAPI.TryGetSingleton<GenericDamageModifierComponent>(out GenericDamageModifierComponent genericDamageModifierComponent))
         {
-            genericDamageModifierComponent = entityManager.GetComponentData<GenericDamageModifierComponent>(player);
             genericDamageModifier = genericDamageModifierComponent.genericDamageModifierValue;
         }
         else
