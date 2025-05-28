@@ -13,8 +13,9 @@ public class UpgradeCard : MonoBehaviour
     [SerializeField] private Image cardImage;
     [SerializeField] private TMP_Text cardDescription;
 
-    [SerializeField] private VoidPublisherSO onCardClickSO;
+    [SerializeField] private UpgradePublisherSO updateUpgradeManagerSO;
 
+    private int ID;
     private WeaponType weaponType;
     private PassiveType passiveType;
 
@@ -73,8 +74,10 @@ public class UpgradeCard : MonoBehaviour
         }
     }
 
-    public void SetCardInfo(UpgradeType type, WeaponType weaponType, PassiveType passiveType, string name, string description, Sprite image, int levelNumber)
+    public void SetCardInfo(UpgradeType type, WeaponType weaponType, PassiveType passiveType, int ID,
+        string name, string description, Sprite image, int levelNumber)
     {
+       this.ID = ID;
         upgradeCardType = type;
         if (levelNumber == 0)
             level.text = "NEW";
@@ -95,19 +98,22 @@ public class UpgradeCard : MonoBehaviour
         if(upgradeCardType == UpgradeType.Weapon)
         {
             if (weaponUpgradeHandlers.TryGetValue(weaponType, out var handler))
+            {
                 handler();
+            }
             else
                 Debug.LogWarning($"No weapon handler for {weaponType}");
         }
         else
         {
             if (passiveUpgradeHandlers.TryGetValue(passiveType, out var handler))
+            {
                 handler();
+            }
             else
                 Debug.LogWarning($"No passive handler for {passiveType}");
         }
 
-        // Unpause the game, close the upgrade panel
-        onCardClickSO.RaiseEvent();
+        updateUpgradeManagerSO.RaiseEvent(upgradeCardType, weaponType, passiveType, ID);
     }
 }

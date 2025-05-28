@@ -21,7 +21,7 @@ public partial struct OpenUpgradePanelSystem : ISystem
             GameManager.Instance.TogglePauseGame();
 
             // Collect all valid upgrade options
-            NativeList<UpgradeOption> offerings
+            NativeList<UpgradeOptionStruct> offerings
                 = UpgradeOfferingHelper.GenerateOfferings(playerSlots.ValueRO);
 
             // Open UI

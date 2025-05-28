@@ -45,28 +45,12 @@ public class GamePlayUIManager : MonoBehaviour
     public TMP_Text skill2CoodownText;
 
     [Header("Weapons")]
-    public Image weapon1Level;
-    public TMP_Text weapon1Image;
-    public Image weapon2Image;
-    public TMP_Text weapon2Level;
-    public Image weapon3Image;
-    public TMP_Text weapon3Level;
-    //public Image weapon4Image;
-    //public TMP_Text weapon4Level;
-    //public Image weapon5Image;
-    //public TMP_Text weapon5Level;
+    [SerializeField] private List<UpgradeSlot> weaponSlots;
+    private int currentEmptyWeaponSlotIndex = 0;
 
-    [Header("Stats")]
-    public Image stats1;
-    public TMP_Text stats1Level;
-    public Image stats2;
-    public TMP_Text stats2Level;
-    public Image stats3;
-    public TMP_Text stats3Level;
-    //public Image stats4;
-    //public TMP_Text stats4Level;
-    //public Image stats5;
-    //public TMP_Text stats5Level;
+    [Header("Passives")]
+    [SerializeField] private List<UpgradeSlot> passiveSlots;
+    private int currentEmptyPassiveSlotIndex = 0;
 
     [Header("Effects")]
     public GameObject effectImagePrefab;
@@ -154,6 +138,9 @@ public class GamePlayUIManager : MonoBehaviour
             return;
         }
         player = playerQuery.GetSingletonEntity();
+
+        passiveSlots = new List<UpgradeSlot>();
+        weaponSlots = new List<UpgradeSlot>();
 
         SetSettingPanel(false);
         SetTitlePanel(true);
@@ -366,14 +353,14 @@ public class GamePlayUIManager : MonoBehaviour
         comfirmExitPanel.SetActive(status);
     }
 
-    public void OpenUpgradePanel(NativeList<UpgradeOption> upgradeOptions)
+    public void OpenUpgradePanel(NativeList<UpgradeOptionStruct> upgradeOptions)
     {
         ClearCards();
 
         // Add cards
         foreach (var upgradeOption in upgradeOptions)
         {
-            AddCard(upgradeOption.CardType, upgradeOption.WeaponType, upgradeOption.PassiveType, upgradeOption.CurrentLevel,
+            AddCard(upgradeOption.CardType, upgradeOption.WeaponType, upgradeOption.PassiveType, upgradeOption.ID, upgradeOption.CurrentLevel,
                 upgradeOption.DisplayName.ToString(), upgradeOption.Description.ToString());
         }
     }
@@ -384,7 +371,7 @@ public class GamePlayUIManager : MonoBehaviour
         ClearCards();
     }
 
-    public void AddCard(UpgradeType upgradeType, WeaponType weaponType, PassiveType passiveType, int level, string name, string description)
+    public void AddCard(UpgradeType upgradeType, WeaponType weaponType, PassiveType passiveType, int ID, int level, string name, string description)
     {
         Sprite image = null;
         UpgradeCard upgradeCard = null;
@@ -403,7 +390,7 @@ public class GamePlayUIManager : MonoBehaviour
         if (image == null)
             Debug.LogWarning($"[GamePlayUIManager] Unknown card name for image: {name}");
 
-        upgradeCard.SetCardInfo(upgradeType, weaponType, passiveType, name, description, image, level);
+        upgradeCard.SetCardInfo(upgradeType, weaponType, passiveType, ID, name, description, image, level);
         addCardSO.RaiseEvent(upgradeCard.gameObject);
     }
 
@@ -423,5 +410,59 @@ public class GamePlayUIManager : MonoBehaviour
         rightCountdownBar.value = timeLeft;
 
         countdownSelectionText.text = $"{(int)timeLeft}";
+    }
+
+    public void UpdateSlots(UpgradeType type, WeaponType weaponType, PassiveType passiveType, int ID)
+    {
+        if (type == UpgradeType.Weapon)
+        {
+            foreach (UpgradeSlot slot in weaponSlots)
+            {
+                if(slot.ID == ID)
+                {
+                   slot.LevelUp();
+                    currentEmptyWeaponSlotIndex++;
+                    return;
+                }
+            }
+
+            // create new if not found
+            if (weaponIcons.TryGetValue(weaponType, out Sprite iconSprite))
+                weaponSlots[currentEmptyWeaponSlotIndex].SetSlotInfo(ID, iconSprite);
+            else
+            {
+                Debug.LogWarning($"[GamePlayUIManager] Unknown weapon type: {weaponType}, using null sprite.");
+                weaponSlots[currentEmptyWeaponSlotIndex].SetSlotInfo(ID, null);
+            }
+            currentEmptyWeaponSlotIndex++;
+
+        }
+        else if (type == UpgradeType.Passive)
+        {
+            foreach (UpgradeSlot slot in passiveSlots)
+            {
+                if (slot.ID == ID)
+                {
+                    slot.LevelUp();
+                    currentEmptyPassiveSlotIndex++;
+                    return;
+                }
+            }
+
+            // create new if not found
+            if (passiveIcons.TryGetValue(passiveType, out Sprite iconSprite))
+                passiveSlots[currentEmptyPassiveSlotIndex].SetSlotInfo(ID, iconSprite);
+            else
+            {
+                Debug.LogWarning($"[GamePlayUIManager] Unknown passive type: {passiveType}, using null sprite.");
+                passiveSlots[currentEmptyPassiveSlotIndex].SetSlotInfo(ID, null);
+            }
+
+            currentEmptyPassiveSlotIndex++;
+        }
+        else
+        {
+            Debug.LogError($"[GamePlayUIManager] Unknown upgrade type: {type}");
+        }
     }
 }

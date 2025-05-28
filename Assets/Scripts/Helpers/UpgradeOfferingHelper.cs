@@ -3,10 +3,10 @@ using Unity.Entities;
 
 public static class UpgradeOfferingHelper
 {
-    public static NativeList<UpgradeOption> GenerateOfferings(PlayerUpgradeSlots slots)
+    public static NativeList<UpgradeOptionStruct> GenerateOfferings(PlayerUpgradeSlots slots)
     {
         var random = new Unity.Mathematics.Random((uint)UnityEngine.Random.Range(1, int.MaxValue));
-        var offerings = new NativeList<UpgradeOption>(Allocator.Temp);
+        var offerings = new NativeList<UpgradeOptionStruct>(Allocator.Temp);
 
         NativeList<Entity> validWeapons = new NativeList<Entity>(Allocator.Temp);
         EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
@@ -45,13 +45,13 @@ public static class UpgradeOfferingHelper
             passiveEntities.Dispose();
         }
 
-        NativeList<UpgradeOption> combined = new NativeList<UpgradeOption>(Allocator.Temp);
+        NativeList<UpgradeOptionStruct> combined = new NativeList<UpgradeOptionStruct>(Allocator.Temp);
 
         // Add valid weapons to the combined list
         foreach(var weapon in validWeapons)
         {
             var weaponComponent = entityManager.GetComponentData<WeaponComponent>(weapon);
-            UpgradeOption option = new UpgradeOption
+            UpgradeOptionStruct option = new UpgradeOptionStruct
             {
                 CardType = UpgradeType.Weapon,
                 WeaponType = weaponComponent.WeaponType,
@@ -68,7 +68,7 @@ public static class UpgradeOfferingHelper
         foreach (var passive in validPassives)
         {
             var passiveComponent = entityManager.GetComponentData<PassiveComponent>(passive);
-            UpgradeOption option = new UpgradeOption
+            UpgradeOptionStruct option = new UpgradeOptionStruct
             {
                 CardType = UpgradeType.Passive,
                 PassiveType = passiveComponent.PassiveType,

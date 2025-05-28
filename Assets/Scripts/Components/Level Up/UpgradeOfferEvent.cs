@@ -4,5 +4,5 @@ using UnityEngine;
 
 public struct UpgradeOfferEvent : IComponentData
 {
-    public NativeList<UpgradeOption> Options;
+    public NativeList<UpgradeOptionStruct> Options;
 }

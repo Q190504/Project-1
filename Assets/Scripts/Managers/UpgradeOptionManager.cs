@@ -10,7 +10,12 @@ public class UpgradeOptionManager : MonoBehaviour
     [SerializeField] private float totalTime;
     private List<UpgradeCard> upgradeOptions;
 
+    private List<UpgradeOptionClass> selectedPassiveUpgrades;
+    private List<UpgradeOptionClass> selectedWeaponUpgrades;
+
     [SerializeField] private TwoFloatPublisherSO updateCountdownSO;
+    [SerializeField] private UpgradePublisherSO updateUISO;
+    [SerializeField] private VoidPublisherSO togglePauseSO;
 
     public static UpgradeOptionManager Instance
     {
@@ -36,6 +41,8 @@ public class UpgradeOptionManager : MonoBehaviour
     {
         timer = totalTime;
         upgradeOptions = new List<UpgradeCard>();
+        selectedPassiveUpgrades = new List<UpgradeOptionClass>();
+        selectedWeaponUpgrades = new List<UpgradeOptionClass>();
     }
 
     // Update is called once per frame
@@ -50,7 +57,7 @@ public class UpgradeOptionManager : MonoBehaviour
                 ChooseFirstOption();
 
                 timer = totalTime;
-                GameManager.Instance.TogglePauseGame();
+                togglePauseSO.RaiseEvent();
             }
 
             updateCountdownSO.RaiseEvent(timer, totalTime);
@@ -59,7 +66,7 @@ public class UpgradeOptionManager : MonoBehaviour
 
     private void ChooseFirstOption()
     {
-       if (upgradeOptions != null && upgradeOptions.Count > 0)
+        if (upgradeOptions != null && upgradeOptions.Count > 0)
         {
             // Select the first upgrade option
             UpgradeCard firstOption = upgradeOptions[0];
@@ -85,5 +92,48 @@ public class UpgradeOptionManager : MonoBehaviour
         {
             upgradeOptions.Add(option);
         }
+    }
+
+    public void ClearAllUpgrade()
+    {
+        selectedPassiveUpgrades.Clear();
+        selectedWeaponUpgrades.Clear();
+    }
+
+    public void UpdateSelectedUpgrade(UpgradeType type, WeaponType weaponType, PassiveType passiveType, int ID)
+    {
+        if (type == UpgradeType.Weapon)
+        {
+            foreach (UpgradeOptionClass upgrade in selectedWeaponUpgrades)
+            {
+                if (upgrade.ID == ID)
+                {
+                    upgrade.LevelUp();
+                    return;
+                }
+            }
+
+            // Create new upgrade option if not found
+            UpgradeOptionClass upgradeOption = new UpgradeOptionClass(type, ID);
+            selectedWeaponUpgrades.Add(upgradeOption);
+        }
+        else
+        {
+            foreach (UpgradeOptionClass upgrade in selectedPassiveUpgrades)
+            {
+                if (upgrade.ID == ID)
+                {
+                    upgrade.LevelUp();
+                    return;
+                }
+            }
+
+            // Create new upgrade option if not found
+            UpgradeOptionClass upgradeOption = new UpgradeOptionClass(type, ID);
+            selectedPassiveUpgrades.Add(upgradeOption);
+        }
+
+        updateUISO.RaiseEvent(type, weaponType, passiveType, ID);
+        togglePauseSO.RaiseEvent();
     }
 }

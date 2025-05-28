@@ -92,12 +92,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10b55569903cb5d449893a750876bd73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upgradeType: 0
+  upgradeCardType: 0
   level: {fileID: 6168632734242482064}
   cardName: {fileID: 8941865984309951170}
   cardImage: {fileID: 7411385066383652077}
   cardDescription: {fileID: 4531501812600337675}
-  onCardClickSO: {fileID: 11400000, guid: 2605bd95cf9ccc84398753bcccc7263f, type: 2}
+  updateUpgradeManagerSO: {fileID: 11400000, guid: f0250fc9dcd03f840ac97596b13184ab, type: 2}
 --- !u!1 &1467076415898811541
 GameObject:
   m_ObjectHideFlags: 0
@@ -571,8 +571,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 2644187960349470963, guid: 8228b917d948b694a879fcfd1cfb0a76, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
