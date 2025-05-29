@@ -18,7 +18,7 @@ public partial struct PassiveInitializationSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker) && !tracker.passiveSystemInitialized)
+        if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker) && !tracker.passivesInitialized)
         {
             foreach (var passiveComponent in SystemAPI.Query<RefRW<PassiveComponent>>())
             {
@@ -75,7 +75,7 @@ public partial struct PassiveInitializationSystem : ISystem
                 pickupExperienceOrbComponent.ValueRW.pickupRadius = pickupExperienceOrbComponent.ValueRO.basePickupRadius;
             }
 
-            tracker.passiveSystemInitialized = true;
+            tracker.passivesInitialized = true;
 
             // Update
             state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), tracker);

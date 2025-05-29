@@ -1,6 +1,8 @@
+using Unity.Burst;
 using Unity.Entities;
 using UnityEngine;
 
+[BurstCompile]
 public partial struct RadiantFieldLevelUpSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
@@ -12,13 +14,13 @@ public partial struct RadiantFieldLevelUpSystem : ISystem
 
         if (SystemAPI.TryGetSingletonEntity<RadiantFieldComponent>(out Entity entity))
         {
-            if (state.EntityManager.HasComponent<RadiantFieldLevelUpEvent>(entity))
+            if (state.EntityManager.HasComponent<UpgradeEvent>(entity))
             {
                 WeaponComponent weaponComponent = SystemAPI.GetComponent<WeaponComponent>(entity);
                 weaponComponent.Level += 1;
 
                 ecb.SetComponent(entity, weaponComponent);
-                ecb.RemoveComponent<RadiantFieldLevelUpEvent>(entity);
+                ecb.RemoveComponent<UpgradeEvent>(entity);
             }
         }
     }

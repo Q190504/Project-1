@@ -3,9 +3,9 @@ using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
 
-public class XPManager : MonoBehaviour
+public class ExperienceOrbManager : MonoBehaviour
 {
-    private static XPManager _instance;
+    private static ExperienceOrbManager _instance;
 
     [SerializeField] private int orbPrepare;
     [SerializeField] private float spawnChance; // <= 1  Chance to spawn an orb when an enemy is defeated
@@ -16,13 +16,12 @@ public class XPManager : MonoBehaviour
     private NativeQueue<Entity> inactiveOrbs;
     private int orbCount = 0;
 
-
-    public static XPManager Instance
+    public static ExperienceOrbManager Instance
     {
         get
         {
             if (_instance == null)
-                _instance = FindFirstObjectByType<XPManager>();
+                _instance = FindFirstObjectByType<ExperienceOrbManager>();
             return _instance;
         }
     }

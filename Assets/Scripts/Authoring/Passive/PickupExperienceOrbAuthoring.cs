@@ -27,6 +27,7 @@ public class PickupExperienceOrbAuthoring : MonoBehaviour
 
             AddComponent(entity, new PassiveComponent
             {
+                PassiveType = PassiveType.PickupRadius,
                 ID = authoring.ID,
                 Level = authoring.currentLevel,
                 MaxLevel = 5,

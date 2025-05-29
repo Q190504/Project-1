@@ -1,6 +1,8 @@
+using Unity.Burst;
 using Unity.Entities;
 using UnityEngine;
 
+[BurstCompile]
 public partial struct PickupRadiusLevelUpSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
@@ -15,7 +17,7 @@ public partial struct PickupRadiusLevelUpSystem : ISystem
             PickupExperienceOrbComponent component
                 = SystemAPI.GetComponent<PickupExperienceOrbComponent>(entity);
 
-            if (state.EntityManager.HasComponent<PickupRadiusLevelUpEvent>(entity))
+            if (state.EntityManager.HasComponent<UpgradeEvent>(entity))
             {
                 PassiveComponent passiveComponent = SystemAPI.GetComponent<PassiveComponent>(entity);
                 component.pickupRadius *= (1 + component.increment);
@@ -23,7 +25,7 @@ public partial struct PickupRadiusLevelUpSystem : ISystem
 
                 ecb.SetComponent(entity, component);
                 ecb.SetComponent(entity, passiveComponent);
-                ecb.RemoveComponent<PickupRadiusLevelUpEvent>(entity);
+                ecb.RemoveComponent<UpgradeEvent>(entity);
             }
         }
     }

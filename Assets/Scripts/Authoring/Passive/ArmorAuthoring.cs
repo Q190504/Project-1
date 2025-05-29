@@ -24,8 +24,8 @@ public class ArmorAuthoring : MonoBehaviour
 
             AddComponent(entity, new PassiveComponent
             {
+                PassiveType = PassiveType.Armor,
                 ID = authoring.ID,
-
                 Level = authoring.currentLevel,
                 MaxLevel = 5,
                 DisplayName = "Armor",

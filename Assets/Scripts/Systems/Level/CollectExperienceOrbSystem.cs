@@ -34,7 +34,7 @@ public partial struct CollectExperienceOrbSystem : ISystem
 
         foreach (var orb in orbsToReturn)
         {
-            XPManager.Instance.Return(orb, ecb);
+            ExperienceOrbManager.Instance.Return(orb, ecb);
         }
 
         orbsToReturn.Dispose();

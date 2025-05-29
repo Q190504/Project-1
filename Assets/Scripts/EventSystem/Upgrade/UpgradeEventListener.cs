@@ -3,7 +3,7 @@ using UnityEngine.Events;
 
 public class UpgradeEventListener : MonoBehaviour
 {
-    [SerializeField] private UnityEvent<UpgradeType, WeaponType, PassiveType, int> EventResponse;
+    [SerializeField] private UnityEvent<UpgradeEventArgs> EventResponse;
     [SerializeField] private UpgradePublisherSO publisher;
 
     private void OnEnable()
@@ -16,8 +16,8 @@ public class UpgradeEventListener : MonoBehaviour
         publisher.OnEventRaised -= Respond;
     }
 
-    private void Respond(UpgradeType type, WeaponType weaponType, PassiveType passiveType, int ID)
+    private void Respond(UpgradeEventArgs upgradeEventArgs)
     {
-        EventResponse?.Invoke(type, weaponType, passiveType, ID);
+        EventResponse?.Invoke(upgradeEventArgs);
     }
 }

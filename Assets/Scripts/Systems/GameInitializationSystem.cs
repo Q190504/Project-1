@@ -19,11 +19,11 @@ public partial struct GameInitializationSystem : ISystem
             var trackerEntity = SystemAPI.GetSingletonEntity<InitializationTrackerComponent>();
 
             //tracker.flowFieldSystemInitialized = false;
-            tracker.playerPositionSystemInitialized = false;
-            tracker.playerHealthSystemInitialized = false;
-            tracker.weaponSystemInitialized = false;
-            tracker.passiveSystemInitialized = false;
-            tracker.levelSystemInitialized = false;
+            tracker.playerPositionInitialized = false;
+            tracker.playerHealthInitialized = false;
+            tracker.weaponsInitialized = false;
+            tracker.passivesInitialized = false;
+            tracker.playerLevelInitialized = false;
             tracker.hasCleanEnemies = false;
             tracker.hasCleanProjectiles = false;
             tracker.hasCleanCloudList = false;

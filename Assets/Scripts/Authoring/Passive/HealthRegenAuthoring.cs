@@ -24,6 +24,7 @@ public class HealthRegenAuthoring : MonoBehaviour
 
             AddComponent(entity, new PassiveComponent
             {
+                PassiveType = PassiveType.HealthRegen,
                 ID = authoring.ID,
                 Level = authoring.currentLevel,
                 MaxLevel = 5, 

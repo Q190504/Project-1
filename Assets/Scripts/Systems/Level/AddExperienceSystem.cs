@@ -2,7 +2,7 @@ using UnityEngine;
 using Unity.Entities;
 using Unity.Burst;
 
-[BurstCompile]
+//[BurstCompile]
 public partial struct PlayerLevelSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
@@ -25,19 +25,20 @@ public partial struct PlayerLevelSystem : ISystem
         if (SystemAPI.TryGetSingletonEntity<PlayerLevelComponent>(out Entity player) && GameManager.Instance.IsInitializing())
         {
             // Track Initialization Progress
-            if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker) && !tracker.levelSystemInitialized)
+            if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker) && !tracker.playerLevelInitialized)
             {
                 var playerLevel = SystemAPI.GetComponent<PlayerLevelComponent>(player);
 
                 playerLevel.currentLevel = 1;
+                playerLevel.maxLevel = 99;
                 playerLevel.experience = 0;
-                playerLevel.experienceToNextLevel = 100; // Example value, adjust as needed
+                playerLevel.experienceToNextLevel = 20;
                 state.EntityManager.SetComponentData(player, playerLevel);
 
                 UpdateXPBar(playerLevel.currentLevel, playerLevel.experience, playerLevel.experienceToNextLevel);
 
                 // Update tracker
-                tracker.levelSystemInitialized = true;
+                tracker.playerLevelInitialized = true;
 
                 state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), tracker);
             }
@@ -55,18 +56,27 @@ public partial struct PlayerLevelSystem : ISystem
                 var experienceOrb = state.EntityManager.GetComponentData<AddExperienceComponent>(playerEntity);
                 playerLevel.ValueRW.experience += experienceOrb.experienceAmount;
 
+                // Level up
                 if (playerLevel.ValueRO.experience >= playerLevel.ValueRO.experienceToNextLevel)
                 {
                     playerLevel.ValueRW.currentLevel++;
 
                     // Reach the max level
-                    if( playerLevel.ValueRO.currentLevel > playerLevel.ValueRO.maxLevel )
+                    if (playerLevel.ValueRO.currentLevel > playerLevel.ValueRO.maxLevel)
                     {
                         playerLevel.ValueRW.currentLevel = playerLevel.ValueRO.maxLevel;
                         playerLevel.ValueRW.experience = playerLevel.ValueRO.experienceToNextLevel;
                     }
                     else
+                    {
                         playerLevel.ValueRW.experience -= playerLevel.ValueRO.experienceToNextLevel;
+
+                        // Inscrease the experience needed for the next level
+                        playerLevel.ValueRW.experienceToNextLevel = (int)(playerLevel.ValueRO.experienceToNextLevel * 1.2f);
+
+                        // Open Upgrade Panel
+                        ecb.AddComponent<PlayerLevelUpEvent>(playerEntity);
+                    }
                 }
 
                 // Update Level Bar

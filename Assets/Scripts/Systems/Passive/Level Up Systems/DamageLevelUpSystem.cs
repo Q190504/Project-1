@@ -1,7 +1,9 @@
+using Unity.Burst;
 using Unity.Entities;
 using UnityEngine;
 
-public partial struct MoveSpeedLevelUpSystem : ISystem
+[BurstCompile]
+public partial struct DamageLevelUpSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
@@ -10,20 +12,20 @@ public partial struct MoveSpeedLevelUpSystem : ISystem
         var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        if (SystemAPI.TryGetSingletonEntity<PlayerMovementSpeedComponent>(out Entity entity))
+        if (SystemAPI.TryGetSingletonEntity<GenericDamageModifierComponent>(out Entity entity))
         {
-            PlayerMovementSpeedComponent component
-                = SystemAPI.GetComponent<PlayerMovementSpeedComponent>(entity);
+            GenericDamageModifierComponent component
+                = SystemAPI.GetComponent<GenericDamageModifierComponent>(entity);
 
-            if (state.EntityManager.HasComponent<MoveSpeedLevelUpEvent>(entity))
+            if (state.EntityManager.HasComponent<UpgradeEvent>(entity))
             {
                 PassiveComponent passiveComponent = SystemAPI.GetComponent<PassiveComponent>(entity);
-                component.currentSpeed *= (1 + component.increment);
+                component.genericDamageModifierValue += component.increment;
                 passiveComponent.Level += 1;
 
                 ecb.SetComponent(entity, component);
                 ecb.SetComponent(entity, passiveComponent);
-                ecb.RemoveComponent<MoveSpeedLevelUpEvent>(entity);
+                ecb.RemoveComponent<UpgradeEvent>(entity);
             }
         }
     }

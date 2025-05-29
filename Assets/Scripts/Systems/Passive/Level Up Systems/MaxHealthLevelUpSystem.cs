@@ -1,6 +1,8 @@
+using Unity.Burst;
 using Unity.Entities;
 using UnityEngine;
 
+[BurstCompile]
 public partial struct MaxHealthLevelUpSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
@@ -15,7 +17,7 @@ public partial struct MaxHealthLevelUpSystem : ISystem
             MaxHealthComponent component
                 = SystemAPI.GetComponent<MaxHealthComponent>(entity);
 
-            if (state.EntityManager.HasComponent<MaxHealthLevelUpEvent>(entity))
+            if (state.EntityManager.HasComponent<UpgradeEvent>(entity))
             {
                 PassiveComponent passiveComponent = SystemAPI.GetComponent<PassiveComponent>(entity);
                 passiveComponent.Level += 1;
@@ -25,7 +27,7 @@ public partial struct MaxHealthLevelUpSystem : ISystem
                     PlayerHealthComponent playerHealthComponent = SystemAPI.GetComponent<PlayerHealthComponent>(player);
                     playerHealthComponent.maxHealth += component.increment;
                     
-                    ecb.SetComponent(player, new HealEventComponent
+                    ecb.AddComponent(player, new HealEventComponent
                     {
                         healAmount = component.increment,
                     });
@@ -38,7 +40,7 @@ public partial struct MaxHealthLevelUpSystem : ISystem
                 }
 
                 ecb.SetComponent(entity, passiveComponent);
-                ecb.RemoveComponent<MaxHealthLevelUpEvent>(entity);
+                ecb.RemoveComponent<UpgradeEvent>(entity);
             }
         }
     }

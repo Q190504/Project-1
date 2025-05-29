@@ -20,13 +20,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject playerInitalPosition;
 
     private int totalEnemiesKilled = 0;
-    [SerializeField] IntPublisherSO enemiesKilledPublisher;
+    [SerializeField] private IntPublisherSO enemiesKilledPublisher;
 
     private GameState gameState;
-    [SerializeField] BoolPublisherSO endGamePublisher;
+    [SerializeField] private BoolPublisherSO endGamePublisher;
 
     private double timeSinceStartPlaying = 0;
-    [SerializeField] DoublePublisherSO timePublisher;
+    [SerializeField] private DoublePublisherSO timePublisher;
 
     //[Range(0f, 1f)]
     //public float SKILL_1_THRESHOLD;
@@ -158,17 +158,17 @@ public class GameManager : MonoBehaviour
         Application.Quit();
     }
 
-    public void TogglePauseGame()
+    public void TogglePauseGameForUpgrading()
     {
         if (gameState == GameState.Playing)
         {
             SetGameState(GameState.Upgrading);
-            Time.timeScale = 0f; // Pause the game
+            //Time.timeScale = 0f; // Pause the game
         }
         else if (gameState == GameState.Upgrading)
         {
             SetGameState(GameState.Playing);
-            Time.timeScale = 1f; // Resume the game
+            //Time.timeScale = 1f; // Resume the game
         }
     }
 }

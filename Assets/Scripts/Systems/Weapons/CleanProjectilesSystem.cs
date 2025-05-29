@@ -30,7 +30,7 @@ public partial struct CleanProjectilesSystem : ISystem
 
             foreach (var (_, experienceOrbEntity) in SystemAPI.Query<RefRO<ExperienceOrbComponent>>().WithEntityAccess())
             {
-                XPManager.Instance.Return(experienceOrbEntity, ecb);
+                ExperienceOrbManager.Instance.Return(experienceOrbEntity, ecb);
             }
 
             // Update tracker

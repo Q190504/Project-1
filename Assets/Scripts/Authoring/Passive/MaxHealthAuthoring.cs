@@ -22,6 +22,7 @@ public class MaxHealthAuthoring : MonoBehaviour
 
             AddComponent(entity, new PassiveComponent
             {
+                PassiveType = PassiveType.MaxHealth,
                 ID = authoring.ID,
                 Level = authoring.currentLevel,
                 MaxLevel = 5,

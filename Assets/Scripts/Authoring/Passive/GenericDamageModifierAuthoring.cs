@@ -24,6 +24,7 @@ public class GenericDamageModifierAuthoring : MonoBehaviour
 
             AddComponent(entity, new PassiveComponent
             {
+                PassiveType = PassiveType.Damage,
                 ID = authoring.ID,
                 Level = authoring.currentLevel,
                 MaxLevel = 5,

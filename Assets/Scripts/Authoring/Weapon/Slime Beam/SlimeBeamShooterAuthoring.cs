@@ -5,16 +5,16 @@ using System.IO;
 
 public class SlimeBeamShooterAuthoring : MonoBehaviour
 {
-    public WeaponType weaponId = WeaponType.SlimeBeamShooter;
+    public WeaponType weaponType = WeaponType.SlimeBeamShooter;
 
     public class Baker : Baker<SlimeBeamShooterAuthoring>
     {
         public override void Bake(SlimeBeamShooterAuthoring authoring)
         {
-            string path = Path.Combine(Application.dataPath, "Data", $"{authoring.weaponId}.json");
+            string path = Path.Combine(Application.dataPath, "Data", $"{authoring.weaponType}.json");
             if (!File.Exists(path))
             {
-                Debug.LogWarning($"{authoring.weaponId} JSON not found at path: {path}");
+                Debug.LogWarning($"{authoring.weaponType} JSON not found at path: {path}");
                 return;
             }
 
@@ -67,6 +67,7 @@ public class SlimeBeamShooterAuthoring : MonoBehaviour
 
             AddComponent(entity, new WeaponComponent
             {
+                WeaponType = authoring.weaponType,
                 ID = weapon.id,
                 DisplayName = weapon.name,
                 Description = "Fires slime beams in four directions.",

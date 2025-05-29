@@ -1,6 +1,8 @@
+using Unity.Burst;
 using Unity.Entities;
 using UnityEngine;
 
+[BurstCompile]
 public partial struct SlimeBulletShooterLevelUpSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
@@ -10,15 +12,15 @@ public partial struct SlimeBulletShooterLevelUpSystem : ISystem
         var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        if (SystemAPI.TryGetSingletonEntity<SlimeBeamShooterComponent>(out Entity entity))
+        if (SystemAPI.TryGetSingletonEntity<SlimeBulletShooterComponent>(out Entity entity))
         {
-            if (state.EntityManager.HasComponent<SlimeBulletShooterLevelUpEvent>(entity))
+            if (state.EntityManager.HasComponent<UpgradeEvent>(entity))
             {
                 WeaponComponent weaponComponent = SystemAPI.GetComponent<WeaponComponent>(entity);
                 weaponComponent.Level += 1;
 
                 ecb.SetComponent(entity, weaponComponent);
-                ecb.RemoveComponent<SlimeBulletShooterLevelUpEvent>(entity);
+                ecb.RemoveComponent<UpgradeEvent>(entity);
             }
         }
     }

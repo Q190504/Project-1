@@ -69,6 +69,11 @@ public partial struct SlimeBulletShooterSystem : ISystem
 
         foreach (var (weaponComponent, weapon, shooterEntity) in SystemAPI.Query<RefRO<WeaponComponent>, RefRW<SlimeBulletShooterComponent>>().WithEntityAccess())
         {
+            // Determine weapon level index 
+            int levelIndex = weaponComponent.ValueRO.Level;
+            if (levelIndex == 0) //inactive
+                return;
+
             ref var shooter = ref weapon.ValueRW;
 
             shooter.timer -= deltaTime;
@@ -76,9 +81,6 @@ public partial struct SlimeBulletShooterSystem : ISystem
 
             var blobData = shooter.Data;
             if (!blobData.IsCreated || blobData.Value.Levels.Length == 0) continue;
-
-            // Determine weapon level index 
-            int levelIndex = weaponComponent.ValueRO.Level;
 
             ref var levelData = ref blobData.Value.Levels[levelIndex];
 

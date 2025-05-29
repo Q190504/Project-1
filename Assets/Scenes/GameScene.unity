@@ -3493,7 +3493,7 @@ MonoBehaviour:
   m_Direction: 1
   m_MinValue: 0
   m_MaxValue: 1
-  m_WholeNumbers: 1
+  m_WholeNumbers: 0
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -9102,7 +9102,7 @@ MonoBehaviour:
   m_Direction: 0
   m_MinValue: 0
   m_MaxValue: 1
-  m_WholeNumbers: 1
+  m_WholeNumbers: 0
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -9312,20 +9312,20 @@ MonoBehaviour:
   frenzyEffectSprite: {fileID: -5906687731359168616, guid: d832e36fff4c7cc4eaa22921c39320cc, type: 3}
   effectsLayout: {fileID: 1113382833}
   cardLayout: {fileID: 94418579}
-  statsCardPrefab: {fileID: -6564784702441057703, guid: ef668e35825f86b4d8f4c31f45e2c83e, type: 3}
+  passiveCardPrefab: {fileID: -6564784702441057703, guid: ef668e35825f86b4d8f4c31f45e2c83e, type: 3}
   weaponCardPrefab: {fileID: 2220865243480083456, guid: 381f74dd998774b41b0718f71938fb63, type: 3}
   addCardSO: {fileID: 11400000, guid: 0520119eaa8d5e144a41cfe0e34626f1, type: 2}
-  damageIcon: {fileID: 0}
-  maxHPIcon: {fileID: 0}
-  moveSpeedIcon: {fileID: 0}
-  healthRegenIcon: {fileID: 0}
-  pickupRadiusIcon: {fileID: 0}
-  armorIcon: {fileID: 0}
-  abilityHasteIcon: {fileID: 0}
-  slimeBulletShooterIcon: {fileID: 0}
-  slimeBeamShooterIcon: {fileID: 0}
-  pawPrintPoisonerIcon: {fileID: 0}
-  radiantFieldIcon: {fileID: 0}
+  damageIcon: {fileID: -3346575053172843645, guid: aded701b21e64ab4a85f9b88025ef34c, type: 3}
+  maxHPIcon: {fileID: -1072127175970171052, guid: aded701b21e64ab4a85f9b88025ef34c, type: 3}
+  moveSpeedIcon: {fileID: 2044097436281933803, guid: aded701b21e64ab4a85f9b88025ef34c, type: 3}
+  healthRegenIcon: {fileID: -8274502759410492490, guid: aded701b21e64ab4a85f9b88025ef34c, type: 3}
+  pickupRadiusIcon: {fileID: -8315605187271447945, guid: aded701b21e64ab4a85f9b88025ef34c, type: 3}
+  armorIcon: {fileID: -2561252975185997263, guid: aded701b21e64ab4a85f9b88025ef34c, type: 3}
+  abilityHasteIcon: {fileID: -5295634354576850911, guid: aded701b21e64ab4a85f9b88025ef34c, type: 3}
+  slimeBulletShooterIcon: {fileID: -3827398062113597543, guid: aded701b21e64ab4a85f9b88025ef34c, type: 3}
+  slimeBeamShooterIcon: {fileID: -3773535540893857118, guid: aded701b21e64ab4a85f9b88025ef34c, type: 3}
+  pawPrintPoisonerIcon: {fileID: -9034024255245367701, guid: aded701b21e64ab4a85f9b88025ef34c, type: 3}
+  radiantFieldIcon: {fileID: 3690171236379502049, guid: aded701b21e64ab4a85f9b88025ef34c, type: 3}
 --- !u!114 &922116003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9609,6 +9609,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: GamePlayUIManager, Assembly-CSharp
         m_MethodName: UpdateSlots
         m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 922116002}
+        m_TargetAssemblyTypeName: GamePlayUIManager, Assembly-CSharp
+        m_MethodName: CloseUpgradePanel
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -50307,52 +50319,6 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!1 &1476228010
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1476228011}
-  - component: {fileID: 1476228012}
-  m_Layer: 0
-  m_Name: XPManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1476228011
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1476228010}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1476228012
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1476228010}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 957a6a33cbd1f474c87968bf5e4353b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  orbPrepare: 100
-  spawnChance: 0.7
 --- !u!1001 &1519829938
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -50591,7 +50557,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1522145078}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: TogglePauseGame
+        m_MethodName: TogglePauseGameForUpgrading
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -50619,7 +50585,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1522145078}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: TogglePauseGame
+        m_MethodName: TogglePauseGameForUpgrading
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -51843,6 +51809,52 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &1645822299
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1645822301}
+  - component: {fileID: 1645822300}
+  m_Layer: 0
+  m_Name: Experience Orb Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1645822300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645822299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cee8a9d4e53f5e94c8c1a0e6dd19498b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  orbPrepare: 100
+  spawnChance: 0.7
+--- !u!4 &1645822301
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645822299}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1655423559
 GameObject:
   m_ObjectHideFlags: 0
@@ -53075,7 +53087,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   totalTime: 30
   updateCountdownSO: {fileID: 11400000, guid: 82929148137a65b429d9260200f1493f, type: 2}
-  updateUISO: {fileID: 0}
   togglePauseSO: {fileID: 11400000, guid: f416fb96a28c45345884db545b184695, type: 2}
 --- !u!114 &1970843901
 MonoBehaviour:
@@ -53122,7 +53133,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1970843900}
         m_TargetAssemblyTypeName: UpgradeOptionManager, Assembly-CSharp
-        m_MethodName: ClearOption
+        m_MethodName: ClearOptions
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -53150,19 +53161,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1970843900}
         m_TargetAssemblyTypeName: UpgradeOptionManager, Assembly-CSharp
-        m_MethodName: ClearAllUpgrade
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1970843900}
-        m_TargetAssemblyTypeName: UpgradeOptionManager, Assembly-CSharp
-        m_MethodName: ClearOption
+        m_MethodName: ClearOptions
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -53182,7 +53181,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1970843898}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc8de5a95d4a999448dc2b1dba843c39, type: 3}
+  m_Script: {fileID: 11500000, guid: b4d67c870696e604e92e17f2f06b7f05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   EventResponse:
@@ -53190,8 +53189,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1970843900}
         m_TargetAssemblyTypeName: UpgradeOptionManager, Assembly-CSharp
-        m_MethodName: UpdateSelectedUpgrade
-        m_Mode: 0
+        m_MethodName: SetTimer
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -53200,7 +53199,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  publisher: {fileID: 11400000, guid: f0250fc9dcd03f840ac97596b13184ab, type: 2}
+  publisher: {fileID: 11400000, guid: 8d531d17176c0f44dbbbda17ebb89ff3, type: 2}
 --- !u!1 &1996720171
 GameObject:
   m_ObjectHideFlags: 0
@@ -53796,8 +53795,8 @@ SceneRoots:
   - {fileID: 108756667}
   - {fileID: 1522145077}
   - {fileID: 922116001}
-  - {fileID: 1476228011}
   - {fileID: 1970843899}
+  - {fileID: 1645822301}
   - {fileID: 827541386}
   - {fileID: 2028360960}
   - {fileID: 2010950038}

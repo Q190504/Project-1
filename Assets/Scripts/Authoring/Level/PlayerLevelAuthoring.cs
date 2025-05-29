@@ -9,13 +9,7 @@ public class PlayerLevelAuthoring : MonoBehaviour
         {
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
 
-            AddComponent(entity, new PlayerLevelComponent
-            {
-                currentLevel = 1,
-                maxLevel = 99,
-                experience = 0,
-                experienceToNextLevel = 100 // Example value, adjust as needed
-            });
+            AddComponent(entity, new PlayerLevelComponent());
         }
     }
 }

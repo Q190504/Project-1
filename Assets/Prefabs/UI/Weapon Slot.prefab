@@ -415,7 +415,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 397481244418297265}
-  level: {fileID: 3521227792040021002}
+  levelText: {fileID: 3521227792040021002}
   levelContainer: {fileID: 2235120058425364512}
 --- !u!114 &-1708948793819049780
 MonoBehaviour:

@@ -28,7 +28,7 @@ public partial struct PlayerHealthSystem : ISystem
         if (SystemAPI.TryGetSingletonEntity<PlayerHealthComponent>(out Entity player) && GameManager.Instance.IsInitializing())
         {
             // Track Initialization Progress
-            if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker) && !tracker.playerHealthSystemInitialized)
+            if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker) && !tracker.playerHealthInitialized)
             {
                 var playerHealth = SystemAPI.GetComponent<PlayerHealthComponent>(player);
 
@@ -38,7 +38,7 @@ public partial struct PlayerHealthSystem : ISystem
                 UpdateHPBar(playerHealth.currentHealth, playerHealth.maxHealth);
 
                 // Update tracker
-                tracker.playerHealthSystemInitialized = true;
+                tracker.playerHealthInitialized = true;
 
                 state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), tracker);
             }

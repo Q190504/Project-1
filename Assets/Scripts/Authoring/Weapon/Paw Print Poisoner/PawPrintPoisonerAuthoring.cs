@@ -5,16 +5,16 @@ using System.IO;
 
 public class PawPrintPoisonerAuthoring : MonoBehaviour
 {
-    public WeaponType weaponId = WeaponType.PawPrintPoisoner;
+    public WeaponType weaponType = WeaponType.PawPrintPoisoner;
 
     public class Baker : Baker<PawPrintPoisonerAuthoring>
     {
         public override void Bake(PawPrintPoisonerAuthoring authoring)
         {
-            string path = Path.Combine(Application.dataPath, "Data", $"{authoring.weaponId}.json");
+            string path = Path.Combine(Application.dataPath, "Data", $"{authoring.weaponType}.json");
             if (!File.Exists(path))
             {
-                Debug.LogWarning($"{authoring.weaponId} JSON not found at path: {path}");
+                Debug.LogWarning($"{authoring.weaponType} JSON not found at path: {path}");
                 return;
             }
 
@@ -58,7 +58,6 @@ public class PawPrintPoisonerAuthoring : MonoBehaviour
             AddComponent(entity, new PawPrintPoisonerComponent
             {
                 Data = blobReference,
-                //level = 0,
                 timer = 0f,
                 tick = weapon.tick,
                 cooldown = weapon.cooldown,
@@ -69,7 +68,7 @@ public class PawPrintPoisonerAuthoring : MonoBehaviour
 
             AddComponent(entity, new WeaponComponent
             {
-                WeaponType = authoring.weaponId,
+                WeaponType = authoring.weaponType,
                 ID = weapon.id,
                 DisplayName = weapon.name,
                 Description = "Leaves a damaging poison cloud behind while moving.",
@@ -104,7 +103,6 @@ public class PawPrintPoisonerJson
 
 public struct PawPrintPoisonerComponent : IComponentData
 {
-    //public int level;
     public float timer;
     public float tick;
     public float cooldown;

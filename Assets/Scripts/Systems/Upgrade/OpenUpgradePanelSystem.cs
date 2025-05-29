@@ -18,7 +18,7 @@ public partial struct OpenUpgradePanelSystem : ISystem
                           .WithAll<PlayerLevelUpEvent>().WithEntityAccess())
         {
             // Pause game
-            GameManager.Instance.TogglePauseGame();
+            GameManager.Instance.TogglePauseGameForUpgrading();
 
             // Collect all valid upgrade options
             NativeList<UpgradeOptionStruct> offerings

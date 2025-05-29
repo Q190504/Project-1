@@ -1,6 +1,8 @@
+using Unity.Burst;
 using Unity.Entities;
 using UnityEngine;
 
+[BurstCompile]
 public partial struct HealthRegenLevelUpSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
@@ -15,7 +17,7 @@ public partial struct HealthRegenLevelUpSystem : ISystem
             HealthRegenComponent component
                 = SystemAPI.GetComponent<HealthRegenComponent>(entity);
 
-            if (state.EntityManager.HasComponent<HealthRegenLevelUpEvent>(entity))
+            if (state.EntityManager.HasComponent<UpgradeEvent>(entity))
             {
                 PassiveComponent passiveComponent = SystemAPI.GetComponent<PassiveComponent>(entity);
                 component.healthRegenValue += component.increment;
@@ -23,7 +25,7 @@ public partial struct HealthRegenLevelUpSystem : ISystem
 
                 ecb.SetComponent(entity, component);
                 ecb.SetComponent(entity, passiveComponent);
-                ecb.RemoveComponent<HealthRegenLevelUpEvent>(entity);
+                ecb.RemoveComponent<UpgradeEvent>(entity);
             }
         }
     }

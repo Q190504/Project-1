@@ -24,8 +24,8 @@ public class AbilityHasteAuthoring : MonoBehaviour
 
             AddComponent(entity, new PassiveComponent
             {
+                PassiveType = PassiveType.AbilityHaste,
                 ID = authoring.ID,
-
                 Level = authoring.currentLevel,
                 MaxLevel = 5,
                 DisplayName = "Ability Haste",

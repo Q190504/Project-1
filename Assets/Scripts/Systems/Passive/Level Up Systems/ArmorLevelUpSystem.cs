@@ -1,7 +1,9 @@
+using Unity.Burst;
 using Unity.Entities;
 using UnityEngine;
 
-public partial struct AbilityHasteLevelUpSystem : ISystem
+[BurstCompile]
+public partial struct ArmorLevelUpSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
@@ -10,20 +12,20 @@ public partial struct AbilityHasteLevelUpSystem : ISystem
         var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        if (SystemAPI.TryGetSingletonEntity<AbilityHasteComponent>(out Entity entity))
+        if (SystemAPI.TryGetSingletonEntity<ArmorComponent>(out Entity entity))
         {
-            AbilityHasteComponent component
-                = SystemAPI.GetComponent<AbilityHasteComponent>(entity);
+            ArmorComponent component
+                = SystemAPI.GetComponent<ArmorComponent>(entity);
 
-            if (state.EntityManager.HasComponent<AbilityHasteLevelUpEvent>(entity))
+            if (state.EntityManager.HasComponent<UpgradeEvent>(entity))
             {
                 PassiveComponent passiveComponent = SystemAPI.GetComponent<PassiveComponent>(entity);
-                component.abilityHasteValue += component.increment;
+                component.armorValue += component.increment;
                 passiveComponent.Level += 1;
 
                 ecb.SetComponent(entity, component);
                 ecb.SetComponent(entity, passiveComponent);
-                ecb.RemoveComponent<AbilityHasteLevelUpEvent>(entity);
+                ecb.RemoveComponent<UpgradeEvent>(entity);
             }
         }
     }

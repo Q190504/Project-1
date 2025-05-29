@@ -7,7 +7,7 @@ public class UpgradeSlot : MonoBehaviour
     public int ID { get; set; }
 
     [SerializeField] private Image image;
-    [SerializeField] private TMP_Text level;
+    [SerializeField] private TMP_Text levelText;
     [SerializeField] private GameObject levelContainer;
 
     void Start ()
@@ -15,19 +15,18 @@ public class UpgradeSlot : MonoBehaviour
         ClearSlotInfo();
     }
 
-    public void SetSlotInfo(int ID, Sprite image)
+    public void SetSlotInfo(int ID, Sprite image, int level)
     {
         this.ID = ID;
-        this.level.text = "0";
+        this.levelText.text = level.ToString();
         this.image.sprite = image;
         levelContainer.SetActive(true);
         this.image.enabled = true;
     }
 
-    public void LevelUp()
+    public void SetLevel(int level)
     {
-        int currentLevel = int.Parse(level.text);
-        level.text = (currentLevel + 1).ToString();
+        levelText.text = level.ToString();
     }
 
     public void ClearSlotInfo()
@@ -35,6 +34,6 @@ public class UpgradeSlot : MonoBehaviour
         image.enabled = false;
         levelContainer.SetActive(false);
         ID = -1;
-        level.text = "0";
+        levelText.text = "0";
     }
 }

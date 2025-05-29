@@ -69,11 +69,11 @@ public class SlimeBulletShooterAuthoring : MonoBehaviour
                 Data = blobReference,
                 timer = 2f,
                 isSlimeFrenzyActive = false,
-                //level = 0,
             });
 
             AddComponent(entity, new WeaponComponent
             {
+                WeaponType = authoring.weaponId,
                 ID = weapon.id,
                 DisplayName = weapon.name,
                 Description = "Fires slime bullet in the target direction.",
@@ -113,7 +113,6 @@ public class SlimeBulletShooterJson
 
 public struct SlimeBulletShooterComponent : IComponentData
 {
-    //public int level;
     public float timer;
     public bool isSlimeFrenzyActive;
     public BlobAssetReference<SlimeBulletShooterDataBlob> Data;

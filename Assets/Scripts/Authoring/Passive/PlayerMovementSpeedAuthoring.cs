@@ -28,11 +28,12 @@ public class PlayerMovementSpeedAuthoring : MonoBehaviour
 
             AddComponent(entity, new PassiveComponent
             {
-                 ID = authoring.ID,
-                 Level = authoring.currentLevel,
-                 MaxLevel = 5,
-                 DisplayName = "Movement Speed",
-                 Description = "Increase movement speed.",
+                PassiveType = PassiveType.MoveSpeed,
+                ID = authoring.ID,
+                Level = authoring.currentLevel,
+                MaxLevel = 5,
+                DisplayName = "Movement Speed",
+                Description = "Increase movement speed.",
             });
         }
     }

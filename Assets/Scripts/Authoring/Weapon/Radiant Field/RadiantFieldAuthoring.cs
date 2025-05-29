@@ -5,16 +5,16 @@ using UnityEngine;
 
 public class RadiantFieldAuthoring : MonoBehaviour
 {
-    public WeaponType weaponId = WeaponType.RadiantField;
+    public WeaponType weaponType = WeaponType.RadiantField;
 
     public class Baker : Baker<RadiantFieldAuthoring>
     {
         public override void Bake(RadiantFieldAuthoring authoring)
         {
-            string path = Path.Combine(Application.dataPath, "Data", $"{authoring.weaponId}.json");
+            string path = Path.Combine(Application.dataPath, "Data", $"{authoring.weaponType}.json");
             if (!File.Exists(path))
             {
-                Debug.LogWarning($"{authoring.weaponId} JSON not found at path: {path}");
+                Debug.LogWarning($"{authoring.weaponType} JSON not found at path: {path}");
                 return;
             }
 
@@ -65,6 +65,7 @@ public class RadiantFieldAuthoring : MonoBehaviour
 
             AddComponent(radiantFieldEntity, new WeaponComponent
             {
+                WeaponType = authoring.weaponType,
                 ID = weapon.id,
                 DisplayName = weapon.name,
                 Description = "A solar field damages nearby enemies.",

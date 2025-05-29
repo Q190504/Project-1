@@ -10,11 +10,10 @@ public class UpgradeOptionManager : MonoBehaviour
     [SerializeField] private float totalTime;
     private List<UpgradeCard> upgradeOptions;
 
-    private List<UpgradeOptionClass> selectedPassiveUpgrades;
-    private List<UpgradeOptionClass> selectedWeaponUpgrades;
+    //private List<UpgradeOptionClass> selectedPassiveUpgrades;
+    //private List<UpgradeOptionClass> selectedWeaponUpgrades;
 
     [SerializeField] private TwoFloatPublisherSO updateCountdownSO;
-    [SerializeField] private UpgradePublisherSO updateUISO;
     [SerializeField] private VoidPublisherSO togglePauseSO;
 
     public static UpgradeOptionManager Instance
@@ -26,7 +25,6 @@ public class UpgradeOptionManager : MonoBehaviour
             return _instance;
         }
     }
-
     private void Awake()
     {
         if (_instance == null)
@@ -39,10 +37,10 @@ public class UpgradeOptionManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        timer = totalTime;
+        ResetTimer();
         upgradeOptions = new List<UpgradeCard>();
-        selectedPassiveUpgrades = new List<UpgradeOptionClass>();
-        selectedWeaponUpgrades = new List<UpgradeOptionClass>();
+        //selectedPassiveUpgrades = new List<UpgradeOptionClass>();
+        //selectedWeaponUpgrades = new List<UpgradeOptionClass>();
     }
 
     // Update is called once per frame
@@ -57,7 +55,6 @@ public class UpgradeOptionManager : MonoBehaviour
                 ChooseFirstOption();
 
                 timer = totalTime;
-                togglePauseSO.RaiseEvent();
             }
 
             updateCountdownSO.RaiseEvent(timer, totalTime);
@@ -74,7 +71,7 @@ public class UpgradeOptionManager : MonoBehaviour
         }
     }
 
-    public void ClearOption()
+    public void ClearOptions()
     {
         upgradeOptions.Clear();
     }
@@ -94,46 +91,8 @@ public class UpgradeOptionManager : MonoBehaviour
         }
     }
 
-    public void ClearAllUpgrade()
+    public void ResetTimer()
     {
-        selectedPassiveUpgrades.Clear();
-        selectedWeaponUpgrades.Clear();
-    }
-
-    public void UpdateSelectedUpgrade(UpgradeType type, WeaponType weaponType, PassiveType passiveType, int ID)
-    {
-        if (type == UpgradeType.Weapon)
-        {
-            foreach (UpgradeOptionClass upgrade in selectedWeaponUpgrades)
-            {
-                if (upgrade.ID == ID)
-                {
-                    upgrade.LevelUp();
-                    return;
-                }
-            }
-
-            // Create new upgrade option if not found
-            UpgradeOptionClass upgradeOption = new UpgradeOptionClass(type, ID);
-            selectedWeaponUpgrades.Add(upgradeOption);
-        }
-        else
-        {
-            foreach (UpgradeOptionClass upgrade in selectedPassiveUpgrades)
-            {
-                if (upgrade.ID == ID)
-                {
-                    upgrade.LevelUp();
-                    return;
-                }
-            }
-
-            // Create new upgrade option if not found
-            UpgradeOptionClass upgradeOption = new UpgradeOptionClass(type, ID);
-            selectedPassiveUpgrades.Add(upgradeOption);
-        }
-
-        updateUISO.RaiseEvent(type, weaponType, passiveType, ID);
-        togglePauseSO.RaiseEvent();
+        timer = totalTime;
     }
 }

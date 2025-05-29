@@ -91,7 +91,7 @@ public partial struct PlayerMovementSystem : ISystem
         // Track Initialization Progress
         if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker))
         {
-            if (!tracker.playerPositionSystemInitialized)
+            if (!tracker.playerPositionInitialized)
             {
                 LocalTransform playerTransform = entityManager.GetComponentData<LocalTransform>(player);
 
@@ -100,7 +100,7 @@ public partial struct PlayerMovementSystem : ISystem
                 ecb.SetComponent(player, playerTransform);
 
                 // Update tracker
-                tracker.playerPositionSystemInitialized = true;
+                tracker.playerPositionInitialized = true;
                 ecb.SetComponent(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), tracker);
             }
         }

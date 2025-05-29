@@ -20,7 +20,7 @@ public partial struct ResetWeaponSystem : ISystem
         if (!GameManager.Instance.IsInitializing())
             return;
 
-        if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var initializationTrackerComponent) && !initializationTrackerComponent.weaponSystemInitialized)
+        if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var initializationTrackerComponent) && !initializationTrackerComponent.weaponsInitialized)
         {
             if (SystemAPI.TryGetSingletonEntity<SlimeBulletShooterComponent>(out var slimeBulletShooterEntity))
             {
@@ -122,7 +122,7 @@ public partial struct ResetWeaponSystem : ISystem
                 state.EntityManager.SetComponentData(radiantFieldEntity, radiantFieldComponent);
             }
 
-            initializationTrackerComponent.weaponSystemInitialized = true;
+            initializationTrackerComponent.weaponsInitialized = true;
 
             // Update
             state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), 

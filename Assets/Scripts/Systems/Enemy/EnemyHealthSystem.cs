@@ -35,7 +35,7 @@ public partial struct EnemyHealthSystem : ISystem
                     GameManager.Instance.AddEnemyKilled();
 
                     // Try to spawn XP orb
-                    XPManager.Instance.TrySpawnExperienceOrb(localTransform.ValueRO.Position, ecb);
+                    ExperienceOrbManager.Instance.TrySpawnExperienceOrb(localTransform.ValueRO.Position, ecb);
                 }
 
                 ecb.RemoveComponent<DamageEventComponent>(enemyEntity);
