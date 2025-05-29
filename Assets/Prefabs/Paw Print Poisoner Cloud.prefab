@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 6843230984833704876}
   - component: {fileID: 3575846174754344043}
   - component: {fileID: 7464773104187933706}
-  - component: {fileID: 2799384023115976259}
   - component: {fileID: 4334251659560794540}
   m_Layer: 10
   m_Name: Paw Print Poisoner Cloud
@@ -80,7 +79,7 @@ SpriteRenderer:
   m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: -6571863576434913728, guid: 327d1522eac350b4387fdb7915720b2e, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.69411767}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.3529412}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -102,57 +101,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11e3d4aa350758f4a89a499c0242d2cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2799384023115976259
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4775407818290775146}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ccea9ea98e38942e0b0938c27ed1903e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_MotionType: 0
-  m_Smoothing: 0
-  m_Mass: 1
-  m_LinearDamping: 0.01
-  m_AngularDamping: 0.05
-  m_InitialLinearVelocity:
-    x: 0
-    y: 0
-    z: 0
-  m_InitialAngularVelocity:
-    x: 0
-    y: 0
-    z: 0
-  m_GravityFactor: 0
-  m_OverrideDefaultMassDistribution: 1
-  m_CenterOfMass:
-    x: 0
-    y: 0
-    z: 0
-  m_Orientation:
-    Value:
-      x: 0
-      y: 0
-      z: 0
-    RotationOrder: 4
-  m_InertiaTensor:
-    x: Infinity
-    y: Infinity
-    z: Infinity
-  m_WorldIndex: 0
-  m_CustomTags:
-    Tag00: 0
-    Tag01: 0
-    Tag02: 0
-    Tag03: 0
-    Tag04: 0
-    Tag05: 0
-    Tag06: 0
-    Tag07: 0
 --- !u!114 &4334251659560794540
 MonoBehaviour:
   m_ObjectHideFlags: 0

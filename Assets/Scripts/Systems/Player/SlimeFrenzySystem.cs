@@ -21,40 +21,55 @@ public partial struct SlimeFrenzySystem : ISystem
             return;
         }
 
-        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+        float abilityHaste = 0;
+        if (SystemAPI.TryGetSingleton<AbilityHasteComponent>(out AbilityHasteComponent abilityHasteComponent))
+        {
+            abilityHaste = abilityHasteComponent.abilityHasteValue;
+        }
+        else
+        {
+            Debug.Log($"Cant Found Ability Haste Component in SlimeFrenzySystem!");
+        }
 
-        if (SystemAPI.TryGetSingleton<PlayerInputComponent>(out var playerInput) && SystemAPI.TryGetSingleton<SlimeFrenzyComponent>(out var slimeFrenzyComponent) && SystemAPI.TryGetSingleton<PlayerTagComponent>(out var playerTagComponent))
+        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+
+        if (SystemAPI.TryGetSingleton<PlayerInputComponent>(out var playerInput) 
+            && SystemAPI.TryGetSingleton<SlimeFrenzyComponent>(out var slimeFrenzyComponent) 
+            && SystemAPI.TryGetSingleton<PlayerTagComponent>(out var playerTagComponent))
         {
             PlayerHealthComponent playerHealthComponent = entityManager.GetComponentData<PlayerHealthComponent>(player);
-            var playerTagComponentRef = SystemAPI.GetSingletonRW<PlayerTagComponent>();
+
+            float baseCooldownTime = slimeFrenzyComponent.cooldownTime;
+            float finalCooldownTime = baseCooldownTime * (100 / (100 + abilityHaste));
 
             if (cooldownTimer <= 0)
             {
                 GamePlayUIManager.Instance.SetSkill1CooldownUI(false);
 
-                if(!isFrenzyActive)
+                if (!isFrenzyActive)
                     GamePlayUIManager.Instance.SetSkill1ImageOpacity(true);
                 else
                     GamePlayUIManager.Instance.SetSkill1ImageOpacity(false);
 
-                if (playerInput.isCPressed
+                if (playerInput.isEPressed
                 && CheckPlayerHealth(playerHealthComponent.currentHealth, playerHealthComponent.maxHealth))
                 {
                     // Apply frenzy effect
                     if (!entityManager.HasComponent<SlimeFrenzyTimerComponent>(player))
-                        ecb.AddComponent(player, new SlimeFrenzyTimerComponent 
-                        { 
+                        ecb.AddComponent(player, new SlimeFrenzyTimerComponent
+                        {
                             timeRemaining = slimeFrenzyComponent.duration,
                             initialDuration = slimeFrenzyComponent.duration
                         });
 
                     isFrenzyActive = true;
                 }
-                else if (!entityManager.HasComponent<SlimeFrenzyTimerComponent>(player) && isFrenzyActive) //Just ended slime frenzy
+                else if (!entityManager.HasComponent<SlimeFrenzyTimerComponent>(player) 
+                    && isFrenzyActive) //Just ended slime frenzy
                 {
                     // Frenzy effect ended, start cooldown
-                    cooldownTimer = slimeFrenzyComponent.cooldownTime;
+                    cooldownTimer = finalCooldownTime;
                     isFrenzyActive = false;
                 }
             }
@@ -65,13 +80,11 @@ public partial struct SlimeFrenzySystem : ISystem
                 //update UI cooldown
                 GamePlayUIManager.Instance.SetSkill1CooldownUI(true);
                 GamePlayUIManager.Instance.SetSkill1ImageOpacity(false);
-                GamePlayUIManager.Instance.UpdateSkill1CooldownUI(cooldownTimer, slimeFrenzyComponent.cooldownTime);
+                GamePlayUIManager.Instance.UpdateSkill1CooldownUI(cooldownTimer, finalCooldownTime);
             }
         }
-
-        ecb.Playback(state.EntityManager);
-        ecb.Dispose();
     }
+
     private bool CheckPlayerHealth(int currentHealth, int maxHealth)
     {
         //if (maxHealth <= 0) return false;

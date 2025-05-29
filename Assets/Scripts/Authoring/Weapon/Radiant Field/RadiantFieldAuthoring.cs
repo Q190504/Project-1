@@ -5,16 +5,16 @@ using UnityEngine;
 
 public class RadiantFieldAuthoring : MonoBehaviour
 {
-    public WeaponType weaponId = WeaponType.RadiantField;
+    public WeaponType weaponType = WeaponType.RadiantField;
 
     public class Baker : Baker<RadiantFieldAuthoring>
     {
         public override void Bake(RadiantFieldAuthoring authoring)
         {
-            string path = Path.Combine(Application.dataPath, "Data", $"{authoring.weaponId}.json");
+            string path = Path.Combine(Application.dataPath, "Data", $"{authoring.weaponType}.json");
             if (!File.Exists(path))
             {
-                Debug.LogWarning($"{authoring.weaponId} JSON not found at path: {path}");
+                Debug.LogWarning($"{authoring.weaponType} JSON not found at path: {path}");
                 return;
             }
 
@@ -56,44 +56,21 @@ public class RadiantFieldAuthoring : MonoBehaviour
             AddComponent(radiantFieldEntity, new RadiantFieldComponent
             {
                 Data = blobReference,
-                timer = 2f,
+                timer = 0f,
                 timeBetween = weapon.timeBetween,
-                currentLevel = 0,
-                previousLevel = -1,
+                //currentLevel = 0,
+                //previousLevel = -1,
                 lastTickTime = 0,
             });
 
-            //using var builder = new BlobBuilder(Allocator.Temp);
-            //{
-            //    ref var root = ref builder.ConstructRoot<RadiantFieldDataBlob>();
-
-            //    var levels = builder.Allocate(ref root.Levels, weapon.levels.Length);
-            //    for (int i = 0; i < weapon.levels.Length; i++)
-            //    {
-            //        var level = weapon.levels[i];
-            //        levels[i] = new RadiantFieldLevelData
-            //        {
-            //            damagePerTick = level.damagePerTick,
-            //            cooldown = level.cooldown,
-            //            radius = level.radius,
-            //            slowModifier = level.slowModifier,
-            //        };
-            //    }
-
-            //    var blob = builder.CreateBlobAssetReference<RadiantFieldDataBlob>(Allocator.Temp);
-
-            //    Entity radiantFieldEntity = GetEntity(TransformUsageFlags.Dynamic);
-
-            //    AddComponent(radiantFieldEntity, new RadiantFieldComponent
-            //    {
-            //        Data = blob,
-            //        timer = 2f,
-            //        timeBetween = weapon.timeBetween,
-            //        currentLevel = 0,
-            //        previousLevel = -1,
-            //        lastTickTime = 0,
-            //    });
-            //}
+            AddComponent(radiantFieldEntity, new WeaponComponent
+            {
+                WeaponType = authoring.weaponType,
+                ID = weapon.id,
+                DisplayName = weapon.name,
+                Description = "A solar field damages nearby enemies.",
+                Level = 0,
+            });
         }
     }
 }
@@ -112,7 +89,7 @@ public class RadiantFieldLevelJson
 [System.Serializable]
 public class RadiantFieldJson
 {
-    public string id;
+    public int id;
     public string name;
     public float timeBetween;
     public RadiantFieldLevelJson[] levels;
@@ -128,14 +105,13 @@ public struct RadiantFieldLevelData
 
 public struct RadiantFieldDataBlob
 {
-    public BlobString Name;
     public BlobArray<RadiantFieldLevelData> Levels;
 }
 
 public struct RadiantFieldComponent : IComponentData
 {
-    public int currentLevel;
-    public int previousLevel;
+    //public int currentLevel;
+    //public int previousLevel;
     public float timer;
     public float timeBetween;
     public double lastTickTime;

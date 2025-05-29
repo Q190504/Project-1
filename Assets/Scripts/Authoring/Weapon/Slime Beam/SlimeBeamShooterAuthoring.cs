@@ -5,16 +5,16 @@ using System.IO;
 
 public class SlimeBeamShooterAuthoring : MonoBehaviour
 {
-    public WeaponType weaponId = WeaponType.SlimeBeamShooter;
+    public WeaponType weaponType = WeaponType.SlimeBeamShooter;
 
     public class Baker : Baker<SlimeBeamShooterAuthoring>
     {
         public override void Bake(SlimeBeamShooterAuthoring authoring)
         {
-            string path = Path.Combine(Application.dataPath, "Data", $"{authoring.weaponId}.json");
+            string path = Path.Combine(Application.dataPath, "Data", $"{authoring.weaponType}.json");
             if (!File.Exists(path))
             {
-                Debug.LogWarning($"{authoring.weaponId} JSON not found at path: {path}");
+                Debug.LogWarning($"{authoring.weaponType} JSON not found at path: {path}");
                 return;
             }
 
@@ -52,46 +52,27 @@ public class SlimeBeamShooterAuthoring : MonoBehaviour
             // Register the Blob Asset to the Baker for de-duplication and reverting.
             AddBlobAsset<SlimeBeamShooterDataBlob>(ref blobReference, out var hash);
 
-            AddComponent(GetEntity(TransformUsageFlags.None), new SlimeBeamShooterComponent
+            Entity entity = GetEntity(TransformUsageFlags.None);
+
+
+            AddComponent(entity, new SlimeBeamShooterComponent
             {
                 Data = blobReference,
                 timer = 2f,
                 beamCount = 0,
                 timeBetween = 0,
-                level = 0,
+                //level = 0,
                 spawnOffsetPositon = weapon.spawnOffsetPositon,
             });
 
-            //using var builder = new BlobBuilder(Allocator.Temp);
-            //{
-            //    ref var root = ref builder.ConstructRoot<SlimeBeamShooterDataBlob>();
-
-            //    var levels = builder.Allocate(ref root.Levels, weapon.levels.Length);
-            //    for (int i = 0; i < weapon.levels.Length; i++)
-            //    {
-            //        var level = weapon.levels[i];
-
-            //        levels[i] = new SlimeBeamShooterLevelData
-            //        {
-            //            damage = level.damage,
-            //            cooldown = level.cooldown,
-            //            range = level.range,
-            //            timeBetween = level.timeBetween,
-            //        };
-            //    }
-
-            //    var blob = builder.CreateBlobAssetReference<SlimeBeamShooterDataBlob>(Allocator.Temp);
-
-            //    AddComponent(GetEntity(TransformUsageFlags.None), new SlimeBeamShooterComponent
-            //    {
-            //        Data = blob,
-            //        timer = 2f,
-            //        beamCount = 0,
-            //        timeBetween = 0,
-            //        level = 0,
-            //        spawnOffsetPositon = weapon.spawnOffsetPositon,
-            //    });
-            //}
+            AddComponent(entity, new WeaponComponent
+            {
+                WeaponType = authoring.weaponType,
+                ID = weapon.id,
+                DisplayName = weapon.name,
+                Description = "Fires slime beams in four directions.",
+                Level = 0,
+            });
         }
     }
 }
@@ -110,7 +91,7 @@ public class SlimeBeamShooterLevelJson
 [System.Serializable]
 public class SlimeBeamShooterJson
 {
-    public string id;
+    public int id;
     public string name;
     public float spawnOffsetPositon;
     public SlimeBeamShooterLevelJson[] levels;
@@ -118,7 +99,7 @@ public class SlimeBeamShooterJson
 
 public struct SlimeBeamShooterComponent : IComponentData
 {
-    public int level;
+    //public int level;
     public float timer;
     public float timeBetween;
     public int beamCount;

@@ -4,6 +4,7 @@ using Unity.Physics;
 using Unity.Collections;
 using Unity.Mathematics;
 using Unity.Burst;
+using UnityEngine;
 
 public partial struct CreepAttackSystem : ISystem
 {
@@ -59,6 +60,7 @@ struct CreepAttackJob : ITriggerEventsJob
         if (entityAIsPlayer ||  entityBIsPlayer)
         {
             Entity enemyEntity = entityAIsPlayer ? entityB : entityA;
+            Entity playerEntity = entityAIsPlayer ? entityA : entityB;
 
             if (enemyLookup.HasComponent(enemyEntity))
             {
@@ -71,14 +73,7 @@ struct CreepAttackJob : ITriggerEventsJob
 
                     if (currentTime - cooldown.lastAttackTime >= cooldown.cooldownTime)
                     {
-                        if (entityAIsPlayer)
-                        {
-                            ecb.AddComponent(entityA, new DamageEventComponent { damageAmount = damage });
-                        }
-                        else if (entityBIsPlayer)
-                        {
-                            ecb.AddComponent(entityB, new DamageEventComponent { damageAmount = damage });
-                        }
+                        ecb.AddComponent(playerEntity, new DamageEventComponent { damageAmount = damage });
 
                         ecb.SetComponent(enemyEntity, new AttackCooldownComponent
                         {

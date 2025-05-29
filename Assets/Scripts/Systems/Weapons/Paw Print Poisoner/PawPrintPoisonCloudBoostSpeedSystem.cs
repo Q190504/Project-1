@@ -31,7 +31,7 @@ public partial struct PawPrintPoisonCloudBoostSpeedSystem : ISystem
 
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
-        int currentLevel = entityManager.GetComponentData<PawPrintPoisonerComponent>(pawPrintPoisoner).level;
+        int currentLevel = entityManager.GetComponentData<WeaponComponent>(pawPrintPoisoner).Level;
         if (currentLevel < 5)
         {
             // Not max level, no effect
@@ -74,11 +74,11 @@ public partial struct PawPrintPoisonCloudBoostSpeedSystem : ISystem
         }
 
         // Update player speed
-        PlayerMovementComponent playerMovement =
-                        entityManager.GetComponentData<PlayerMovementComponent>(player);
+        PlayerMovementSpeedComponent playerMovement =
+                        entityManager.GetComponentData<PlayerMovementSpeedComponent>(player);
 
         float bonusMultiplier = 1f + (bonusPercentPerEnemy * enemiesInCloud);
-        playerMovement.currentSpeed = playerMovement.baseSpeed * bonusMultiplier;
+        playerMovement.totalSpeed = playerMovement.currentSpeed * bonusMultiplier;
 
         entityManager.SetComponentData(player, playerMovement);
 

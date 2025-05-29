@@ -120,7 +120,7 @@ public class ProjectilesManager : MonoBehaviour
         for (int i = 0; i < slimeBulletPrepare; i++)
         {
             Entity slimeBulletInstance = entityManager.Instantiate(slimeBulletPrefab);
-            ecb.AddComponent<Disabled>(slimeBulletInstance);
+            SetEntityStatus(slimeBulletInstance, false, ecb, entityManager);
             inactiveSlimeBullets.Enqueue(slimeBulletInstance);
             slimeBulletCount++;
         }
@@ -133,7 +133,7 @@ public class ProjectilesManager : MonoBehaviour
         for (int i = 0; i < slimeBeamPrepare; i++)
         {
             Entity slimeBeamInstance = entityManager.Instantiate(slimeBeamPrefab);
-            ecb.AddComponent<Disabled>(slimeBeamInstance);
+            SetEntityStatus(slimeBeamInstance, false, ecb, entityManager);
             inactiveSlimeBeams.Enqueue(slimeBeamInstance);
             slimeBeamCount++;
         }
@@ -146,7 +146,7 @@ public class ProjectilesManager : MonoBehaviour
         for (int i = 0; i < poisionCloudPrepare; i++)
         {
             Entity poisionCloudInstance = entityManager.Instantiate(poisionCloudPrefab);
-            ecb.AddComponent<Disabled>(poisionCloudInstance);
+            SetEntityStatus(poisionCloudInstance, false, ecb, entityManager);
             inactivePoisionClouds.Enqueue(poisionCloudInstance);
             poisionCloudCount++;
         }
@@ -159,7 +159,7 @@ public class ProjectilesManager : MonoBehaviour
 
         Entity slimeBulletInstance = inactiveSlimeBullets.Dequeue();
         slimeBulletCount--;
-        ecb.RemoveComponent<Disabled>(slimeBulletInstance);
+        SetEntityStatus(slimeBulletInstance, true, ecb, entityManager);
         return slimeBulletInstance;
     }
 
@@ -170,7 +170,7 @@ public class ProjectilesManager : MonoBehaviour
 
         Entity slimeBeamInstance = inactiveSlimeBeams.Dequeue();
         slimeBeamCount--;
-        ecb.RemoveComponent<Disabled>(slimeBeamInstance);
+        SetEntityStatus(slimeBeamInstance, true, ecb, entityManager);
         return slimeBeamInstance;
     }
 
@@ -181,7 +181,7 @@ public class ProjectilesManager : MonoBehaviour
 
         Entity poisionCloudInstance = inactivePoisionClouds.Dequeue();
         poisionCloudCount--;
-        ecb.RemoveComponent<Disabled>(poisionCloudInstance);
+        SetEntityStatus(poisionCloudInstance, true, ecb, entityManager);
         return poisionCloudInstance;
     }
 
@@ -189,7 +189,7 @@ public class ProjectilesManager : MonoBehaviour
     {
         if (!entityManager.Exists(bullet)) return;
 
-        ecb.AddComponent<Disabled>(bullet);
+        SetEntityStatus(bullet, false, ecb, entityManager);
         inactiveSlimeBullets.Enqueue(bullet);
         slimeBulletCount++;
     }
@@ -198,7 +198,7 @@ public class ProjectilesManager : MonoBehaviour
     {
         if (!entityManager.Exists(beam)) return;
 
-        ecb.AddComponent<Disabled>(beam);
+        SetEntityStatus(beam, false, ecb, entityManager);
         inactiveSlimeBeams.Enqueue(beam);
         slimeBeamCount++;
     }
@@ -207,8 +207,41 @@ public class ProjectilesManager : MonoBehaviour
     {
         if (!entityManager.Exists(cloud)) return;
 
-        ecb.AddComponent<Disabled>(cloud);
+        SetEntityStatus(cloud, false, ecb, entityManager);
         inactivePoisionClouds.Enqueue(cloud);
         poisionCloudCount++;
     }
+
+    private void SetEntityStatus(Entity root, bool status, EntityCommandBuffer ecb, EntityManager entityManager)
+    {
+        DynamicBuffer<Child> children;
+
+        if (status)
+        {
+            ecb.RemoveComponent<Disabled>(root);
+            if (entityManager.HasComponent<Child>(root))
+            {
+                children = entityManager.GetBuffer<Child>(root);
+                foreach (var child in children)
+                {
+                    ecb.RemoveComponent<Disabled>(child.Value);
+                }
+            }
+
+        }
+        else
+        {
+            ecb.AddComponent<Disabled>(root);
+
+            if (entityManager.HasComponent<Child>(root))
+            {
+                children = entityManager.GetBuffer<Child>(root);
+                foreach (var child in children)
+                {
+                    ecb.AddComponent<Disabled>(child.Value);
+                }
+            }
+        }
+    }
+
 }

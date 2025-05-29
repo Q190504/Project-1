@@ -5,16 +5,16 @@ using System.IO;
 
 public class PawPrintPoisonerAuthoring : MonoBehaviour
 {
-    public WeaponType weaponId = WeaponType.PawPrintPoisoner;
+    public WeaponType weaponType = WeaponType.PawPrintPoisoner;
 
     public class Baker : Baker<PawPrintPoisonerAuthoring>
     {
         public override void Bake(PawPrintPoisonerAuthoring authoring)
         {
-            string path = Path.Combine(Application.dataPath, "Data", $"{authoring.weaponId}.json");
+            string path = Path.Combine(Application.dataPath, "Data", $"{authoring.weaponType}.json");
             if (!File.Exists(path))
             {
-                Debug.LogWarning($"{authoring.weaponId} JSON not found at path: {path}");
+                Debug.LogWarning($"{authoring.weaponType} JSON not found at path: {path}");
                 return;
             }
 
@@ -52,10 +52,12 @@ public class PawPrintPoisonerAuthoring : MonoBehaviour
             // Register the Blob Asset to the Baker for de-duplication and reverting.
             AddBlobAsset<PawPrintPoisonerDataBlob>(ref blobReference, out var hash);
 
-            AddComponent(GetEntity(TransformUsageFlags.None), new PawPrintPoisonerComponent
+            Entity entity = GetEntity(TransformUsageFlags.None);
+
+
+            AddComponent(entity, new PawPrintPoisonerComponent
             {
                 Data = blobReference,
-                level = 0,
                 timer = 0f,
                 tick = weapon.tick,
                 cooldown = weapon.cooldown,
@@ -64,38 +66,14 @@ public class PawPrintPoisonerAuthoring : MonoBehaviour
                 distanceTraveled = 0f,
             });
 
-            //using var builder = new BlobBuilder(Allocator.Temp);
-            //{
-            //    ref var root = ref builder.ConstructRoot<PawPrintPoisonerDataBlob>();
-
-            //    var levels = builder.Allocate(ref root.Levels, weapon.levels.Length);
-            //    for (int i = 0; i < weapon.levels.Length; i++)
-            //    {
-            //        var level = weapon.levels[i];
-
-            //        levels[i] = new PawPrintPoisonerLevelData
-            //        {
-            //            damagePerTick = level.damagePerTick,
-            //            cloudRadius = level.cloudRadius,
-            //            maximumCloudDuration = level.maximumCloudDuration,
-            //            bonusMoveSpeedPerTargetInTheCloud = level.bonusMoveSpeedPerTargetInTheCloud,
-            //        };
-            //    }
-
-            //    var blob = builder.CreateBlobAssetReference<PawPrintPoisonerDataBlob>(Allocator.Temp);
-
-            //    AddComponent(GetEntity(TransformUsageFlags.None), new PawPrintPoisonerComponent
-            //    {
-            //        Data = blob,
-            //        level = 1, //TO DO: SET TO 0
-            //        timer = 0f,
-            //        tick = weapon.tick,
-            //        cooldown = weapon.cooldown,
-            //        maximumClouds = weapon.maximumClouds,
-            //        distanceToCreateACloud = weapon.distanceToCreateACloud,
-            //        distanceTraveled = 0f,
-            //    });
-            //}
+            AddComponent(entity, new WeaponComponent
+            {
+                WeaponType = authoring.weaponType,
+                ID = weapon.id,
+                DisplayName = weapon.name,
+                Description = "Leaves a damaging poison cloud behind while moving.",
+                Level = 0,
+            });
         }
     }
 }
@@ -114,7 +92,7 @@ public class PawPrintPoisonerLevelJson
 [System.Serializable]
 public class PawPrintPoisonerJson
 {
-    public string id;
+    public int id;
     public string name;
     public float tick;
     public float cooldown;
@@ -125,7 +103,6 @@ public class PawPrintPoisonerJson
 
 public struct PawPrintPoisonerComponent : IComponentData
 {
-    public int level;
     public float timer;
     public float tick;
     public float cooldown;

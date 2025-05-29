@@ -14,7 +14,7 @@ public partial struct PlayerMovementSystem : ISystem
     private Entity player;
     private PlayerTagComponent playerTagComponent;
     private PlayerInputComponent playerInput;
-    private PlayerMovementComponent playerMovement;
+    private PlayerMovementSpeedComponent playerMovement;
     private PhysicsVelocity physicsVelocity;
     private SlimeFrenzyComponent slimeFrenzyComponent;
 
@@ -22,7 +22,7 @@ public partial struct PlayerMovementSystem : ISystem
     {
         state.RequireForUpdate<PlayerTagComponent>();
         state.RequireForUpdate<PlayerInputComponent>();
-        state.RequireForUpdate<PlayerMovementComponent>();
+        state.RequireForUpdate<PlayerMovementSpeedComponent>();
         state.RequireForUpdate<PhysicsVelocity>();
         state.RequireForUpdate<SlimeFrenzyComponent>();
     }
@@ -53,14 +53,14 @@ public partial struct PlayerMovementSystem : ISystem
             playerInput = entityManager.GetComponentData<PlayerInputComponent>(player);
         }
 
-        if (!entityManager.HasComponent<PlayerMovementComponent>(player))
+        if (!entityManager.HasComponent<PlayerMovementSpeedComponent>(player))
         {
             Debug.Log($"Cant Found Player Movement Component in PlayerMovementSystem!");
             return;
         }
         else
         {
-            playerMovement = entityManager.GetComponentData<PlayerMovementComponent>(player);
+            playerMovement = entityManager.GetComponentData<PlayerMovementSpeedComponent>(player);
         }
 
         if (!entityManager.HasComponent<PhysicsVelocity>(player))
@@ -91,7 +91,7 @@ public partial struct PlayerMovementSystem : ISystem
         // Track Initialization Progress
         if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker))
         {
-            if (!tracker.playerPositionSystemInitialized)
+            if (!tracker.playerPositionInitialized)
             {
                 LocalTransform playerTransform = entityManager.GetComponentData<LocalTransform>(player);
 
@@ -100,7 +100,7 @@ public partial struct PlayerMovementSystem : ISystem
                 ecb.SetComponent(player, playerTransform);
 
                 // Update tracker
-                tracker.playerPositionSystemInitialized = true;
+                tracker.playerPositionInitialized = true;
                 ecb.SetComponent(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), tracker);
             }
         }
@@ -111,11 +111,11 @@ public partial struct PlayerMovementSystem : ISystem
             targetVelocity = float3.zero; 
         else if(playerTagComponent.isStunned)
             targetVelocity = float3.zero;
-        else if (playerTagComponent.isFrenzing)
+        else if (slimeFrenzyComponent.isActive)
             targetVelocity = new float3(playerInput.moveInput.x, playerInput.moveInput.y, 0)
-                * (playerMovement.currentSpeed + playerMovement.currentSpeed * slimeFrenzyComponent.bonusMovementSpeedPercent);
+                * (playerMovement.totalSpeed + playerMovement.totalSpeed * slimeFrenzyComponent.bonusMovementSpeedPercent);
         else
-            targetVelocity = new float3(playerInput.moveInput.x, playerInput.moveInput.y, 0) * playerMovement.currentSpeed;
+            targetVelocity = new float3(playerInput.moveInput.x, playerInput.moveInput.y, 0) * playerMovement.totalSpeed;
 
         physicsVelocity.Linear = math.lerp(physicsVelocity.Linear, targetVelocity, playerMovement.smoothTime);
 

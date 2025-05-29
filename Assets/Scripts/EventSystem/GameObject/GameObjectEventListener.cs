@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 
 public class GameObjectEventListener : MonoBehaviour
 {
-    [SerializeField] private UnityEvent<GameObject, string, int> EventResponse;
+    [SerializeField] private UnityEvent<GameObject> EventResponse;
     [SerializeField] private GameObjectPublisherSO publisher;
 
     private void OnEnable()
@@ -18,8 +16,8 @@ public class GameObjectEventListener : MonoBehaviour
         publisher.OnEventRaised -= Respond;
     }
 
-    private void Respond(GameObject obj, string tag,int name)
+    private void Respond(GameObject obj)
     {
-        EventResponse?.Invoke(obj, tag, name);
+        EventResponse?.Invoke(obj);
     }
 }

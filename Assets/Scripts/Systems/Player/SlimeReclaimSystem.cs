@@ -26,12 +26,26 @@ public partial struct SlimeReclaimSystem : ISystem
             return;
         }
 
-        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+        float abilityHaste = 0;
+        if (SystemAPI.TryGetSingleton<AbilityHasteComponent>(out AbilityHasteComponent abilityHasteComponent))
+        {
+            abilityHaste = abilityHasteComponent.abilityHasteValue;
+        }
+        else
+        {
+            Debug.Log($"Cant Found Ability Haste Component in SlimeReclaimSystem!");
+        }
 
-        if (SystemAPI.TryGetSingleton<PlayerInputComponent>(out var playerInput) && SystemAPI.TryGetSingleton<SlimeReclaimComponent>(out var slimeReclaimComponent))
+        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+
+        if (SystemAPI.TryGetSingleton<PlayerInputComponent>(out var playerInput)
+            && SystemAPI.TryGetSingleton<SlimeReclaimComponent>(out var slimeReclaimComponent))
         {
             PlayerHealthComponent playerHealthComponent = entityManager.GetComponentData<PlayerHealthComponent>(player);
+
+            float baseCooldownTime = slimeReclaimComponent.cooldownTime;
+            float finalCooldownTime = baseCooldownTime * (100 / (100 + abilityHaste));
 
             if (cooldownTimer <= 0)
             {
@@ -54,7 +68,7 @@ public partial struct SlimeReclaimSystem : ISystem
                     //Update UI
                     GamePlayUIManager.Instance.SetSkill2ImageOpacity(true);
 
-                    if (playerInput.isSpacePressed)
+                    if (playerInput.isRPressed)
                     {
                         //// Apply stun effect
                         //if (!entityManager.HasComponent<StunTimerComponent>(player))
@@ -71,7 +85,7 @@ public partial struct SlimeReclaimSystem : ISystem
                                 slimeBulletComponent.ValueRW.isBeingSummoned = true;
                         }
 
-                        cooldownTimer = slimeReclaimComponent.cooldownTime;
+                        cooldownTimer = finalCooldownTime;
                     }
                 }
                 else
@@ -83,12 +97,9 @@ public partial struct SlimeReclaimSystem : ISystem
                 //update UI cooldown
                 GamePlayUIManager.Instance.SetSkill2CooldownUI(true);
                 GamePlayUIManager.Instance.SetSkill2ImageOpacity(false);
-                GamePlayUIManager.Instance.UpdateSkill2CooldownUI(cooldownTimer, slimeReclaimComponent.cooldownTime);
+                GamePlayUIManager.Instance.UpdateSkill2CooldownUI(cooldownTimer, finalCooldownTime);
             }
         }
-
-        ecb.Playback(entityManager);
-        ecb.Dispose();
     }
 
     private bool CheckPlayerHealth(int currentHealth, int maxHealth)

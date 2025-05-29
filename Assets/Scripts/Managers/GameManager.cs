@@ -7,6 +7,7 @@ public enum GameState
 {
     NotStarted,
     Initializing,
+    Upgrading,
     Playing,
 }
 
@@ -19,13 +20,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject playerInitalPosition;
 
     private int totalEnemiesKilled = 0;
-    [SerializeField] IntPublisherSO enemiesKilledPublisher;
+    [SerializeField] private IntPublisherSO enemiesKilledPublisher;
 
     private GameState gameState;
-    [SerializeField] BoolPublisherSO endGamePublisher;
+    [SerializeField] private BoolPublisherSO endGamePublisher;
 
     private double timeSinceStartPlaying = 0;
-    [SerializeField] DoublePublisherSO timePublisher;
+    [SerializeField] private DoublePublisherSO timePublisher;
 
     //[Range(0f, 1f)]
     //public float SKILL_1_THRESHOLD;
@@ -117,6 +118,11 @@ public class GameManager : MonoBehaviour
         return gameState == GameState.Playing;
     }
 
+    public bool IsUpgrading()
+    {
+        return gameState == GameState.Upgrading;
+    }
+
     public bool IsNotStarted()
     {
         return gameState == GameState.NotStarted;
@@ -150,5 +156,19 @@ public class GameManager : MonoBehaviour
     public void ExitGame()
     {
         Application.Quit();
+    }
+
+    public void TogglePauseGameForUpgrading()
+    {
+        if (gameState == GameState.Playing)
+        {
+            SetGameState(GameState.Upgrading);
+            //Time.timeScale = 0f; // Pause the game
+        }
+        else if (gameState == GameState.Upgrading)
+        {
+            SetGameState(GameState.Playing);
+            //Time.timeScale = 1f; // Resume the game
+        }
     }
 }

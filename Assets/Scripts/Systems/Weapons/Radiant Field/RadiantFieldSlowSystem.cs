@@ -26,6 +26,7 @@ public partial struct RadiantFieldSlowSystem : ISystem
 
         var job = new RadiantFieldSlowEnemyJob
         {
+            weaponComponentLookup = SystemAPI.GetComponentLookup<WeaponComponent>(true),
             radiantFieldLookup = SystemAPI.GetComponentLookup<RadiantFieldComponent>(true),
             enemyLookup = SystemAPI.GetComponentLookup<EnemyTagComponent>(true),
             velocityLookup = SystemAPI.GetComponentLookup<PhysicsVelocity>(false),
@@ -43,6 +44,7 @@ public partial struct RadiantFieldSlowSystem : ISystem
 [BurstCompile]
 struct RadiantFieldSlowEnemyJob : ITriggerEventsJob
 {
+    [ReadOnly] public ComponentLookup<WeaponComponent> weaponComponentLookup;
     [ReadOnly] public ComponentLookup<RadiantFieldComponent> radiantFieldLookup;
     [ReadOnly] public ComponentLookup<EnemyTagComponent> enemyLookup;
     public ComponentLookup<PhysicsVelocity> velocityLookup;
@@ -63,17 +65,20 @@ struct RadiantFieldSlowEnemyJob : ITriggerEventsJob
             Entity enemyEntity = entityAIsEnemy ? entityA : entityB;
             Entity radiantFieldEntity = entityAIsEnemy ? entityB : entityA;
 
-            if (!radiantFieldLookup.HasComponent(radiantFieldEntity) || !radiantFieldLookup.HasComponent(radiantFieldEntity))
-                return;
-
-            RadiantFieldComponent radiantFieldComponent = radiantFieldLookup[radiantFieldEntity];
-
-            if (radiantFieldComponent.currentLevel <= 0) // is inactive
+            if (!radiantFieldLookup.HasComponent(radiantFieldEntity) || !weaponComponentLookup.HasComponent(radiantFieldEntity))
             {
                 return;
             }
 
-            RadiantFieldLevelData currerntLevelData = radiantFieldComponent.Data.Value.Levels[radiantFieldComponent.currentLevel];
+            var radiantFieldComponent = radiantFieldLookup[radiantFieldEntity];
+            var weaponComponent = weaponComponentLookup[radiantFieldEntity];
+
+            if (weaponComponent.Level <= 0) // is inactive
+            {
+                return;
+            }
+
+            RadiantFieldLevelData currerntLevelData = radiantFieldComponent.Data.Value.Levels[weaponComponent.Level];
 
             float slowModifier = currerntLevelData.slowModifier;
 

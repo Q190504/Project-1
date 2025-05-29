@@ -3,21 +3,19 @@ using UnityEngine;
 
 public class PlayerHealthAuthoring : MonoBehaviour
 {
-    public int currentHealth;
-    public int maxHealth;
+    public int baseMaxHealth;
 
     public class PlayerHealthBaker : Baker<PlayerHealthAuthoring>
     {
         public override void Bake(PlayerHealthAuthoring authoring)
         {
-            Entity entity = GetEntity(TransformUsageFlags.Dynamic);
-
-            authoring.currentHealth = authoring.maxHealth;
+            Entity entity = GetEntity(TransformUsageFlags.None);
 
             AddComponent(entity, new PlayerHealthComponent
             {
-                currentHealth = authoring.currentHealth,
-                maxHealth = authoring.maxHealth,
+                baseMaxHealth = authoring.baseMaxHealth,
+                currentHealth = authoring.baseMaxHealth,
+                maxHealth = authoring.baseMaxHealth,
             });
         }
     }
@@ -25,6 +23,7 @@ public class PlayerHealthAuthoring : MonoBehaviour
 
 public struct PlayerHealthComponent : IComponentData
 {
+    public int baseMaxHealth;
     public int currentHealth;
     public int maxHealth;
 }

@@ -11,8 +11,8 @@ public partial struct PlayerInputSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         float2 movement = float2.zero;
-        bool isPressingCKey = false;
-        bool isPressingSpaceKey = false;
+        bool isPressingEKey = false;
+        bool isPressingRKey = false;
         bool isPressingEscKey = false;
 
         if (Keyboard.current != null)
@@ -20,8 +20,8 @@ public partial struct PlayerInputSystem : ISystem
             movement.x = (Keyboard.current.dKey.isPressed ? 1f : 0f) - (Keyboard.current.aKey.isPressed ? 1f : 0f);
             movement.y = (Keyboard.current.wKey.isPressed ? 1f : 0f) - (Keyboard.current.sKey.isPressed ? 1f : 0f);
 
-            isPressingCKey = Keyboard.current.cKey.wasReleasedThisFrame;
-            isPressingSpaceKey = Keyboard.current.spaceKey.wasReleasedThisFrame;
+            isPressingEKey = Keyboard.current.eKey.wasReleasedThisFrame;
+            isPressingRKey = Keyboard.current.rKey.wasReleasedThisFrame;
             isPressingEscKey = Keyboard.current.escapeKey.wasReleasedThisFrame;
         }
 
@@ -30,13 +30,16 @@ public partial struct PlayerInputSystem : ISystem
 
         foreach (var playerInput in SystemAPI.Query<RefRW<PlayerInputComponent>>())
         {
-            if (GameManager.Instance.IsPlaying() == false) return;
+            // Can open setting panel when pausing or playing
+            if (GameManager.Instance.IsUpgrading() || GameManager.Instance.IsPlaying())
+               playerInput.ValueRW.isEscPressed = isPressingEscKey;
 
+            // If the game is not playing, don't update the player input
+            if (!GameManager.Instance.IsPlaying()) return;
             playerInput.ValueRW.moveInput = movement;
             //playerInput.ValueRW.isShootingPressed = isShooting;
-            playerInput.ValueRW.isCPressed = isPressingCKey;
-            playerInput.ValueRW.isSpacePressed = isPressingSpaceKey;
-            playerInput.ValueRW.isEscPressed = isPressingEscKey;
+            playerInput.ValueRW.isEPressed = isPressingEKey;
+            playerInput.ValueRW.isRPressed = isPressingRKey;
         }
     }
 }

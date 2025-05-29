@@ -8,7 +8,7 @@ public partial struct PlayerStunSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+        EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         foreach (var (stunTimer, entity) in SystemAPI.Query<RefRW<StunTimerComponent>>().WithEntityAccess())
         {
@@ -45,8 +45,5 @@ public partial struct PlayerStunSystem : ISystem
                 }
             }
         }
-
-        ecb.Playback(state.EntityManager);
-        ecb.Dispose();
     }
 }

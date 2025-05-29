@@ -15,15 +15,12 @@ public partial struct SlimeBeamShooterSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
-        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+        entityManager = state.EntityManager;
     }
 
     public void OnUpdate(ref SystemState state)
     {
         if (!GameManager.Instance.IsPlaying()) return;
-
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
-        float deltaTime = SystemAPI.Time.DeltaTime;
 
         if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
         {
@@ -31,9 +28,50 @@ public partial struct SlimeBeamShooterSystem : ISystem
             return;
         }
 
-        foreach (var (weapon, entity) in SystemAPI.Query<RefRW<SlimeBeamShooterComponent>>().WithEntityAccess())
+        // Get Ability Haste
+        float abilityHaste = 0;
+        if (SystemAPI.TryGetSingleton<AbilityHasteComponent>(out AbilityHasteComponent abilityHasteComponent))
         {
-            ref var beamShooter = ref weapon.ValueRW;
+            abilityHaste = abilityHasteComponent.abilityHasteValue;
+        }
+        else
+        {
+            Debug.Log($"Cant Found Ability Haste Component in SlimeBeamShooterSystem!");
+        }
+
+        // Get Generic Damage Modifier
+        float genericDamageModifier = 0;
+        if (SystemAPI.TryGetSingleton<GenericDamageModifierComponent>(out GenericDamageModifierComponent genericDamageModifierComponent))
+        {
+            genericDamageModifier = genericDamageModifierComponent.genericDamageModifierValue;
+        }
+        else
+        {
+            Debug.Log($"Cant find Generic Damage Modifier Component in SlimeBeamShooterSystem!");
+        }
+
+        // Get Frenzy data
+        SlimeFrenzyComponent slimeFrenzyComponent;
+        float bonusDamagePercent = 0;
+        if (SystemAPI.HasComponent<SlimeFrenzyComponent>(player))
+        {
+            slimeFrenzyComponent = entityManager.GetComponentData<SlimeFrenzyComponent>(player);
+            if (slimeFrenzyComponent.isActive)
+                bonusDamagePercent = slimeFrenzyComponent.bonusDamagePercent;
+        }
+        else
+        {
+            Debug.Log($"Cant find Slime Frenzy Component in SlimeBeamShooterSystem!");
+        }
+
+        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+        float deltaTime = SystemAPI.Time.DeltaTime;
+
+        foreach (var (weaponComponent, SlimeBeamShooter, entity) 
+            in SystemAPI.Query<RefRO<WeaponComponent>, RefRW<SlimeBeamShooterComponent>>().WithEntityAccess())
+        {
+            ref var beamShooter = ref SlimeBeamShooter.ValueRW;
             beamShooter.timer -= deltaTime;
             if (beamShooter.timer > 0) continue;
 
@@ -41,7 +79,7 @@ public partial struct SlimeBeamShooterSystem : ISystem
             if (!blobData.IsCreated || blobData.Value.Levels.Length == 0) continue;
             
             // Determine weapon level
-            int level = beamShooter.level;
+            int level = weaponComponent.ValueRO.Level;
 
             if (level <= 0) // is active
             {
@@ -50,17 +88,21 @@ public partial struct SlimeBeamShooterSystem : ISystem
 
             ref var levelData = ref blobData.Value.Levels[level];
 
-            int damage = levelData.damage;
-            float cooldown = levelData.cooldown;
+            int baseDamage = levelData.damage;
+            int finalDamage = (int)(baseDamage * (1 + genericDamageModifier + bonusDamagePercent));
+
+            float baseCooldownTime = levelData.cooldown;
+            float finalCooldownTime = baseCooldownTime * (100 / (100 + abilityHaste));
+
             float timeBetween = levelData.timeBetween;
             float spawnOffsetPositon = beamShooter.spawnOffsetPositon;
 
             if(level == 5) //max level
             {
                 for (int beamCount = 0; beamCount < 4; beamCount++)
-                    PerformSingleBeam(entity, spawnOffsetPositon, damage, beamCount, ecb);
+                    PerformSingleBeam(entity, spawnOffsetPositon, finalDamage, beamCount, ecb);
 
-                beamShooter.timer = cooldown; // Reset timer
+                beamShooter.timer = finalCooldownTime; // Reset timer
             }
             else
             {
@@ -68,22 +110,18 @@ public partial struct SlimeBeamShooterSystem : ISystem
 
                 if (beamShooter.timeBetween >= timeBetween && beamShooter.beamCount < 4)
                 {
-                    PerformSingleBeam(entity, spawnOffsetPositon, damage, beamShooter.beamCount, ecb);
+                    PerformSingleBeam(entity, spawnOffsetPositon, finalDamage, beamShooter.beamCount, ecb);
 
                     beamShooter.beamCount++;
                     beamShooter.timeBetween = 0f;
                 }
-
-                if (beamShooter.beamCount >= 4)
+                else if (beamShooter.beamCount >= 4)
                 {
                     beamShooter.beamCount = 0;
-                    beamShooter.timer = cooldown; // Reset timer
+                    beamShooter.timer = finalCooldownTime; // Reset timer
                 }
             }
         }
-
-        ecb.Playback(entityManager);
-        ecb.Dispose();
     }
 
     private void PerformSingleBeam(Entity entity, float spawnOffsetPositon, int damage, int beamCount, EntityCommandBuffer ecb)
@@ -116,8 +154,7 @@ public partial struct SlimeBeamShooterSystem : ISystem
         {
             damage = damage,
             hasDealDamageToEnemies = false,
-            existDuration = 0.2f,
-            timer = 0.3f,
+            timer = 0.1f,
         });
     }
 

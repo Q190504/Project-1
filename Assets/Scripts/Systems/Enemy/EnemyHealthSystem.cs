@@ -1,6 +1,7 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Transforms;
 
 [BurstCompile]
 public partial struct EnemyHealthSystem : ISystem
@@ -19,7 +20,7 @@ public partial struct EnemyHealthSystem : ISystem
 
         var enemyEntitiesToReturn = new NativeList<Entity>(Allocator.Temp);
 
-        foreach (var (enemyHealth, enemyEntity) in SystemAPI.Query<RefRW<EnemyHealthComponent>>().WithEntityAccess())
+        foreach (var (enemyHealth, localTransform, enemyEntity) in SystemAPI.Query<RefRW<EnemyHealthComponent>, RefRO<LocalTransform>>().WithEntityAccess())
         {
             //Take Damage
             if (state.EntityManager.HasComponent<DamageEventComponent>(enemyEntity))
@@ -32,6 +33,9 @@ public partial struct EnemyHealthSystem : ISystem
                     // Collect the entity to return later.
                     enemyEntitiesToReturn.Add(enemyEntity);
                     GameManager.Instance.AddEnemyKilled();
+
+                    // Try to spawn XP orb
+                    ExperienceOrbManager.Instance.TrySpawnExperienceOrb(localTransform.ValueRO.Position, ecb);
                 }
 
                 ecb.RemoveComponent<DamageEventComponent>(enemyEntity);
