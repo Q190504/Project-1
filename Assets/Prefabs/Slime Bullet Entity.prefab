@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -1268395180912477177}
   - component: {fileID: 4622978250112393739}
   m_Layer: 8
-  m_Name: SlimeBullet
+  m_Name: Slime Bullet Entity
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
