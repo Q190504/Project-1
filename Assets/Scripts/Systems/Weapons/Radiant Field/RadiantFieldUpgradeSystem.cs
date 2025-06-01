@@ -5,6 +5,7 @@ using Unity.Collections;
 using Unity.Physics;
 using Unity.Burst;
 using Unity.Transforms;
+using UnityEditor.PackageManager;
 
 [BurstCompile]
 [UpdateAfter(typeof(GameInitializationSystem))]
@@ -21,8 +22,8 @@ public partial struct RadiantFieldUpgradeSystem : ISystem
     {
         if (!GameManager.Instance.IsPlaying()) return;
 
-        foreach (var (weaponComponent, radiantFieldComponent, localTransform) 
-            in SystemAPI.Query<RefRO<WeaponComponent>, RefRW<RadiantFieldComponent>, RefRW<LocalTransform>>())
+        foreach (var (weaponComponent, radiantFieldComponent, physicsCollider) 
+            in SystemAPI.Query<RefRO<WeaponComponent>, RefRW<RadiantFieldComponent>, RefRW<PhysicsCollider>>())
         {
             ref var radiantField = ref radiantFieldComponent.ValueRW;
             var blobData = radiantField.Data;
@@ -42,8 +43,6 @@ public partial struct RadiantFieldUpgradeSystem : ISystem
             ref var levelData = ref blobData.Value.Levels[currentLevel];
 
             float newRadius = levelData.radius;
-
-            localTransform.ValueRW.Scale = newRadius;
 
             // Update tracker
             previousLevel = currentLevel;

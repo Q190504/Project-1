@@ -51478,7 +51478,6 @@ MonoBehaviour:
   creepPrefab: {fileID: 2629613540209194340, guid: 90fe08f22dea8ad428579cd2b1679278, type: 3}
   hitEffectPrefab: {fileID: 7800111571244290935, guid: ac198653c05eb0740b3243dd53905e2a, type: 3}
   hitEffectPrepare: 20
-  hitEffectCount: 0
 --- !u!1 &1610388369
 GameObject:
   m_ObjectHideFlags: 0
