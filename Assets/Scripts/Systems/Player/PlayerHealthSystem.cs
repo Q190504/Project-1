@@ -59,7 +59,7 @@ public partial struct PlayerHealthSystem : ISystem
             }
             else
             {
-                Debug.Log($"Cant Found Armor Component in PawPrintPoisonerSystem!");
+                Debug.Log($"Cant Found Armor Component in PlayerHealthSystem!");
             }
 
             //Take Damage
@@ -84,7 +84,7 @@ public partial struct PlayerHealthSystem : ISystem
                 if (playerHealth.currentHealth <= 0)
                 {
                     //onDie action
-                    Debug.Log("Player Died!");
+                    Debug.Log("Player Died!"); 
                     GameManager.Instance.EndGame(false);
                 }
 

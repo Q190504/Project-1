@@ -7,6 +7,8 @@ public partial struct SlimeFrenzySystem : ISystem
 {
     private EntityManager entityManager;
     private Entity player;
+    private PlayerInputComponent playerInput;
+    private SlimeFrenzyComponent slimeFrenzy;
     private float cooldownTimer;
     private bool isFrenzyActive;
 
@@ -15,6 +17,7 @@ public partial struct SlimeFrenzySystem : ISystem
         if (!GameManager.Instance.IsPlaying()) return;
 
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+
         if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
         {
             Debug.Log($"Cant Found Player Entity in SlimeFrenzySystem!");
@@ -31,57 +34,73 @@ public partial struct SlimeFrenzySystem : ISystem
             Debug.Log($"Cant Found Ability Haste Component in SlimeFrenzySystem!");
         }
 
+        if (!SystemAPI.HasComponent<PlayerInputComponent>(player))
+        {
+            Debug.Log($"Cant Player Input Component in SlimeFrenzySystem!");
+            return;
+        }
+        else
+        {
+            playerInput = SystemAPI.GetComponent<PlayerInputComponent>(player);
+        }
+
+        if (!SystemAPI.HasComponent<SlimeFrenzyComponent>(player))
+        {
+            Debug.Log($"Cant Slime Frenzy Component in SlimeFrenzySystem!");
+            return;
+        }
+        else
+        {
+            slimeFrenzy = SystemAPI.GetComponent<SlimeFrenzyComponent>(player);
+        }
+
         var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        if (SystemAPI.TryGetSingleton<PlayerInputComponent>(out var playerInput) 
-            && SystemAPI.TryGetSingleton<SlimeFrenzyComponent>(out var slimeFrenzyComponent) 
-            && SystemAPI.TryGetSingleton<PlayerTagComponent>(out var playerTagComponent))
+
+        PlayerHealthComponent playerHealthComponent = entityManager.GetComponentData<PlayerHealthComponent>(player);
+
+        float baseCooldownTime = slimeFrenzy.cooldownTime;
+        float finalCooldownTime = baseCooldownTime * (100 / (100 + abilityHaste));
+
+        if (cooldownTimer <= 0)
         {
-            PlayerHealthComponent playerHealthComponent = entityManager.GetComponentData<PlayerHealthComponent>(player);
+            GamePlayUIManager.Instance.SetSkill1CooldownUI(false);
 
-            float baseCooldownTime = slimeFrenzyComponent.cooldownTime;
-            float finalCooldownTime = baseCooldownTime * (100 / (100 + abilityHaste));
-
-            if (cooldownTimer <= 0)
-            {
-                GamePlayUIManager.Instance.SetSkill1CooldownUI(false);
-
-                if (!isFrenzyActive)
-                    GamePlayUIManager.Instance.SetSkill1ImageOpacity(true);
-                else
-                    GamePlayUIManager.Instance.SetSkill1ImageOpacity(false);
-
-                if (playerInput.isEPressed
-                && CheckPlayerHealth(playerHealthComponent.currentHealth, playerHealthComponent.maxHealth))
-                {
-                    // Apply frenzy effect
-                    if (!entityManager.HasComponent<SlimeFrenzyTimerComponent>(player))
-                        ecb.AddComponent(player, new SlimeFrenzyTimerComponent
-                        {
-                            timeRemaining = slimeFrenzyComponent.duration,
-                            initialDuration = slimeFrenzyComponent.duration
-                        });
-
-                    isFrenzyActive = true;
-                }
-                else if (!entityManager.HasComponent<SlimeFrenzyTimerComponent>(player) 
-                    && isFrenzyActive) //Just ended slime frenzy
-                {
-                    // Frenzy effect ended, start cooldown
-                    cooldownTimer = finalCooldownTime;
-                    isFrenzyActive = false;
-                }
-            }
+            if (!isFrenzyActive)
+                GamePlayUIManager.Instance.SetSkill1ImageOpacity(true);
             else
-            {
-                cooldownTimer -= SystemAPI.Time.DeltaTime;
-
-                //update UI cooldown
-                GamePlayUIManager.Instance.SetSkill1CooldownUI(true);
                 GamePlayUIManager.Instance.SetSkill1ImageOpacity(false);
-                GamePlayUIManager.Instance.UpdateSkill1CooldownUI(cooldownTimer, finalCooldownTime);
+
+            if (playerInput.isEPressed
+            && CheckPlayerHealth(playerHealthComponent.currentHealth, playerHealthComponent.maxHealth))
+            {
+                // Apply frenzy effect
+                if (!entityManager.HasComponent<SlimeFrenzyTimerComponent>(player))
+                    ecb.AddComponent(player, new SlimeFrenzyTimerComponent
+                    {
+                        timeRemaining = slimeFrenzy.duration,
+                        initialDuration = slimeFrenzy.duration
+                    });
+
+                isFrenzyActive = true;
             }
+            else if (!entityManager.HasComponent<SlimeFrenzyTimerComponent>(player)
+                && isFrenzyActive) //Just ended slime frenzy
+            {
+                // Frenzy effect ended, start cooldown
+                cooldownTimer = finalCooldownTime;
+                isFrenzyActive = false;
+            }
+        }
+        else
+        {
+            cooldownTimer -= SystemAPI.Time.DeltaTime;
+
+            //update UI cooldown
+            GamePlayUIManager.Instance.SetSkill1CooldownUI(true);
+            GamePlayUIManager.Instance.SetSkill1ImageOpacity(false);
+            GamePlayUIManager.Instance.UpdateSkill1CooldownUI(cooldownTimer, finalCooldownTime);
         }
     }
 

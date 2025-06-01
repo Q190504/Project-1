@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4934775881953606000}
   - component: {fileID: 5994867281479567170}
   m_Layer: 0
-  m_Name: SlimeBulletSlowZone
+  m_Name: Slime Bullet Slow Zone Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

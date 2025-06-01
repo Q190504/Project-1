@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6060116425957083076}
   - component: {fileID: 3893752758891792960}
   m_Layer: 0
-  m_Name: Slime Beam
+  m_Name: Slime Beam Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -29,7 +29,8 @@ public partial struct CreepAttackSystem : ISystem
         var job = new CreepAttackJob
         {
             playerLookup = SystemAPI.GetComponentLookup<PlayerHealthComponent>(true),
-            enemyLookup = SystemAPI.GetComponentLookup<EnemyTagComponent>(true),
+            creepLookup = SystemAPI.GetComponentLookup<CreepTagComponent>(true),
+            creepDamageLookup = SystemAPI.GetComponentLookup<CreepDamageComponent>(true),
             cooldownLookup = SystemAPI.GetComponentLookup<AttackCooldownComponent>(false),
             ecb = ecb,
             currentTime = currentTime,
@@ -43,7 +44,8 @@ public partial struct CreepAttackSystem : ISystem
 struct CreepAttackJob : ITriggerEventsJob
 {
     [ReadOnly] public ComponentLookup<PlayerHealthComponent> playerLookup;
-    [ReadOnly] public ComponentLookup<EnemyTagComponent> enemyLookup;
+    [ReadOnly] public ComponentLookup<CreepTagComponent> creepLookup;
+    [ReadOnly] public ComponentLookup<CreepDamageComponent> creepDamageLookup;
     public ComponentLookup<AttackCooldownComponent> cooldownLookup; 
     public EntityCommandBuffer ecb;
 
@@ -62,10 +64,10 @@ struct CreepAttackJob : ITriggerEventsJob
             Entity enemyEntity = entityAIsPlayer ? entityB : entityA;
             Entity playerEntity = entityAIsPlayer ? entityA : entityB;
 
-            if (enemyLookup.HasComponent(enemyEntity))
+            if (creepLookup.HasComponent(enemyEntity))
             {
-                var enemyComponent = enemyLookup[enemyEntity];
-                int damage = enemyComponent.damage;
+                var damageComponent = creepDamageLookup[enemyEntity];
+                int damage = damageComponent.damage;
 
                 if (cooldownLookup.HasComponent(enemyEntity))
                 {

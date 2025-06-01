@@ -25,5 +25,5 @@ public class PlayerTagAuthoring : MonoBehaviour
 
 public struct PlayerTagComponent : IComponentData 
 {
-    public bool isStunned;
+
 }

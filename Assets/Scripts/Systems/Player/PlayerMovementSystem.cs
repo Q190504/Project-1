@@ -12,7 +12,7 @@ public partial struct PlayerMovementSystem : ISystem
 {
     private EntityManager entityManager;
     private Entity player;
-    private PlayerTagComponent playerTagComponent;
+    private StunComponent stunComponent;
     private PlayerInputComponent playerInput;
     private PlayerMovementSpeedComponent playerMovement;
     private PhysicsVelocity physicsVelocity;
@@ -38,9 +38,15 @@ public partial struct PlayerMovementSystem : ISystem
             Debug.Log($"Cant Found Player Entity in PlayerMovementSystem!");
             return;
         }
+
+        if(!SystemAPI.HasComponent<StunComponent>(player))
+        {
+            Debug.Log($"Cant Found Stun Component in PlayerMovementSystem!");
+            return;
+        }
         else
         {
-            playerTagComponent = entityManager.GetComponentData<PlayerTagComponent>(player);            
+            stunComponent = entityManager.GetComponentData<StunComponent>(player);
         }
 
         if (!entityManager.HasComponent<PlayerInputComponent>(player))
@@ -109,7 +115,7 @@ public partial struct PlayerMovementSystem : ISystem
 
         if (!GameManager.Instance.IsPlaying())
             targetVelocity = float3.zero; 
-        else if(playerTagComponent.isStunned)
+        else if(stunComponent.isStunned)
             targetVelocity = float3.zero;
         else if (slimeFrenzyComponent.isActive)
             targetVelocity = new float3(playerInput.moveInput.x, playerInput.moveInput.y, 0)

@@ -3,12 +3,12 @@ using UnityEngine;
 
 public class CreepTagAuthoring : MonoBehaviour
 {
-    public class CreepTagBaker : Baker<CreepTagAuthoring>
+    public class Baker : Baker<CreepTagAuthoring>
     {
         public override void Bake(CreepTagAuthoring authoring)
         {
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
-            AddComponent(entity, new EnemyTagComponent());
+            AddComponent(entity, new CreepTagComponent());
         }
     }
 }

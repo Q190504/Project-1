@@ -1,21 +1,20 @@
 using Unity.Entities;
 using UnityEngine;
 
-public class EnemyHealthAuthoring : MonoBehaviour
+public class CreepHealthAuthoring : MonoBehaviour
 {
     public float currentHealth;
     public float maxHealth;
 
-
-    public class EnemyHealthBaker : Baker<EnemyHealthAuthoring>
+    public class Baker : Baker<CreepHealthAuthoring>
     {
-        public override void Bake(EnemyHealthAuthoring authoring)
+        public override void Bake(CreepHealthAuthoring authoring)
         {
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
 
             authoring.currentHealth = authoring.maxHealth;
 
-            AddComponent(entity, new EnemyHealthComponent
+            AddComponent(entity, new CreepHealthComponent
             {
                 currentHealth = authoring.currentHealth,
                 maxHealth = authoring.maxHealth,
@@ -24,7 +23,7 @@ public class EnemyHealthAuthoring : MonoBehaviour
     }
 }
 
-public struct EnemyHealthComponent : IComponentData
+public struct CreepHealthComponent : IComponentData
 {
     public float currentHealth;
     public float maxHealth;

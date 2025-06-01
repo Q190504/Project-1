@@ -8787,7 +8787,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe9d6a2c4cfb87647ad663fa5f48d890, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPrepare: 100
+  creepPrepare: 100
   SpawnerList:
   - {fileID: 657537700}
   - {fileID: 1620067691}
@@ -8812,7 +8812,7 @@ Transform:
   m_GameObject: {fileID: 827541383}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 27.500996, y: 19.437918, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9322,7 +9322,7 @@ MonoBehaviour:
   pickupRadiusIcon: {fileID: 21300000, guid: 0fd9b5dd20b84ab47890feaa166739d2, type: 3}
   armorIcon: {fileID: 21300000, guid: 0233aea3977e1a84390988818f4519b8, type: 3}
   abilityHasteIcon: {fileID: 21300000, guid: 5bf76368e8d8c8d4fa5aac931099dc38, type: 3}
-  slimeBulletShooterIcon: {fileID: 21300000, guid: fd8ae52e12a38df45838a92e2cc67284, type: 3}
+  slimeBulletShooterIcon: {fileID: 21300000, guid: ae9f5c93290d5af4bba938e8c5514627, type: 3}
   slimeBeamShooterIcon: {fileID: 21300000, guid: 82a2c96d346814040abf083d54eede90, type: 3}
   pawPrintPoisonerIcon: {fileID: 21300000, guid: 97fb96bed96d77f42a4fdca4935bb32b, type: 3}
   radiantFieldIcon: {fileID: 21300000, guid: d6865e1d1f762af4c828d8a3b7dcdf0d, type: 3}
@@ -51431,6 +51431,54 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1601827850}
   m_CullTransparentMesh: 1
+--- !u!1 &1607411011
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1607411012}
+  - component: {fileID: 1607411013}
+  m_Layer: 0
+  m_Name: Animation Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1607411012
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1607411011}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1607411013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1607411011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca8340ca895049045a5f0b2de317c2fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  creepPrefab: {fileID: 2629613540209194340, guid: 90fe08f22dea8ad428579cd2b1679278, type: 3}
+  hitEffectPrefab: {fileID: 7800111571244290935, guid: ac198653c05eb0740b3243dd53905e2a, type: 3}
+  hitEffectPrepare: 20
+  hitEffectCount: 0
 --- !u!1 &1610388369
 GameObject:
   m_ObjectHideFlags: 0
@@ -53689,6 +53737,7 @@ SceneRoots:
   - {fileID: 1645822301}
   - {fileID: 827541386}
   - {fileID: 2028360960}
+  - {fileID: 1607411012}
   - {fileID: 2010950038}
   - {fileID: 2087238804}
   - {fileID: 406217612}

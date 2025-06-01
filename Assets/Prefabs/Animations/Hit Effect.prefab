@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6653310175182360536}
   - component: {fileID: 1482416287213933964}
   - component: {fileID: 2806418064316329749}
+  - component: {fileID: 8485009551413792585}
   m_Layer: 0
   m_Name: Hit Effect
   m_TagString: Untagged
@@ -76,7 +77,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 999991303
   m_SortingLayer: 3
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 9fb3b936aee904843b0a06b33efe5dab, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0.627451}
   m_FlipX: 0
@@ -110,3 +111,15 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8485009551413792585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7800111571244290935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97122cb6bb7db0e468534301babc32bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
