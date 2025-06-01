@@ -238,10 +238,15 @@ public class AnimationManager : MonoBehaviour
         cloudPrepare = ProjectilesManager.Instance.GetPoisionCloudPrepare();
         slimeBeamPrepare = ProjectilesManager.Instance.GetSlimeBeamPrepare();
 
-        PrepareCreep();
-        PrepareHitEffect();
-        PrepareSlimeBeam();
-        PreparePoisonCloud();
-        PrepareSlimeBulletSlowZone();
+        if (creepCount == 0)
+            PrepareCreep();
+        if (hitEffectCount == 0)
+            PrepareHitEffect();
+        if (slimeBeamCount == 0)
+            PrepareSlimeBeam();
+        if (poisonCloudCount == 0)
+            PreparePoisonCloud();
+        if (slimeBulletSlowZoneCount == 0)
+            PrepareSlimeBulletSlowZone();
     }
 }

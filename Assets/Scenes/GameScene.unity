@@ -51441,6 +51441,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1607411012}
   - component: {fileID: 1607411013}
+  - component: {fileID: 1607411014}
   m_Layer: 0
   m_Name: Animation Manager
   m_TagString: Untagged
@@ -51482,6 +51483,34 @@ MonoBehaviour:
   slimeBulletSlowZonePrefab: {fileID: 4719175363902246557, guid: ea6d130028f85804db2c32334718878c, type: 3}
   slimeBulletSlowZonePrepare: 20
   hitEffectPrepare: 20
+--- !u!114 &1607411014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1607411011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4d67c870696e604e92e17f2f06b7f05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EventResponse:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1607411013}
+        m_TargetAssemblyTypeName: AnimationManager, Assembly-CSharp
+        m_MethodName: Initialize
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  publisher: {fileID: 11400000, guid: 8d531d17176c0f44dbbbda17ebb89ff3, type: 2}
 --- !u!1 &1610388369
 GameObject:
   m_ObjectHideFlags: 0
