@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Entities.UniversalDelegates;
 using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
@@ -197,6 +198,14 @@ public class EnemyManager : MonoBehaviour
             ecb.RemoveComponent<SlowedBySlimeBulletTag>(enemy);
         if (entityManager.HasComponent<DamageEventComponent>(enemy))
             ecb.RemoveComponent<DamageEventComponent>(enemy);
+
+        // Return the visual game object
+        if (entityManager.HasComponent<VisualReferenceComponent>(enemy))
+        {
+            VisualReferenceComponent visualReferenceComponent =
+                entityManager.GetComponentData<VisualReferenceComponent>(enemy);
+            AnimationManager.Instance.ReturnCreep(visualReferenceComponent.gameObject);
+        }
 
         SetEnemyStatus(enemy, false, ecb, entityManager);
 

@@ -13,6 +13,8 @@ public class AnimationManager : MonoBehaviour
     [SerializeField] private GameObject creepPrefab;
     [SerializeField] private GameObject hitEffectPrefab;
     [SerializeField] private GameObject poisonCloudPrefab;
+    [SerializeField] private GameObject slimeBeamPrefab;
+    [SerializeField] private GameObject slimeBulletSlowZonePrefab;
 
     private int cloudPrepare;
     private int poisonCloudCount;
@@ -21,6 +23,14 @@ public class AnimationManager : MonoBehaviour
     private int creepPrepare;
     private int creepCount;
     private List<GameObject> inactiveCreepGameObjects;
+
+    private int slimeBeamPrepare;
+    private int slimeBeamCount;
+    private List<GameObject> inactiveSlimeBeamGameObjects;
+
+    [SerializeField] private int slimeBulletSlowZonePrepare;
+    private int slimeBulletSlowZoneCount;
+    private List<GameObject> inactiveSlimeBulletSlowZoneGameObjects;
 
     [SerializeField] private int hitEffectPrepare;
     private int hitEffectCount;
@@ -53,7 +63,7 @@ public class AnimationManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     private void PrepareCreep()
@@ -71,7 +81,7 @@ public class AnimationManager : MonoBehaviour
 
     public GameObject TakeCreep()
     {
-        if (inactiveCreepGameObjects.Count == 0)
+        if (creepCount == 0)
             PrepareCreep();
 
         GameObject creep = inactiveCreepGameObjects[0];
@@ -103,7 +113,7 @@ public class AnimationManager : MonoBehaviour
 
     public GameObject TakeHitEffect()
     {
-        if (inactiveHitEffectGameObjects.Count == 0)
+        if (hitEffectCount == 0)
             PrepareHitEffect();
 
         GameObject hitEffect = inactiveHitEffectGameObjects[0];
@@ -135,7 +145,7 @@ public class AnimationManager : MonoBehaviour
 
     public GameObject TakePoisonCloud()
     {
-        if (inactivePoisonCloudGameObjects.Count == 0)
+        if (poisonCloudCount == 0)
             PreparePoisonCloud();
 
         GameObject cloud = inactivePoisonCloudGameObjects[0];
@@ -152,16 +162,86 @@ public class AnimationManager : MonoBehaviour
         poisonCloudCount++;
     }
 
+    private void PrepareSlimeBeam()
+    {
+        if (slimeBeamPrefab == null) return;
+
+        for (int i = 0; i < slimeBeamPrepare; i++)
+        {
+            GameObject slimeBeam = Object.Instantiate(slimeBeamPrefab);
+            slimeBeam.gameObject.SetActive(false);
+            inactiveSlimeBeamGameObjects.Add(slimeBeam);
+            slimeBeamCount++;
+        }
+    }
+
+    public GameObject TakeSlimeBeam()
+    {
+        if (slimeBeamCount == 0)
+            PrepareSlimeBeam();
+
+        GameObject beam = inactiveSlimeBeamGameObjects[0];
+        inactiveSlimeBeamGameObjects.RemoveAt(0);
+        slimeBeamCount--;
+        beam.gameObject.SetActive(true);
+        return beam;
+    }
+
+    public void ReturnSlimeBeam(GameObject beam)
+    {
+        beam.gameObject.SetActive(false);
+        inactiveSlimeBeamGameObjects.Add(beam);
+        slimeBeamCount++;
+    }
+
+    private void PrepareSlimeBulletSlowZone()
+    {
+        if (slimeBulletSlowZonePrefab == null) return;
+
+        for (int i = 0; i < slimeBulletSlowZonePrepare; i++)
+        {
+            GameObject slimeBulletSlowZone = Object.Instantiate(slimeBulletSlowZonePrefab);
+            slimeBulletSlowZone.gameObject.SetActive(false);
+            inactiveSlimeBulletSlowZoneGameObjects.Add(slimeBulletSlowZone);
+            slimeBulletSlowZoneCount++;
+        }
+    }
+
+    public GameObject TakeSlimeBulletSlowZone()
+    {
+        if (slimeBulletSlowZoneCount == 0)
+            PrepareSlimeBulletSlowZone();
+
+        GameObject slimeBulletSlowZone = inactiveSlimeBulletSlowZoneGameObjects[0];
+        inactiveSlimeBulletSlowZoneGameObjects.RemoveAt(0);
+        slimeBulletSlowZoneCount--;
+        slimeBulletSlowZone.gameObject.SetActive(true);
+        return slimeBulletSlowZone;
+    }
+
+    public void ReturnSlimeBulletSlowZone(GameObject slimeBulletSlowZone)
+    {
+        slimeBulletSlowZone.gameObject.SetActive(false);
+        inactiveSlimeBulletSlowZoneGameObjects.Add(slimeBulletSlowZone);
+        slimeBulletSlowZoneCount++;
+    }
+
     public void Initialize()
     {
         inactiveCreepGameObjects = new List<GameObject>();
         inactiveHitEffectGameObjects = new List<GameObject>();
         inactivePoisonCloudGameObjects = new List<GameObject>();
+        inactiveSlimeBeamGameObjects = new List<GameObject>();
+        inactiveSlimeBulletSlowZoneGameObjects = new List<GameObject>();
 
         creepPrepare = EnemyManager.Instance.GetCreepPrepare();
         cloudPrepare = ProjectilesManager.Instance.GetPoisionCloudPrepare();
+        slimeBeamPrepare = ProjectilesManager.Instance.GetSlimeBeamPrepare();
 
         PrepareCreep();
         PrepareHitEffect();
+        PrepareSlimeBeam();
+        PreparePoisonCloud();
+        PrepareSlimeBulletSlowZone();
     }
 }

@@ -52,14 +52,6 @@ public partial struct CreepHealthSystem : ISystem
 
         for (int i = 0; i < creepEntitiesToReturn.Length; i++)
         {
-            // Return the visual game object
-            if (entityManager.HasComponent<VisualReferenceComponent>(creepEntitiesToReturn[i]))
-            {
-                VisualReferenceComponent visualReferenceComponent = 
-                    entityManager.GetComponentData<VisualReferenceComponent>(creepEntitiesToReturn[i]);
-                AnimationManager.Instance.ReturnCreep(visualReferenceComponent.gameObject);
-            }
-
             // Return the entity
             EnemyManager.Instance.Return(creepEntitiesToReturn[i], ecb);
         }

@@ -1053,8 +1053,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 2
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 839bf269a9ad55848ada07c2550e296c, type: 2}
+  m_sharedMaterial: {fileID: -4380928117986006576, guid: 839bf269a9ad55848ada07c2550e296c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -9725,8 +9725,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 2
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 839bf269a9ad55848ada07c2550e296c, type: 2}
+  m_sharedMaterial: {fileID: -4380928117986006576, guid: 839bf269a9ad55848ada07c2550e296c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -51478,6 +51478,9 @@ MonoBehaviour:
   creepPrefab: {fileID: 2629613540209194340, guid: 90fe08f22dea8ad428579cd2b1679278, type: 3}
   hitEffectPrefab: {fileID: 7800111571244290935, guid: ac198653c05eb0740b3243dd53905e2a, type: 3}
   poisonCloudPrefab: {fileID: 4447383451000455114, guid: 3ee96822bbbb2f94eafe19de79bec741, type: 3}
+  slimeBeamPrefab: {fileID: 633467526835660584, guid: 15a0c0d7e2d64624db55587a87f37eef, type: 3}
+  slimeBulletSlowZonePrefab: {fileID: 4719175363902246557, guid: ea6d130028f85804db2c32334718878c, type: 3}
+  slimeBulletSlowZonePrepare: 20
   hitEffectPrepare: 20
 --- !u!1 &1610388369
 GameObject:

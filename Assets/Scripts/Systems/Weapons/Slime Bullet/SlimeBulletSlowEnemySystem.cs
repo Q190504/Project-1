@@ -41,7 +41,7 @@ public partial struct SlimeBulletSlowEnemySystem : ISystem
 
             if (slowModifier > 0)
             {
-                DebugDrawSphere(bulletPos, radius, Color.cyan);
+                //DebugDrawSphere(bulletPos, radius, Color.cyan);
 
                 foreach (var (transform, enemyComponent, velocity, entity) in
                     SystemAPI.Query<RefRO<LocalTransform>, RefRO<EnemyTagComponent>, RefRW<PhysicsVelocity>>().WithEntityAccess())

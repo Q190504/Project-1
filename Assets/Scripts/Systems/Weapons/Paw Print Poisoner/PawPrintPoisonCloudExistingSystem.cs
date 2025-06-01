@@ -28,14 +28,6 @@ public partial struct PawPrintPoisonCloudExistingSystem : ISystem
             // Return this cloud if it's duration is over
             if (pawPrintPoisonCloudComponent.ValueRO.existDurationTimer <= 0)
             {
-                // Return the visual game object
-                if (entityManager.HasComponent<VisualReferenceComponent>(cloudEntity))
-                {
-                    VisualReferenceComponent visualReferenceComponent =
-                        entityManager.GetComponentData<VisualReferenceComponent>(cloudEntity);
-                    AnimationManager.Instance.ReturnPoisonCloud(visualReferenceComponent.gameObject);
-                }
-
                 ProjectilesManager.Instance.ReturnPoisonCloud(cloudEntity, ecb);
                 continue;
             }

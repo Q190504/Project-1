@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 447956370276993036}
   m_Layer: 0
   m_Name: Radiant Field Visual
-  m_TagString: Untagged
+  m_TagString: Visual
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

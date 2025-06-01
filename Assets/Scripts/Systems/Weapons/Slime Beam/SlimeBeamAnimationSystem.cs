@@ -5,7 +5,7 @@ using UnityEngine;
 using Unity.Collections;
 using Unity.Mathematics;
 
-public partial struct PoisonCloudAnimationSystem : ISystem
+public partial struct SlimeBeamAnimationSystem : ISystem
 {
     private EntityManager entityManager;
 
@@ -21,22 +21,25 @@ public partial struct PoisonCloudAnimationSystem : ISystem
 
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        foreach (var (transform, cloudComponent, entity) in
-            SystemAPI.Query<LocalTransform, PawPrintPoisonCloudComponent>().WithEntityAccess())
+        foreach (var (transform, slimeBeamComponent, entity) in
+            SystemAPI.Query<LocalTransform, SlimeBeamComponent>().WithEntityAccess())
         {
             // Hasnt had VisualReferenceComponent -> add
             if (!entityManager.HasComponent<VisualReferenceComponent>(entity))
             {
-                GameObject cloudVisual = AnimationManager.Instance.TakePoisonCloud();
-
-                ecb.AddComponent(entity, new VisualReferenceComponent { gameObject = cloudVisual });
+                GameObject visual = AnimationManager.Instance.TakeSlimeBeam();
+                ecb.AddComponent(entity, new VisualReferenceComponent { gameObject = visual });
             }
             else
             {
-                VisualReferenceComponent cloudVisualReference =
+                VisualReferenceComponent visualReference =
                     entityManager.GetComponentData<VisualReferenceComponent>(entity);
-                cloudVisualReference.gameObject.transform.position = transform.Position;
-                cloudVisualReference.gameObject.transform.localScale = Vector2.one * cloudComponent.cloudRadius;
+
+                visualReference.gameObject.SetActive(true);
+
+                Animator playerAnimator = visualReference.gameObject.GetComponent<Animator>();
+                visualReference.gameObject.transform.position = transform.Position;
+                visualReference.gameObject.transform.rotation = transform.Rotation;
             }
         }
 
