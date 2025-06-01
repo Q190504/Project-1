@@ -57,7 +57,11 @@ public class AnimationManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        inactiveCreepGameObjects = new List<GameObject>();
+        inactiveHitEffectGameObjects = new List<GameObject>();
+        inactivePoisonCloudGameObjects = new List<GameObject>();
+        inactiveSlimeBeamGameObjects = new List<GameObject>();
+        inactiveSlimeBulletSlowZoneGameObjects = new List<GameObject>();
     }
 
     // Update is called once per frame
@@ -228,12 +232,6 @@ public class AnimationManager : MonoBehaviour
 
     public void Initialize()
     {
-        inactiveCreepGameObjects = new List<GameObject>();
-        inactiveHitEffectGameObjects = new List<GameObject>();
-        inactivePoisonCloudGameObjects = new List<GameObject>();
-        inactiveSlimeBeamGameObjects = new List<GameObject>();
-        inactiveSlimeBulletSlowZoneGameObjects = new List<GameObject>();
-
         creepPrepare = EnemyManager.Instance.GetCreepPrepare();
         cloudPrepare = ProjectilesManager.Instance.GetPoisionCloudPrepare();
         slimeBeamPrepare = ProjectilesManager.Instance.GetSlimeBeamPrepare();
