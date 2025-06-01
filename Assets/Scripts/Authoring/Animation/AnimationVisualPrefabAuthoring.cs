@@ -8,6 +8,7 @@ public class AnimationVisualPrefabAuthoring : MonoBehaviour
     [SerializeField] private GameObject slimeBulletSlowZonePrefab;
     [SerializeField] private GameObject slimeBeamPrefab;
     [SerializeField] private GameObject radiantFieldPrefab;
+    [SerializeField] private GameObject poisonCloud;
     [SerializeField] private GameObject hitEffectPrefab;
 
     class Baker : Baker<AnimationVisualPrefabAuthoring>
@@ -23,6 +24,7 @@ public class AnimationVisualPrefabAuthoring : MonoBehaviour
                 slimeBeam = authoring.slimeBeamPrefab,
                 slimeBulletSlowZone = authoring.slimeBulletSlowZonePrefab,
                 hitEffect = authoring.hitEffectPrefab,
+                poisonCloud = authoring.poisonCloud,
                 radiantField = authoring.radiantFieldPrefab,
             });
         }
@@ -36,5 +38,6 @@ public class AnimationVisualPrefabsComponent : IComponentData
     public GameObject slimeBulletSlowZone;   
     public GameObject slimeBeam;   
     public GameObject radiantField;   
+    public GameObject poisonCloud;   
     public GameObject hitEffect;
 }

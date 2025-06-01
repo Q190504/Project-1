@@ -51477,6 +51477,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   creepPrefab: {fileID: 2629613540209194340, guid: 90fe08f22dea8ad428579cd2b1679278, type: 3}
   hitEffectPrefab: {fileID: 7800111571244290935, guid: ac198653c05eb0740b3243dd53905e2a, type: 3}
+  poisonCloudPrefab: {fileID: 4447383451000455114, guid: 3ee96822bbbb2f94eafe19de79bec741, type: 3}
   hitEffectPrepare: 20
 --- !u!1 &1610388369
 GameObject:

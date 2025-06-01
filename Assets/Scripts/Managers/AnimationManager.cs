@@ -12,7 +12,13 @@ public class AnimationManager : MonoBehaviour
     [Header("Visual Prefabs")]
     [SerializeField] private GameObject creepPrefab;
     [SerializeField] private GameObject hitEffectPrefab;
+    [SerializeField] private GameObject poisonCloudPrefab;
 
+    private int cloudPrepare;
+    private int poisonCloudCount;
+    private List<GameObject> inactivePoisonCloudGameObjects;
+
+    private int creepPrepare;
     private int creepCount;
     private List<GameObject> inactiveCreepGameObjects;
 
@@ -53,8 +59,6 @@ public class AnimationManager : MonoBehaviour
     private void PrepareCreep()
     {
         if (creepPrefab == null) return;
-
-        int creepPrepare = EnemyManager.Instance.GetCreepPrepare();
 
         for (int i = 0; i < creepPrepare; i++)
         {
@@ -116,10 +120,47 @@ public class AnimationManager : MonoBehaviour
         hitEffectCount++;
     }
 
+    private void PreparePoisonCloud()
+    {
+        if (poisonCloudPrefab == null) return;
+
+        for (int i = 0; i < cloudPrepare; i++)
+        {
+            GameObject cloud = Object.Instantiate(poisonCloudPrefab);
+            cloud.gameObject.SetActive(false);
+            inactivePoisonCloudGameObjects.Add(cloud);
+            poisonCloudCount++;
+        }
+    }
+
+    public GameObject TakePoisonCloud()
+    {
+        if (inactivePoisonCloudGameObjects.Count == 0)
+            PreparePoisonCloud();
+
+        GameObject cloud = inactivePoisonCloudGameObjects[0];
+        inactivePoisonCloudGameObjects.RemoveAt(0);
+        poisonCloudCount--;
+        cloud.gameObject.SetActive(true);
+        return cloud;
+    }
+
+    public void ReturnPoisonCloud(GameObject cloud)
+    {
+        cloud.gameObject.SetActive(false);
+        inactivePoisonCloudGameObjects.Add(cloud);
+        poisonCloudCount++;
+    }
+
     public void Initialize()
     {
         inactiveCreepGameObjects = new List<GameObject>();
         inactiveHitEffectGameObjects = new List<GameObject>();
+        inactivePoisonCloudGameObjects = new List<GameObject>();
+
+        creepPrepare = EnemyManager.Instance.GetCreepPrepare();
+        cloudPrepare = ProjectilesManager.Instance.GetPoisionCloudPrepare();
+
         PrepareCreep();
         PrepareHitEffect();
     }

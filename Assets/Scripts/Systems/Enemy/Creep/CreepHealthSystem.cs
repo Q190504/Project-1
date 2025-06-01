@@ -13,7 +13,6 @@ public partial struct CreepHealthSystem : ISystem
     {
         state.RequireForUpdate<CreepHealthComponent>();
         entityManager = state.EntityManager;
-
     }
 
     public void OnUpdate(ref SystemState state)

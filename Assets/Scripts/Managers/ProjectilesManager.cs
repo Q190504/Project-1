@@ -244,4 +244,8 @@ public class ProjectilesManager : MonoBehaviour
         }
     }
 
+    public int GetPoisionCloudPrepare()
+    { 
+        return poisionCloudPrepare; 
+    }
 }
