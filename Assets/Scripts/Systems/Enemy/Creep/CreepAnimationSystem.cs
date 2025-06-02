@@ -40,6 +40,16 @@ public partial struct CreepAnimationSystem : ISystem
                 creepVisualReference.gameObject.transform.position = transform.Position;
                 float speed = math.length(physicsVelocity.Linear);
                 animator.SetFloat("speed", speed);
+
+                float speedX = physicsVelocity.Linear.x;
+                if (math.abs(speedX) > 0.01f) // prevent jitter at rest
+                {
+                    float3 scale = transform.Scale;
+                    float currentX = scale.x;
+                    // Flip by negating x-scale based on direction
+                    float desiredX = math.sign(speedX) > 0 ? math.abs(currentX) : -math.abs(currentX);
+                    creepVisualReference.gameObject.transform.localScale = new float3(desiredX, scale.y, scale.z);
+                }
             }
         }
 
