@@ -4,6 +4,7 @@ using Unity.Transforms;
 using UnityEngine;
 using Unity.Collections;
 using Unity.Mathematics;
+using UnityEngine.UIElements;
 
 public partial struct PlayerAnimationSystem : ISystem
 {
@@ -14,15 +15,15 @@ public partial struct PlayerAnimationSystem : ISystem
         if (!GameManager.Instance.IsPlaying())
             return;
 
-        if(!SystemAPI.ManagedAPI.TryGetSingleton(out AnimationVisualPrefabsComponent animationVisualPrefabs))
+        if (!SystemAPI.ManagedAPI.TryGetSingleton(out AnimationVisualPrefabsComponent animationVisualPrefabs))
             return;
 
         entityManager = state.EntityManager;
 
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        foreach (var (transform, playerMovementSpeed, playerInput, playerHealth, playerTag, entity) in 
-            SystemAPI.Query<LocalTransform, PlayerMovementSpeedComponent, PlayerInputComponent, 
+        foreach (var (transform, playerMovementSpeed, playerInput, playerHealth, playerTag, entity) in
+            SystemAPI.Query<LocalTransform, PlayerMovementSpeedComponent, PlayerInputComponent,
             PlayerHealthComponent, PlayerTagComponent>().WithEntityAccess())
         {
             // Hasnt had VisualReferenceComponent -> add
@@ -34,15 +35,26 @@ public partial struct PlayerAnimationSystem : ISystem
             }
             else
             {
-                VisualReferenceComponent playerVisualReference = 
+                VisualReferenceComponent playerVisualReference =
                     entityManager.GetComponentData<VisualReferenceComponent>(entity);
+                GameObject playerGO = playerVisualReference.gameObject;
+                Animator playerAnimator = playerGO.GetComponent<Animator>();
 
-                Animator playerAnimator = playerVisualReference.gameObject.GetComponent<Animator>();
-
-                playerVisualReference.gameObject.transform.position = transform.Position;
+                playerGO.transform.position = transform.Position;
                 float3 move = new float3(playerInput.moveInput.x, playerInput.moveInput.y, 0);
                 float speed = math.length(move * playerMovementSpeed.totalSpeed);
                 playerAnimator.SetFloat("speed", speed);
+
+                // Flip logic
+                Vector3 currentScale = playerGO.transform.localScale;
+                if (playerInput.moveInput.x > 0.01f)
+                {
+                    playerGO.transform.localScale = new Vector3(math.abs(currentScale.x), currentScale.y, currentScale.z);
+                }
+                else if (playerInput.moveInput.x < -0.01f)
+                {
+                    playerGO.transform.localScale = new Vector3(-math.abs(currentScale.x), currentScale.y, currentScale.z);
+                }
 
                 if (playerHealth.currentHealth <= 0)
                 {
