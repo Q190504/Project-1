@@ -7,7 +7,8 @@ public class MaxHealthAuthoring : MonoBehaviour
     public int baseMaxHealth;
 
     public int currentLevel;
-    public int increment;
+    [Range(0f, 1f)]
+    public float increment;
 
     public class Baker : Baker<MaxHealthAuthoring>
     {
@@ -27,7 +28,7 @@ public class MaxHealthAuthoring : MonoBehaviour
                 Level = authoring.currentLevel,
                 MaxLevel = 5,
                 DisplayName = "Max Health",
-                Description = "Increases the maximum health of the player.",
+                Description = "Increases player's maximum health by a percentage.",
             });
         }
     }
@@ -35,5 +36,5 @@ public class MaxHealthAuthoring : MonoBehaviour
 
 public struct MaxHealthComponent : IComponentData
 {
-    public int increment;
+    public float increment;
 }

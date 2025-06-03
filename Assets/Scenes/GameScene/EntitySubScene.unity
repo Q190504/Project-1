@@ -3740,7 +3740,7 @@ MonoBehaviour:
   ID: 0
   baseMaxHealth: 100
   currentLevel: 0
-  increment: 150
+  increment: 0.1
 --- !u!1 &1638301084
 GameObject:
   m_ObjectHideFlags: 0
