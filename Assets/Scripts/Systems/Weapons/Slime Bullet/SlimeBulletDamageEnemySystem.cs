@@ -1,7 +1,10 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Physics;
+using Unity.Transforms;
+using UnityEngine.UIElements;
 
 public partial struct SlimeBulletDamageEnemySystem : ISystem
 {
@@ -21,6 +24,7 @@ public partial struct SlimeBulletDamageEnemySystem : ISystem
         {
             slimeBulletLookup = SystemAPI.GetComponentLookup<SlimeBulletComponent>(true),
             enemyLookup = SystemAPI.GetComponentLookup<EnemyTagComponent>(true),
+            enemyLocalTransformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true),
             ecb = ecb,
         };
 
@@ -34,6 +38,7 @@ struct SlimeBulletDamageEnemyJob : ITriggerEventsJob
 {
     [ReadOnly] public ComponentLookup<SlimeBulletComponent> slimeBulletLookup;
     [ReadOnly] public ComponentLookup<EnemyTagComponent> enemyLookup;
+    [ReadOnly] public ComponentLookup<LocalTransform> enemyLocalTransformLookup;
     public EntityCommandBuffer ecb;
 
     public void Execute(TriggerEvent triggerEvent)
@@ -54,8 +59,8 @@ struct SlimeBulletDamageEnemyJob : ITriggerEventsJob
 
             var bulletComponent = slimeBulletLookup[bulletEntity];
 
-            // Skip if  (stopped moving and not being summoned) or already hit this enemy 
-            if ((!bulletComponent.isAbleToMove && !bulletComponent.isBeingSummoned)|| bulletComponent.lastHitEnemy == enemyEntity)
+            // Skip if (stopped moving and not being summoned) or already hit this enemy 
+            if ((!bulletComponent.isAbleToMove && !bulletComponent.isBeingSummoned) || bulletComponent.lastHitEnemy == enemyEntity)
                 return;
 
             // Deal damage
@@ -67,10 +72,21 @@ struct SlimeBulletDamageEnemyJob : ITriggerEventsJob
             ecb.AddComponent(enemyEntity, new DamageEventComponent { damageAmount = damage });
 
             // Reduce damage for future hits if the bullet is not being summoned
-            if(!bulletComponent.isBeingSummoned)
+            if (!bulletComponent.isBeingSummoned)
             {
                 bulletComponent.remainingDamage = (int)(damage * bulletComponent.passthroughDamageModifier);
                 bulletComponent.lastHitEnemy = enemyEntity;
+            }
+
+            LocalTransform enemyTransform;
+            if (enemyLocalTransformLookup.HasComponent(enemyEntity))
+            {
+                enemyTransform = enemyLocalTransformLookup[enemyEntity];
+                var eventEntity = ecb.CreateEntity();
+                ecb.AddComponent(eventEntity, new PlaySFXEvent
+                {
+                    sfxId = SFXID.SlimeBulletHit,
+                });
             }
 
             ecb.SetComponent(bulletEntity, bulletComponent);

@@ -1,11 +1,12 @@
 using UnityEngine;
 
-public class ContinueButton : MonoBehaviour
+public class OpenSettingPanelButton : BaseButton
 {
     [SerializeField] private BoolPublisherSO setSettingPanelSO;
 
     public void OnButtonPressed()
     {
-        setSettingPanelSO.RaiseEvent(false);
+        PlayClickSound();
+        setSettingPanelSO.RaiseEvent(true);
     }
 }
