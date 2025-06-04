@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Entities.UniversalDelegates;
 using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
@@ -9,12 +10,12 @@ public class EnemyManager : MonoBehaviour
 {
     private static EnemyManager _instance;
 
-    [SerializeField] private int enemyPrepare;
+    [SerializeField] private int creepPrepare;
     public List<EnemySpawner> SpawnerList = new List<EnemySpawner>();
 
     private Entity player;
     private EntityManager entityManager;
-    private Entity enemyPrefab;
+    private Entity creepPrefab;
 
     private NativeQueue<Entity> inactiveEnemies;
     private int enemyCount = 0;
@@ -69,7 +70,7 @@ public class EnemyManager : MonoBehaviour
         EntityQuery enemyPrefabQuery = entityManager.CreateEntityQuery(typeof(EnemyPrefabComponent));
         if (enemyPrefabQuery.CalculateEntityCount() > 0)
         {
-            enemyPrefab = entityManager.GetComponentData<EnemyPrefabComponent>(enemyPrefabQuery.GetSingletonEntity()).enemyPrefab;
+            creepPrefab = entityManager.GetComponentData<EnemyPrefabComponent>(enemyPrefabQuery.GetSingletonEntity()).enemyPrefab;
         }
         else
         {
@@ -152,9 +153,9 @@ public class EnemyManager : MonoBehaviour
             targetEntity = player,
         });
 
-        EnemyHealthComponent enemyHealthComponent = entityManager.GetComponentData<EnemyHealthComponent>(enemyInstance);
+        CreepHealthComponent enemyHealthComponent = entityManager.GetComponentData<CreepHealthComponent>(enemyInstance);
 
-        entityManager.SetComponentData(enemyInstance, new EnemyHealthComponent
+        entityManager.SetComponentData(enemyInstance, new CreepHealthComponent
         {
             currentHealth = enemyHealthComponent.maxHealth,
             maxHealth = enemyHealthComponent.maxHealth,
@@ -163,11 +164,11 @@ public class EnemyManager : MonoBehaviour
 
     private void PrepareEnemy(EntityCommandBuffer ecb)
     {
-        if (enemyPrefab == Entity.Null) return;
+        if (creepPrefab == Entity.Null) return;
 
-        for (int i = 0; i < enemyPrepare; i++)
+        for (int i = 0; i < creepPrepare; i++)
         {
-            Entity enemy = entityManager.Instantiate(enemyPrefab);
+            Entity enemy = entityManager.Instantiate(creepPrefab);
             SetEnemyStatus(enemy, false, ecb, entityManager);
             inactiveEnemies.Enqueue(enemy);
             enemyCount++;
@@ -197,6 +198,14 @@ public class EnemyManager : MonoBehaviour
             ecb.RemoveComponent<SlowedBySlimeBulletTag>(enemy);
         if (entityManager.HasComponent<DamageEventComponent>(enemy))
             ecb.RemoveComponent<DamageEventComponent>(enemy);
+
+        // Return the visual game object
+        if (entityManager.HasComponent<VisualReferenceComponent>(enemy))
+        {
+            VisualReferenceComponent visualReferenceComponent =
+                entityManager.GetComponentData<VisualReferenceComponent>(enemy);
+            AnimationManager.Instance.ReturnCreep(visualReferenceComponent.gameObject);
+        }
 
         SetEnemyStatus(enemy, false, ecb, entityManager);
 
@@ -242,5 +251,10 @@ public class EnemyManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public int GetCreepPrepare()
+    {
+        return creepPrepare;
     }
 }

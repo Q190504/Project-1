@@ -25,11 +25,12 @@ public partial struct MaxHealthLevelUpSystem : ISystem
                 if (SystemAPI.TryGetSingletonEntity<PlayerHealthComponent>(out Entity player))
                 {
                     PlayerHealthComponent playerHealthComponent = SystemAPI.GetComponent<PlayerHealthComponent>(player);
-                    playerHealthComponent.maxHealth += component.increment;
+                    int previousMaxHealth = playerHealthComponent.maxHealth;
+                    playerHealthComponent.maxHealth += (int)(previousMaxHealth * component.increment);
                     
                     ecb.AddComponent(player, new HealEventComponent
                     {
-                        healAmount = component.increment,
+                        healAmount = (int)(previousMaxHealth * component.increment),
                     });
 
                     ecb.SetComponent(player, playerHealthComponent);

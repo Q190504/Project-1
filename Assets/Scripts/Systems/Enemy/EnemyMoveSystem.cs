@@ -33,7 +33,8 @@ public partial struct EnemyMoveSystem : ISystem
         int width = flowFieldGridDataComponent.width;
         float cellSize = flowFieldGridDataComponent.nodeSize;
 
-        foreach (var (localTransform, enemyTag, physicsVelocity, entity) in SystemAPI.Query<RefRW<LocalTransform>, RefRO<EnemyTagComponent>, RefRW<PhysicsVelocity>>().WithEntityAccess())
+        foreach (var (localTransform, creepMoveSpeed, creepTag, physicsVelocity, entity) in 
+            SystemAPI.Query<RefRW<LocalTransform>, RefRO<CreepMoveSpeedComponent>, RefRO<CreepTagComponent>, RefRW<PhysicsVelocity>>().WithEntityAccess())
         {
             if (!GameManager.Instance.IsPlaying())
                 physicsVelocity.ValueRW.Linear = float3.zero;
@@ -47,7 +48,7 @@ public partial struct EnemyMoveSystem : ISystem
                 {
                     float2 flowDirection = pathBuffer[index].vector;
 
-                    float3 movement = new float3(flowDirection.x, flowDirection.y, 0) * 2f;
+                    float3 movement = new float3(flowDirection.x, flowDirection.y, 0) * creepMoveSpeed.ValueRO.speed;
 
                     physicsVelocity.ValueRW.Linear = movement;
                 }

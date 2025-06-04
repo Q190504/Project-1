@@ -18,11 +18,11 @@ public partial struct PlayerStunSystem : ISystem
             {
                 ecb.RemoveComponent<StunTimerComponent>(entity);
 
-                if (SystemAPI.HasComponent<PlayerTagComponent>(entity))
+                if (SystemAPI.HasComponent<StunComponent>(entity))
                 {
-                    var playerTag = SystemAPI.GetComponent<PlayerTagComponent>(entity);
-                    playerTag.isStunned = false;
-                    ecb.SetComponent(entity, playerTag);
+                    var stunComponent = SystemAPI.GetComponent<StunComponent>(entity);
+                    stunComponent.isStunned = false;
+                    ecb.SetComponent(entity, stunComponent);
 
                     // Remove the stun effect UI when stun expires
                     GamePlayUIManager.Instance.RemoveEffectImage(ref GamePlayUIManager.Instance.stunEffectIndex);
@@ -30,11 +30,11 @@ public partial struct PlayerStunSystem : ISystem
             }
             else
             {
-                if (SystemAPI.HasComponent<PlayerTagComponent>(entity))
+                if (SystemAPI.HasComponent<StunComponent>(entity))
                 {
-                    var playerTag = SystemAPI.GetComponent<PlayerTagComponent>(entity);
-                    playerTag.isStunned = true;
-                    ecb.SetComponent(entity, playerTag);
+                    var stunComponent = SystemAPI.GetComponent<StunComponent>(entity);
+                    stunComponent.isStunned = false;
+                    ecb.SetComponent(entity, stunComponent);
 
                     //if hasn't Stun Effect Image yet
                     if (GamePlayUIManager.Instance.stunEffectIndex == -1)

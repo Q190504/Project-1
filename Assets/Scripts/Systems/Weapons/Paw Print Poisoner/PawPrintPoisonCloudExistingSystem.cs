@@ -2,13 +2,15 @@ using Unity.Burst;
 using Unity.Entities;
 using UnityEngine;
 
-[BurstCompile]
 [UpdateAfter(typeof(PawPrintPoisonerSystem))]
 public partial struct PawPrintPoisonCloudExistingSystem : ISystem
 {
+    EntityManager entityManager;
+
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<PawPrintPoisonCloudComponent>();
+        entityManager = state.EntityManager;
     }
 
     public void OnUpdate(ref SystemState state)
@@ -18,7 +20,8 @@ public partial struct PawPrintPoisonCloudExistingSystem : ISystem
         var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        foreach (var (pawPrintPoisonCloudComponent, cloudEntity) in SystemAPI.Query<RefRW<PawPrintPoisonCloudComponent>>().WithEntityAccess())
+        foreach (var (pawPrintPoisonCloudComponent, cloudEntity) in 
+            SystemAPI.Query<RefRW<PawPrintPoisonCloudComponent>>().WithEntityAccess())
         {
             pawPrintPoisonCloudComponent.ValueRW.existDurationTimer -= SystemAPI.Time.DeltaTime;
 

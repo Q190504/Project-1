@@ -1,6 +1,7 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Entities.UniversalDelegates;
 
 [BurstCompile]
 public partial struct SlimeBeamSystem : ISystem
@@ -24,7 +25,9 @@ public partial struct SlimeBeamSystem : ISystem
             slimeBeamComponent.ValueRW.timer -= deltaTime;
             // Destroy if out of lifetime
             if (slimeBeamComponent.ValueRO.timer <= 0)
+            {
                 ProjectilesManager.Instance.ReturnSlimeBeam(beamEntity, ecb);
+            }
         }
 
         ecb.Playback(entityManager);

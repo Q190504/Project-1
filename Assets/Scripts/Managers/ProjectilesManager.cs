@@ -41,7 +41,7 @@ public class ProjectilesManager : MonoBehaviour
         else
             Destroy(this.gameObject);
 
-        
+
         inactiveSlimeBullets = new NativeQueue<Entity>(Allocator.Persistent);
         inactiveSlimeBeams = new NativeQueue<Entity>(Allocator.Persistent);
         inactivePoisionClouds = new NativeQueue<Entity>(Allocator.Persistent);
@@ -190,6 +190,15 @@ public class ProjectilesManager : MonoBehaviour
         if (!entityManager.Exists(bullet)) return;
 
         SetEntityStatus(bullet, false, ecb, entityManager);
+
+        // Return the visual Slow Zone game object
+        if (entityManager.HasComponent<VisualReferenceComponent>(bullet))
+        {
+            VisualReferenceComponent visualReferenceComponent =
+                entityManager.GetComponentData<VisualReferenceComponent>(bullet);
+            AnimationManager.Instance.ReturnSlimeBulletSlowZone(visualReferenceComponent.gameObject);
+        }
+
         inactiveSlimeBullets.Enqueue(bullet);
         slimeBulletCount++;
     }
@@ -199,6 +208,15 @@ public class ProjectilesManager : MonoBehaviour
         if (!entityManager.Exists(beam)) return;
 
         SetEntityStatus(beam, false, ecb, entityManager);
+
+        // Return the visual game object
+        if (entityManager.HasComponent<VisualReferenceComponent>(beam))
+        {
+            VisualReferenceComponent visualReferenceComponent =
+                entityManager.GetComponentData<VisualReferenceComponent>(beam);
+            AnimationManager.Instance.ReturnSlimeBeam(visualReferenceComponent.gameObject);
+        }
+
         inactiveSlimeBeams.Enqueue(beam);
         slimeBeamCount++;
     }
@@ -208,6 +226,15 @@ public class ProjectilesManager : MonoBehaviour
         if (!entityManager.Exists(cloud)) return;
 
         SetEntityStatus(cloud, false, ecb, entityManager);
+
+        // Return the visual game object
+        if (entityManager.HasComponent<VisualReferenceComponent>(cloud))
+        {
+            VisualReferenceComponent visualReferenceComponent =
+                entityManager.GetComponentData<VisualReferenceComponent>(cloud);
+            AnimationManager.Instance.ReturnPoisonCloud(visualReferenceComponent.gameObject);
+        }
+
         inactivePoisionClouds.Enqueue(cloud);
         poisionCloudCount++;
     }
@@ -244,4 +271,13 @@ public class ProjectilesManager : MonoBehaviour
         }
     }
 
+    public int GetPoisionCloudPrepare()
+    {
+        return poisionCloudPrepare;
+    }
+
+    public int GetSlimeBeamPrepare()
+    {
+        return slimeBeamPrepare;
+    }
 }
