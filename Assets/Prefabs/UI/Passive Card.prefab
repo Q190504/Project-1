@@ -236,6 +236,7 @@ MonoBehaviour:
   cardDescription: {fileID: 6106421965187362650}
   updateUISO: {fileID: 11400000, guid: a9c71591a6c3866498f4213b0303decf, type: 2}
   togglePauseSO: {fileID: 11400000, guid: f416fb96a28c45345884db545b184695, type: 2}
+  playSoundSO: {fileID: 11400000, guid: 152ac6a536861874dbb979bbbbe4b8d8, type: 2}
 --- !u!114 &-3363703834481194249
 MonoBehaviour:
   m_ObjectHideFlags: 0

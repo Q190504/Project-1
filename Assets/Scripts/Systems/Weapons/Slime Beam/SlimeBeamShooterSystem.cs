@@ -128,7 +128,6 @@ public partial struct SlimeBeamShooterSystem : ISystem
     {
         PhysicsWorldSingleton physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
         EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-        NativeList<Unity.Physics.RaycastHit> hits = new NativeList<Unity.Physics.RaycastHit>(Allocator.Temp);
 
         float3 playerPosition = entityManager.GetComponentData<LocalTransform>(player).Position;
         float3 position = playerPosition + GetAttackDirection(spawnOffsetPositon, beamCount);
@@ -138,7 +137,8 @@ public partial struct SlimeBeamShooterSystem : ISystem
         Entity slimeBeamInstance = ProjectilesManager.Instance.TakeSlimeBeam(ecb);
         SetStats(ecb, slimeBeamInstance, damage, position, rotation);
 
-        hits.Dispose();
+
+        AudioManager.Instance.PlaySlimeBeamSoundSFX();
     }
 
     private void SetStats(EntityCommandBuffer ecb, Entity beam, int damage, float3 originPosition, quaternion rotation)

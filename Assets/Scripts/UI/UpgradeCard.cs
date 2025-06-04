@@ -18,6 +18,7 @@ public class UpgradeCard : MonoBehaviour
 
     [SerializeField] private UpgradePublisherSO updateUISO;
     [SerializeField] private VoidPublisherSO togglePauseSO;
+    [SerializeField] private VoidPublisherSO playSoundSO;
 
     private int ID;
     private WeaponType weaponType;
@@ -98,6 +99,8 @@ public class UpgradeCard : MonoBehaviour
 
     public void Select()
     {
+        playSoundSO.RaiseEvent();
+
         Entity playerUpgradeSlotsEntity;
         PlayerUpgradeSlots playerUpgradeSlots;
         int newLevel = 0;

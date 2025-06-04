@@ -28,11 +28,6 @@ public class GameManager : MonoBehaviour
     private double timeSinceStartPlaying = 0;
     [SerializeField] private DoublePublisherSO timePublisher;
 
-    //[Range(0f, 1f)]
-    //public float SKILL_1_THRESHOLD;
-    //[Range(0f, 1f)]
-    //public float SKILL_2_THRESHOLD;
-
     public static GameManager Instance
     {
         get

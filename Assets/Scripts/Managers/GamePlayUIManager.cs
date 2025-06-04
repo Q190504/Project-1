@@ -14,7 +14,6 @@ public class GamePlayUIManager : MonoBehaviour
     public GameObject upgradePanel;
     public GameObject endGamePanel;
     public GameObject settingPanel;
-    public GameObject audioSettingPanel;
     public GameObject creditPanel;
     public GameObject comfirmExitPanel;
 
@@ -35,6 +34,12 @@ public class GamePlayUIManager : MonoBehaviour
 
     public Slider leftCountdownBar;
     public Slider rightCountdownBar;
+
+    [Header("Audio Setting")]
+    public Slider sfxVolumeBar;
+    public Slider bgmVolumeBar;
+    public FloatPublisherSO setSFXSO;
+    public FloatPublisherSO setBGMSO;
 
     [Header("Skills")]
     public Image skill1Image;
@@ -265,11 +270,6 @@ public class GamePlayUIManager : MonoBehaviour
         settingPanel.SetActive(status);
     }
 
-    public void SetAudioSettingPanel(bool status)
-    {
-        audioSettingPanel.SetActive(status);
-    }
-
     public void SetTitlePanel(bool status)
     {
         titlePanel.SetActive(status);
@@ -476,5 +476,24 @@ public class GamePlayUIManager : MonoBehaviour
         SetConfirmExitPanel(false);
         CloseUpgradePanel();
         ClearSlots();
+    }
+
+    public void SetBGMSlider(float value)
+    {
+        bgmVolumeBar.value = value;
+    }
+     public void SetSFXSlider(float value)
+    {
+        sfxVolumeBar.value = value;
+    }
+
+    public void SetSFX()
+    {
+        setSFXSO.RaiseEvent(sfxVolumeBar.value);
+    }
+
+    public void SetBGM()
+    {
+        setBGMSO.RaiseEvent(bgmVolumeBar.value);
     }
 }
