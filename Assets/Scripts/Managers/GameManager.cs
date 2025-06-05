@@ -97,6 +97,11 @@ public class GameManager : MonoBehaviour
         endGamePublisher.RaiseEvent(result);
     }
 
+    public void ExitGameMode()
+    {
+        SetGameState(GameState.NotStarted);
+    }
+
     public float3 GetPlayerInitialPosition()
     {
         if (playerInitalPosition == null)

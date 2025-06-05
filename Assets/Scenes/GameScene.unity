@@ -3530,8 +3530,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 284409448}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
-        m_MethodName: PlayEndGameSoundSFX
-        m_Mode: 6
+        m_MethodName: ExitGameMode
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -10296,7 +10296,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EventResponse:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 922116002}
+        m_TargetAssemblyTypeName: GamePlayUIManager, Assembly-CSharp
+        m_MethodName: ExitGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   publisher: {fileID: 11400000, guid: 7baa05628328bcc4183455c39b6411c5, type: 2}
 --- !u!1 &941708848
 GameObject:
@@ -51529,7 +51541,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1522145078}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: ExitGame
+        m_MethodName: ExitGameMode
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
