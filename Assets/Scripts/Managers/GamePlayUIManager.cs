@@ -496,4 +496,10 @@ public class GamePlayUIManager : MonoBehaviour
     {
         setBGMSO.RaiseEvent(bgmVolumeBar.value);
     }
+
+    public void ExitGame()
+    {
+        settingPanel.SetActive(false);
+        titlePanel.SetActive(true);
+    }
 }
