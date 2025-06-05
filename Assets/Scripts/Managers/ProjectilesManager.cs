@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class ProjectilesManager : MonoBehaviour
 {
@@ -160,6 +161,10 @@ public class ProjectilesManager : MonoBehaviour
         Entity slimeBulletInstance = inactiveSlimeBullets.Dequeue();
         slimeBulletCount--;
         SetEntityStatus(slimeBulletInstance, true, ecb, entityManager);
+
+        GameObject visual = AnimationManager.Instance.TakeSlimeBulletSlowZone();
+        ecb.AddComponent(slimeBulletInstance, new VisualReferenceComponent { gameObject = visual });
+
         return slimeBulletInstance;
     }
 
@@ -171,6 +176,11 @@ public class ProjectilesManager : MonoBehaviour
         Entity slimeBeamInstance = inactiveSlimeBeams.Dequeue();
         slimeBeamCount--;
         SetEntityStatus(slimeBeamInstance, true, ecb, entityManager);
+
+        GameObject visual = AnimationManager.Instance.TakeSlimeBeam();
+        ecb.AddComponent(slimeBeamInstance, new VisualReferenceComponent { gameObject = visual });
+
+
         return slimeBeamInstance;
     }
 
@@ -182,6 +192,10 @@ public class ProjectilesManager : MonoBehaviour
         Entity poisionCloudInstance = inactivePoisionClouds.Dequeue();
         poisionCloudCount--;
         SetEntityStatus(poisionCloudInstance, true, ecb, entityManager);
+
+        GameObject visual = AnimationManager.Instance.TakePoisonCloud();
+        ecb.AddComponent(poisionCloudInstance, new VisualReferenceComponent { gameObject = visual });
+
         return poisionCloudInstance;
     }
 
