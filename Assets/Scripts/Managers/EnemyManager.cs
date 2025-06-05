@@ -1,7 +1,10 @@
+using System.Buffers.Text;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Entities.UniversalDelegates;
+using Unity.Mathematics;
 using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
@@ -11,7 +14,7 @@ public class EnemyManager : MonoBehaviour
     private static EnemyManager _instance;
 
     [SerializeField] private int creepPrepare;
-    public List<EnemySpawner> SpawnerList = new List<EnemySpawner>();
+    public List<GameObject> SpawnerList;
 
     private Entity player;
     private EntityManager entityManager;
@@ -20,14 +23,24 @@ public class EnemyManager : MonoBehaviour
     private NativeQueue<Entity> inactiveEnemies;
     private int enemyCount = 0;
 
-    [SerializeField] private int enemiesPerWave; // Number of enemies per wave
+    Dictionary<GameObject, int> spawnerQueue = new Dictionary<GameObject, int>();
+
+    [Header("Spawing stats")]
+    [SerializeField] private int baseEnemiesPerWave;        // Base number of enemies per wave
+    private int enemiesPerWave;                             // Number of enemies per wave
     private int enemiesToSpawnCounter;
 
-    [SerializeField] private float firstWaveDelay; // Time before the first wave
-    [SerializeField] private float waveInterval; // Time between waves
+    [SerializeField] private float initialSpawnDelay;       // Time before the first wave
+    [SerializeField] private float minInterval;             // The lowest possible interval to prevent overwhelming the player
+    [SerializeField] private float baseInterval;            // The starting interval between spawns at time 0
+    private float waveInterval;                             // Time between waves
     private float waveTimer;
-    [SerializeField] private float individualEnemyDelay;   // Delay between spawning each enemy in a wave
+    [SerializeField] private float spawnAcceleration;       // Rate at which the interval decreases per minute
+    [SerializeField] private float individualEnemyDelay;    // Delay between spawning each enemy in a wave
     private float individualEnemyDelayTimer;
+
+    private float difficultyMultiplier;
+    private double timeSinceStartPlaying;
 
     public static EnemyManager Instance
     {
@@ -90,27 +103,78 @@ public class EnemyManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        #region Spawn Enemies
+
         if (waveTimer <= 0)
         {
-            if (individualEnemyDelayTimer <= 0 && enemiesToSpawnCounter > 0)
+            if (enemiesToSpawnCounter <= 0 && spawnerQueue.Count == 0)
             {
-                foreach (EnemySpawner enemySpawner in SpawnerList)
+                // Set time till new wave
+                waveInterval = Mathf.Max(minInterval, baseInterval - ((float)timeSinceStartPlaying / 60f) * spawnAcceleration);
+                waveTimer = waveInterval;
+
+                // Set enemies per wave
+                enemiesPerWave = baseEnemiesPerWave + Mathf.FloorToInt((float)timeSinceStartPlaying / 30f);
+                enemiesToSpawnCounter = enemiesPerWave;
+
+                spawnerQueue.Clear();
+
+                // Calculate weights based on distance to player
+                Dictionary<GameObject, float> spawnerWeights = new Dictionary<GameObject, float>();
+                float totalWeight = 0f;
+
+                foreach (var spawner in SpawnerList)
                 {
-                    if (enemySpawner.IsPlayerAround)
+                    float3 playerPos = entityManager.GetComponentData<LocalTransform>(player).Position;
+                    float distance = Vector3.Distance(playerPos, spawner.transform.position);
+                    float weight = 1f / (distance + 1f); // Closer = heavier
+                    spawnerWeights[spawner] = weight;
+                    totalWeight += weight;
+                }
+
+                // Distribute enemies to spwaners by weight
+                int distributedEnemies = 0;
+                foreach (var spawner in SpawnerList)
+                {
+                    float ratio = spawnerWeights[spawner] / totalWeight;
+                    int count = Mathf.FloorToInt(ratio * enemiesPerWave);
+                    spawnerQueue.Add(spawner, count);
+                    distributedEnemies += count;
+                }
+
+                // Distribute remainder enemies
+                int remaining = enemiesPerWave - distributedEnemies;
+                for (int i = 0; i < remaining; i++)
+                {
+                    var spawner = SpawnerList[i % SpawnerList.Count];
+                    spawnerQueue[spawner]++;
+                }
+            }
+
+            if (individualEnemyDelayTimer <= 0 && spawnerQueue.Count > 0)
+            {
+                foreach (var spawner in SpawnerList.ToList())
+                {
+                    if (!spawnerQueue.ContainsKey(spawner)) continue;
+
+                    int toSpawn = spawnerQueue[spawner];
+                    if (toSpawn <= 0)
                     {
-                        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
-
-                        Vector3 spawnPosition = new Vector3(enemySpawner.transform.position.x, enemySpawner.transform.position.y, 0);
-                        SpawnEnemy(spawnPosition, ecb);
-
-                        ecb.Playback(entityManager);
-                        ecb.Dispose();
-
-                        enemiesToSpawnCounter--;
-
-                        if (enemiesToSpawnCounter == 0)
-                            break;
+                        spawnerQueue.Remove(spawner);
+                        continue;
                     }
+
+                    EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+                    Vector3 spawnPosition = spawner.transform.position;
+                    SpawnEnemy(spawnPosition, ecb);
+
+                    ecb.Playback(entityManager);
+                    ecb.Dispose();
+
+                    spawnerQueue[spawner] = toSpawn - 1;
+
+                    if (--enemiesToSpawnCounter <= 0)
+                        break;
                 }
 
                 individualEnemyDelayTimer = individualEnemyDelay;
@@ -119,18 +183,13 @@ public class EnemyManager : MonoBehaviour
             {
                 individualEnemyDelayTimer -= Time.deltaTime;
             }
-
-            // Reset wave when all enemies have spawned
-            if (enemiesToSpawnCounter <= 0)
-            {
-                waveTimer = waveInterval;
-                enemiesToSpawnCounter = enemiesPerWave;
-            }
         }
         else
         {
             waveTimer -= Time.deltaTime;
         }
+
+        #endregion
     }
 
     public void SpawnEnemy(Vector3 position, EntityCommandBuffer ecb)
@@ -153,12 +212,23 @@ public class EnemyManager : MonoBehaviour
             targetEntity = player,
         });
 
+        float DifficultyMultiplier = 1 + Mathf.Pow((float)timeSinceStartPlaying / 60f, 1.2f);
+
         CreepHealthComponent enemyHealthComponent = entityManager.GetComponentData<CreepHealthComponent>(enemyInstance);
 
+        float enemyHP = enemyHealthComponent.baseMaxHealth * DifficultyMultiplier;
         entityManager.SetComponentData(enemyInstance, new CreepHealthComponent
         {
-            currentHealth = enemyHealthComponent.maxHealth,
+            currentHealth = enemyHP,
             maxHealth = enemyHealthComponent.maxHealth,
+        });
+
+        CreepDamageComponent enemyDamageComponent = entityManager.GetComponentData<CreepDamageComponent>(enemyInstance);
+        int enemyDamage = (int)(enemyDamageComponent.baseDamage * DifficultyMultiplier);
+        entityManager.SetComponentData(enemyInstance, new CreepDamageComponent
+        {
+            damage = enemyDamage,
+            baseDamage = enemyDamageComponent.baseDamage,
         });
     }
 
@@ -215,10 +285,11 @@ public class EnemyManager : MonoBehaviour
 
     public void Initialize()
     {
-        waveTimer = firstWaveDelay;
+        waveTimer = initialSpawnDelay;
         individualEnemyDelayTimer = 0;
-        enemiesToSpawnCounter = enemiesPerWave;
-        individualEnemyDelayTimer = 0;
+        waveInterval = baseInterval;
+        enemiesPerWave = baseEnemiesPerWave;
+        enemiesToSpawnCounter = 0;
     }
 
     private void SetEnemyStatus(Entity root, bool status, EntityCommandBuffer ecb, EntityManager entityManager)
@@ -256,5 +327,10 @@ public class EnemyManager : MonoBehaviour
     public int GetCreepPrepare()
     {
         return creepPrepare;
+    }
+
+    public void SetTimeSinceStartPlaying(double time)
+    {
+        timeSinceStartPlaying = time;
     }
 }

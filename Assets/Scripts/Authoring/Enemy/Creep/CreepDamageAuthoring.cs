@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class CreepDamageAuthoring : MonoBehaviour
 {
-    public int damage;
+    public int baseDamage;
 
     public class Baker : Baker<CreepDamageAuthoring>
     {
@@ -12,7 +12,8 @@ public class CreepDamageAuthoring : MonoBehaviour
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
             AddComponent(entity, new CreepDamageComponent
             {
-                damage = authoring.damage,
+                baseDamage = authoring.baseDamage,
+                damage = authoring.baseDamage,
             });
         }
     }
@@ -21,4 +22,5 @@ public class CreepDamageAuthoring : MonoBehaviour
 public struct CreepDamageComponent : IComponentData
 {
     public int damage;
+    public int baseDamage;
 }

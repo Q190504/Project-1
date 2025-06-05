@@ -10,5 +10,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd9e329fc52110f4abbbfd94b4ca417f, type: 3}
-  m_Name: SetTimeText
+  m_Name: SetTimeSinceStartPlay
   m_EditorClassIdentifier: 
