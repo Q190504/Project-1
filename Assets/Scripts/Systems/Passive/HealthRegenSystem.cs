@@ -59,8 +59,7 @@ public partial struct HealthRegenSystem : ISystem
             PassiveComponent passiveComponent = SystemAPI.GetComponent<PassiveComponent>(healthRegenEntity);
 
             // Disable if player is max health
-            if (passiveComponent.Level <= 0
-                || playerHealthComponent.currentHealth == playerHealthComponent.maxHealth 
+            if (playerHealthComponent.currentHealth == playerHealthComponent.maxHealth 
                 || healthRegen <= 0)
                 return;
 

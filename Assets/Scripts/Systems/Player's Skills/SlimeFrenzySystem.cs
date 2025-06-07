@@ -58,8 +58,6 @@ public partial struct SlimeFrenzySystem : ISystem
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
 
-        PlayerHealthComponent playerHealthComponent = entityManager.GetComponentData<PlayerHealthComponent>(player);
-
         float baseCooldownTime = slimeFrenzy.cooldownTime;
         float finalCooldownTime = baseCooldownTime * (100 / (100 + abilityHaste));
 
@@ -72,15 +70,21 @@ public partial struct SlimeFrenzySystem : ISystem
             else
                 GamePlayUIManager.Instance.SetSkill1ImageOpacity(false);
 
+            PlayerHealthComponent playerHealthComponent = entityManager.GetComponentData<PlayerHealthComponent>(player);
+
             if (playerInput.isEPressed
             && CheckPlayerHealth(playerHealthComponent.currentHealth, playerHealthComponent.maxHealth))
             {
+                PlayerLevelComponent playerLevelComponent = entityManager.GetComponentData<PlayerLevelComponent>(player);
+                float currentDuration = Mathf.Min(slimeFrenzy.maxIncreaseDuration, 
+                    slimeFrenzy.baseDuration + playerLevelComponent.currentLevel * slimeFrenzy.increaseDurationPerLevel);
+
                 // Apply frenzy effect
                 if (!entityManager.HasComponent<SlimeFrenzyTimerComponent>(player))
                     ecb.AddComponent(player, new SlimeFrenzyTimerComponent
                     {
-                        timeRemaining = slimeFrenzy.duration,
-                        initialDuration = slimeFrenzy.duration
+                        timeRemaining = currentDuration,
+                        initialDuration = currentDuration
                     });
 
                 isFrenzyActive = true;

@@ -20,25 +20,25 @@
     },
     {
       "damagePerTick": 30,
-      "cloudRadius": 2.25,
+      "cloudRadius": 1.75,
       "maximumCloudDuration": 3.5,
       "bonusMoveSpeedPerTargetInTheCloudModifier": 0
     },
     {
       "damagePerTick": 45,
-      "cloudRadius": 3,
+      "cloudRadius": 2,
       "maximumCloudDuration": 4.5,
       "bonusMoveSpeedPerTargetInTheCloudModifier": 0
     },
     {
       "damagePerTick": 60,
-      "cloudRadius": 3,
+      "cloudRadius": 2.25,
       "maximumCloudDuration": 5.5,
       "bonusMoveSpeedPerTargetInTheCloudModifier": 0
     },
     {
       "damagePerTick": 75,
-      "cloudRadius": 3,
+      "cloudRadius": 2.5,
       "maximumCloudDuration": 6.5,
       "bonusMoveSpeedPerTargetInTheCloudModifier": 0.005
     }

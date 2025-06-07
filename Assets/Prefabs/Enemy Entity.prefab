@@ -77,7 +77,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1efb42e07cb2652468539ed6ea2924e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseDamage: 25
+  baseDamage: 15
 --- !u!114 &1753043437300418605
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,7 +103,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3efb143e622ce404e88a5d83468e41ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseMaxHealth: 100
+  baseMaxHealth: 50
 --- !u!114 &1033001227133458703
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -72,8 +72,8 @@ public class GameManager : MonoBehaviour
         timeSinceStartPlaying += Time.deltaTime;
         timePublisher.RaiseEvent(timeSinceStartPlaying);
 
-        // Win if reach 15 minutes
-        if ((int)timeSinceStartPlaying / 60 == 15 && (int)timeSinceStartPlaying % 60 == 0)
+        // Win if reach the max length of the match
+        if ((int)timeSinceStartPlaying / 60 == 10 && (int)timeSinceStartPlaying % 60 == 0)
         {
             EndGame(true);
         }

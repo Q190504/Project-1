@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class CreepHealthAuthoring : MonoBehaviour
 {
-    public float baseMaxHealth;
+    public int baseMaxHealth;
 
     public class Baker : Baker<CreepHealthAuthoring>
     {
@@ -23,7 +23,7 @@ public class CreepHealthAuthoring : MonoBehaviour
 
 public struct CreepHealthComponent : IComponentData
 {
-    public float currentHealth;
-    public float maxHealth;
-    public float baseMaxHealth;
+    public int currentHealth;
+    public int maxHealth;
+    public int baseMaxHealth;
 }

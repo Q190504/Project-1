@@ -16,6 +16,10 @@ public class ExperienceOrbManager : MonoBehaviour
     private NativeQueue<Entity> inactiveOrbs;
     private int orbCount = 0;
 
+    [Header("Spawing stats")]
+    //private float difficultyMultiplier;
+    private double timeSinceStartPlaying;
+
     public static ExperienceOrbManager Instance
     {
         get
@@ -116,11 +120,14 @@ public class ExperienceOrbManager : MonoBehaviour
 
         ExperienceOrbComponent experienceOrbComponent = entityManager.GetComponentData<ExperienceOrbComponent>(orbInstance);
 
+        float experienceMultiplier = 1 + Mathf.Pow((float)timeSinceStartPlaying / 60f, 1.2f);
+
         // Set the orb position
         ecb.SetComponent(orbInstance, new ExperienceOrbComponent
         {
             hasBeenCollected = false,
-            experience = experienceOrbComponent.experience,
+            isBeingPulled = false,
+            experience = (int)(experienceOrbComponent.experience * experienceMultiplier),
         });
     }
 
@@ -174,5 +181,10 @@ public class ExperienceOrbManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void SetTimeSinceStartPlaying(double time)
+    {
+        timeSinceStartPlaying = time;
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 public class ArmorAuthoring : MonoBehaviour
 {
     public int ID;
-    public int armorVaule;
+    public int baseArmorVaule;
 
     public int currentLevel;
     public int increment;
@@ -17,7 +17,8 @@ public class ArmorAuthoring : MonoBehaviour
 
             AddComponent(entity, new ArmorComponent
             {
-                armorValue = authoring.armorVaule,
+                baseArmorVaule = authoring.baseArmorVaule,
+                armorValue = authoring.baseArmorVaule,
 
                 increment = authoring.increment,
             });
@@ -38,6 +39,6 @@ public class ArmorAuthoring : MonoBehaviour
 public struct ArmorComponent : IComponentData
 {
     public int armorValue;
-
+    public int baseArmorVaule;
     public int increment;
 }

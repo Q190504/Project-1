@@ -75,6 +75,7 @@ struct PlayerSuckExperienceOrbJob : ITriggerEventsJob
                     ecb.SetComponent(orbEntity, new ExperienceOrbComponent
                     {
                         hasBeenCollected = true,
+                        isBeingPulled = false,
                         experience = experienceOrbComponent.experience,
                     });
 

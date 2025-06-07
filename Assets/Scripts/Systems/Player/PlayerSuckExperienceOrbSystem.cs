@@ -46,7 +46,7 @@ public partial struct PlayerSuckExperienceOrbSystem : ISystem
 
         #endregion
 
-        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
         PhysicsWorldSingleton physicsWorldSingleton = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
 
@@ -70,20 +70,10 @@ public partial struct PlayerSuckExperienceOrbSystem : ISystem
             if (!SystemAPI.HasComponent<ExperienceOrbComponent>(hit.Entity))
                 continue;
 
-            float3 orbPosition = entityManager.GetComponentData<LocalTransform>(hit.Entity).Position;
-            float3 directionToPlayer = math.normalize(playerPositionComponent.Position - orbPosition);
-            float deltaTime = SystemAPI.Time.DeltaTime;
+            ExperienceOrbComponent experienceOrbComponent = entityManager.GetComponentData<ExperienceOrbComponent>(hit.Entity);
+            experienceOrbComponent.isBeingPulled = true;
 
-            // Move orb toward player
-            orbPosition += directionToPlayer * playerPickupRadiusComponent.pullForce * deltaTime;
-
-            // Update the orb's position
-            ecb.SetComponent(hit.Entity, new LocalTransform
-            {
-                Position = orbPosition,
-                Rotation = quaternion.identity,
-                Scale = entityManager.GetComponentData<LocalTransform>(hit.Entity).Scale,
-            });
+            ecb.SetComponent(hit.Entity, experienceOrbComponent);
         }
 
         hits.Dispose();

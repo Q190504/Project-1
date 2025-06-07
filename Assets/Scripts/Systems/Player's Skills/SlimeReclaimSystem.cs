@@ -42,7 +42,6 @@ public partial struct SlimeReclaimSystem : ISystem
         if (SystemAPI.TryGetSingleton<PlayerInputComponent>(out var playerInput)
             && SystemAPI.TryGetSingleton<SlimeReclaimComponent>(out var slimeReclaimComponent))
         {
-            PlayerHealthComponent playerHealthComponent = entityManager.GetComponentData<PlayerHealthComponent>(player);
 
             float baseCooldownTime = slimeReclaimComponent.cooldownTime;
             float finalCooldownTime = baseCooldownTime * (100 / (100 + abilityHaste));
@@ -62,6 +61,7 @@ public partial struct SlimeReclaimSystem : ISystem
                     }
                 }
 
+                PlayerHealthComponent playerHealthComponent = entityManager.GetComponentData<PlayerHealthComponent>(player);
                 if (CheckPlayerHealth(playerHealthComponent.currentHealth, playerHealthComponent.maxHealth)
                 && hasWaitingSlimeBullet)
                 {
@@ -82,7 +82,14 @@ public partial struct SlimeReclaimSystem : ISystem
                         foreach (var slimeBulletComponent in SystemAPI.Query<RefRW<SlimeBulletComponent>>())
                         {
                             if (!slimeBulletComponent.ValueRO.isAbleToMove)
+                            {
                                 slimeBulletComponent.ValueRW.isBeingSummoned = true;
+
+                                PlayerLevelComponent playerLevelComponent = entityManager.GetComponentData<PlayerLevelComponent>(player);
+                                int damage = slimeReclaimComponent.baseDamagePerBullet
+                                    + slimeReclaimComponent.increaseDamagePerLevel * playerLevelComponent.currentLevel;
+                                slimeBulletComponent.ValueRW.remainingDamage = damage;
+                            }
                         }
 
                         cooldownTimer = finalCooldownTime;

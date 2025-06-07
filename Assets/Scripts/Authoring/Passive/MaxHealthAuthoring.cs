@@ -4,7 +4,6 @@ using UnityEngine;
 public class MaxHealthAuthoring : MonoBehaviour
 {
     public int ID;
-    public int baseMaxHealth;
 
     public int currentLevel;
     [Range(0f, 1f)]

@@ -3,7 +3,10 @@ using UnityEngine;
 
 public class SlimeFrenzyAuthoring : MonoBehaviour
 {
-    public float duration;
+    public float baseDuration;
+    public float increaseDurationPerLevel;
+    public float maxIncreaseDuration; // Maximum allowed cooldown
+
     public float cooldownTime;
     [Range(0f, 1f)]
     public float fireRateReductionPercent;
@@ -14,7 +17,6 @@ public class SlimeFrenzyAuthoring : MonoBehaviour
     [Range(1f, 5f)]
     public float hpCostPerShotPercent;
 
-
     class SlimeFrenzyBaker : Baker<SlimeFrenzyAuthoring>
     {
         public override void Bake(SlimeFrenzyAuthoring authoring)
@@ -23,7 +25,11 @@ public class SlimeFrenzyAuthoring : MonoBehaviour
             AddComponent(entity, new SlimeFrenzyComponent
             {
                 isActive = false,
-                duration = authoring.duration,
+
+                baseDuration = authoring.baseDuration,
+                increaseDurationPerLevel = authoring.increaseDurationPerLevel,
+                maxIncreaseDuration = authoring.maxIncreaseDuration,
+
                 cooldownTime = authoring.cooldownTime,
                 fireRateReductionPercent = authoring.fireRateReductionPercent,
                 bonusDamagePercent = authoring.bonusDamagePercent,
@@ -37,7 +43,11 @@ public class SlimeFrenzyAuthoring : MonoBehaviour
 public struct SlimeFrenzyComponent : IComponentData
 {
     public bool isActive;
-    public float duration;
+
+    public float baseDuration;
+    public float increaseDurationPerLevel;
+    public float maxIncreaseDuration; // Maximum allowed cooldown
+
     public float cooldownTime;
     public float fireRateReductionPercent;
     public float bonusDamagePercent;
