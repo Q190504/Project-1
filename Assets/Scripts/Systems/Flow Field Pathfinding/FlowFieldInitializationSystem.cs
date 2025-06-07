@@ -12,8 +12,8 @@ public partial struct FlowFieldInitializationSystem : ISystem
         {
             if (!tracker.flowFieldSystemInitialized)
             {
-                var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-                var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+                //var ecbSingleton = SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>();
+                //var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
                 EntityQuery query = SystemAPI.QueryBuilder()
                                       .WithAll<FlowFieldGridDataComponent>()
@@ -51,7 +51,7 @@ public partial struct FlowFieldInitializationSystem : ISystem
 
                 // Update tracker
                 tracker.flowFieldSystemInitialized = true;
-                ecb.SetComponent(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), tracker);
+                state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), tracker);
             }
         }
     }
