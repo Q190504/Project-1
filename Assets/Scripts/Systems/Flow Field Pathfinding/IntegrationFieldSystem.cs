@@ -62,7 +62,7 @@ public partial struct IntegrationFieldSystem : ISystem
                 for (int i = 0; i < 4; i++) // Loop through 4 directions
                 {
                     int2 neighbor = new int2(x, y) + neighborOffsets[i];
-                
+
                     // Skip out-of-bounds neighbors
                     if (neighbor.x < 0 || neighbor.x >= grid.ValueRO.width ||
                         neighbor.y < 0 || neighbor.y >= grid.ValueRO.height)
