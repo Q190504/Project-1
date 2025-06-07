@@ -9249,7 +9249,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debugTextPrefab: {fileID: 6612224164288578702, guid: 64d9ee58115815b4c8dd7ed921c6fef8, type: 3}
   debugCanvas: {fileID: 2089770992}
-  flowFieldDebugStatus: 2
+  flowFieldDebugStatus: 0
 --- !u!4 &744304671
 Transform:
   m_ObjectHideFlags: 0
