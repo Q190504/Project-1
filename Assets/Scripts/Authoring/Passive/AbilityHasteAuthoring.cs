@@ -4,7 +4,7 @@ using UnityEngine;
 public class AbilityHasteAuthoring : MonoBehaviour
 {
     public int ID;
-    public float abilityHasteValue;
+    public float baseAbilityHasteValue;
 
     public int currentLevel;
     public float increment;
@@ -17,7 +17,8 @@ public class AbilityHasteAuthoring : MonoBehaviour
 
             AddComponent(entity, new AbilityHasteComponent
             {
-                abilityHasteValue = authoring.abilityHasteValue,
+                baseAbilityHasteValue = authoring.baseAbilityHasteValue,
+                abilityHasteValue = authoring.baseAbilityHasteValue,
 
                 increment = authoring.increment,
             });
@@ -38,6 +39,7 @@ public class AbilityHasteAuthoring : MonoBehaviour
 public struct AbilityHasteComponent : IComponentData
 {
     public float abilityHasteValue;
+    public float baseAbilityHasteValue;
 
     public float increment;
 }

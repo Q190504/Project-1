@@ -404,9 +404,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: 5
-  healthRegenValue: 0
+  baseHealthRegenValue: 4
   currentLevel: 0
-  increment: 4
+  increment: 10
 --- !u!1 &171113838
 GameObject:
   m_ObjectHideFlags: 0
@@ -1633,7 +1633,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: 4
-  abilityHasteValue: 0
+  baseAbilityHasteValue: 0
   currentLevel: 0
   increment: 10
 --- !u!1 &672993757
@@ -2834,7 +2834,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: 3
-  genericDamageModifierValue: 0
+  baseGenericDamageModifierValue: 0
   currentLevel: 0
   increment: 0.1
 --- !u!1 &1200642261
@@ -3122,8 +3122,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: 6
-  basePickupRadius: 1.5
-  pullForce: 2
+  basePickupRadius: 2
+  pullForce: 5
   currentLevel: 0
   increment: 0.5
 --- !u!1 &1387523442
@@ -3738,7 +3738,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: 0
-  baseMaxHealth: 100
   currentLevel: 0
   increment: 0.1
 --- !u!1 &1638301084
@@ -4041,8 +4040,8 @@ GameObject:
   - component: {fileID: 1711749703}
   - component: {fileID: 1711749701}
   - component: {fileID: 1711749689}
-  - component: {fileID: 1711749697}
   - component: {fileID: 1711749698}
+  - component: {fileID: 1711749697}
   - component: {fileID: 1711749705}
   - component: {fileID: 1711749700}
   - component: {fileID: 1711749699}
@@ -4114,7 +4113,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ff9a3412fed753479ede4f0b371d8c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cooldownTime: 10
+  cooldownTime: 14
+  baseDamagePerBullet: 225
+  increaseDamagePerLevel: 25
   stunPlayerTime: 1.5
   hpHealPrecentPerBullet: 1.25
   bulletSpeedWhenSummoned: 30
@@ -4130,8 +4131,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db93773031452254cadf9cd12eb3a640, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  duration: 5
-  cooldownTime: 5
+  baseDuration: 6
+  increaseDurationPerLevel: 0.25
+  maxIncreaseDuration: 2
+  cooldownTime: 7
   fireRateReductionPercent: 0.75
   bonusDamagePercent: 0.4
   bonusMovementSpeedPercent: 0.4
@@ -4342,6 +4345,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2bdeaf9454419249919b03eb125907d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentLevel: 1
+  maxLevel: 34
+  baseExperienceToNextLevel: 50
 --- !u!114 &1711749702
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4385,6 +4391,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultWeaponType: 1
+  maxWeaponSlots: 3
+  maxPassvieSlots: 5
 --- !u!114 &1711749705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5198,7 +5206,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: 1
-  armorVaule: 0
+  baseArmorVaule: 5
   currentLevel: 0
   increment: 8
 --- !u!1 &2019857815

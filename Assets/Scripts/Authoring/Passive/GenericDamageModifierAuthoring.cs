@@ -4,7 +4,7 @@ using UnityEngine;
 public class GenericDamageModifierAuthoring : MonoBehaviour
 {
     public int ID;
-    public float genericDamageModifierValue;
+    public float baseGenericDamageModifierValue;
 
     public int currentLevel;
     public float increment;
@@ -17,7 +17,8 @@ public class GenericDamageModifierAuthoring : MonoBehaviour
 
             AddComponent(entity, new GenericDamageModifierComponent
             {
-                genericDamageModifierValue = authoring.genericDamageModifierValue,
+                baseGenericDamageModifierValue = authoring.baseGenericDamageModifierValue,
+                genericDamageModifierValue = authoring.baseGenericDamageModifierValue,
 
                 increment = authoring.increment,
             });
@@ -38,6 +39,6 @@ public class GenericDamageModifierAuthoring : MonoBehaviour
 public struct GenericDamageModifierComponent : IComponentData
 {
     public float genericDamageModifierValue;
-
+    public float baseGenericDamageModifierValue;
     public float increment;
 }

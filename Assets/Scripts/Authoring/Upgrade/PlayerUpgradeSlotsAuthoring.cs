@@ -7,6 +7,9 @@ using Unity.Mathematics;
 public class PlayerUpgradeSlotsAuthoring : MonoBehaviour
 {
     public WeaponType defaultWeaponType = WeaponType.SlimeBulletShooter;
+    public int maxWeaponSlots;
+    public int maxPassvieSlots;
+
 
     class Baker : Baker<PlayerUpgradeSlotsAuthoring>
     {
@@ -30,10 +33,10 @@ public class PlayerUpgradeSlotsAuthoring : MonoBehaviour
             {
                 defaultWeaponId = defaultWeapon.id,
                 defaultWeaponType = authoring.defaultWeaponType,
-                maxWeaponSlots = 2,
+                maxWeaponSlots = authoring.maxWeaponSlots,
                 weapons = WeaponIDs,
                 passives = new FixedList64Bytes<int2>(),
-                maxPassvieSlots = 3,
+                maxPassvieSlots = authoring.maxPassvieSlots,
             });
         }
     }

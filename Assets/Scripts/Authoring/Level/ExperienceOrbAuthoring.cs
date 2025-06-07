@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class ExperienceOrbAuthoring : MonoBehaviour
 {
+    public int experience;
+
     public class Baker : Baker<ExperienceOrbAuthoring>
     {
         public override void Bake(ExperienceOrbAuthoring authoring)
@@ -12,7 +14,8 @@ public class ExperienceOrbAuthoring : MonoBehaviour
             AddComponent(entity, new ExperienceOrbComponent
             {
                 hasBeenCollected = false,
-                experience = 10,
+                isBeingPulled = false,
+                experience = authoring.experience,
             });
         }
     }
@@ -21,5 +24,6 @@ public class ExperienceOrbAuthoring : MonoBehaviour
 public struct ExperienceOrbComponent : IComponentData
 {
     public bool hasBeenCollected;
+    public bool isBeingPulled;
     public int experience;
 }

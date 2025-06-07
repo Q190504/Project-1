@@ -68,7 +68,7 @@ public partial struct RadiantFieldDamageSystem : ISystem
 
         foreach (var (radiantField, transform, entity) in SystemAPI.Query<RefRW<RadiantFieldComponent>, RefRW<LocalTransform>>().WithEntityAccess())
         {
-            if (radiantField.ValueRW.timer <= 0)
+            if (radiantField.ValueRO.timer <= 0)
             {
                 NativeList<DistanceHit> hits = new NativeList<DistanceHit>(Allocator.Temp);
 
@@ -104,6 +104,12 @@ public partial struct RadiantFieldDamageSystem : ISystem
                 }
 
                 hits.Dispose();
+
+                radiantField.ValueRW.timer = radiantField.ValueRO.timeBetween;
+            }
+            else
+            {
+                radiantField.ValueRW.timer -= Time.deltaTime;
             }
         }
 

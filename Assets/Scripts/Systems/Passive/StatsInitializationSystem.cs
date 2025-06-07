@@ -56,20 +56,20 @@ public partial struct PassiveInitializationSystem : ISystem
                 healthComponent.ValueRW.currentHealth = healthComponent.ValueRO.maxHealth;
 
                 // Initialize armor
-                armorComponent.ValueRW.armorValue = 0;
+                armorComponent.ValueRW.armorValue = armorComponent.ValueRO.baseArmorVaule;
 
                 // Initialize generic damage modifier
-                genericDamageModifierComponent.ValueRW.genericDamageModifierValue = 0;
+                genericDamageModifierComponent.ValueRW.genericDamageModifierValue = genericDamageModifierComponent.ValueRO.baseGenericDamageModifierValue;
 
                 // Initialize movement speed
                 movementSpeedComponent.ValueRW.currentSpeed = movementSpeedComponent.ValueRO.baseSpeed;
                 movementSpeedComponent.ValueRW.totalSpeed = movementSpeedComponent.ValueRO.currentSpeed;
 
                 // Initialize health regen
-                healthRegenComponent.ValueRW.healthRegenValue = 0;
+                healthRegenComponent.ValueRW.healthRegenValue = healthRegenComponent.ValueRO.baseHealthRegenValue;
 
                 // Initialize ability haste
-                abilityHasteComponent.ValueRW.abilityHasteValue = 0;
+                abilityHasteComponent.ValueRW.abilityHasteValue = abilityHasteComponent.ValueRO.baseAbilityHasteValue;
 
                 // Initialize experience orb pickup
                 pickupExperienceOrbComponent.ValueRW.pickupRadius = pickupExperienceOrbComponent.ValueRO.basePickupRadius;

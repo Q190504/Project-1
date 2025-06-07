@@ -32,7 +32,7 @@ public partial struct PlayerLevelSystem : ISystem
                 playerLevel.currentLevel = 1;
                 playerLevel.maxLevel = 99;
                 playerLevel.experience = 0;
-                playerLevel.experienceToNextLevel = 20;
+                playerLevel.experienceToNextLevel = 50;
                 state.EntityManager.SetComponentData(player, playerLevel);
 
                 UpdateXPBar(playerLevel.currentLevel, playerLevel.experience, playerLevel.experienceToNextLevel);
@@ -72,7 +72,8 @@ public partial struct PlayerLevelSystem : ISystem
                         playerLevel.ValueRW.experience -= playerLevel.ValueRO.experienceToNextLevel;
 
                         // Inscrease the experience needed for the next level
-                        playerLevel.ValueRW.experienceToNextLevel = (int)(playerLevel.ValueRO.experienceToNextLevel * 1.2f);
+                        playerLevel.ValueRW.experienceToNextLevel = 
+                            Mathf.FloorToInt(playerLevel.ValueRO.baseExperienceToNextLevel * Mathf.Pow(1.12f, playerLevel.ValueRO.currentLevel));
 
                         // Open Upgrade Panel
                         ecb.AddComponent<PlayerLevelUpEvent>(playerEntity);

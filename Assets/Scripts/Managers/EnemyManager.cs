@@ -39,7 +39,7 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] private float individualEnemyDelay;    // Delay between spawning each enemy in a wave
     private float individualEnemyDelayTimer;
 
-    private float difficultyMultiplier;
+    //private float difficultyMultiplier;
     private double timeSinceStartPlaying;
 
     public static EnemyManager Instance
@@ -103,6 +103,9 @@ public class EnemyManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!GameManager.Instance.IsPlaying())
+            return;
+
         #region Spawn Enemies
 
         if (waveTimer <= 0)
@@ -114,7 +117,7 @@ public class EnemyManager : MonoBehaviour
                 waveTimer = waveInterval;
 
                 // Set enemies per wave
-                enemiesPerWave = baseEnemiesPerWave + Mathf.FloorToInt((float)timeSinceStartPlaying / 30f);
+                enemiesPerWave = baseEnemiesPerWave + Mathf.FloorToInt((float)timeSinceStartPlaying / 2f);
                 enemiesToSpawnCounter = enemiesPerWave;
 
                 spawnerQueue.Clear();
@@ -212,19 +215,20 @@ public class EnemyManager : MonoBehaviour
             targetEntity = player,
         });
 
-        float DifficultyMultiplier = 1 + Mathf.Pow((float)timeSinceStartPlaying / 60f, 1.2f);
+        float difficultyMultiplier = 1 + Mathf.Pow((float)timeSinceStartPlaying / 60f, 1.2f);
 
         CreepHealthComponent enemyHealthComponent = entityManager.GetComponentData<CreepHealthComponent>(enemyInstance);
 
-        float enemyHP = enemyHealthComponent.baseMaxHealth * DifficultyMultiplier;
+        int enemyHP = (int)(enemyHealthComponent.baseMaxHealth * difficultyMultiplier);
         entityManager.SetComponentData(enemyInstance, new CreepHealthComponent
         {
             currentHealth = enemyHP,
             maxHealth = enemyHealthComponent.maxHealth,
+            baseMaxHealth = enemyHealthComponent.baseMaxHealth,
         });
 
         CreepDamageComponent enemyDamageComponent = entityManager.GetComponentData<CreepDamageComponent>(enemyInstance);
-        int enemyDamage = (int)(enemyDamageComponent.baseDamage * DifficultyMultiplier);
+        int enemyDamage = (int)(enemyDamageComponent.baseDamage * difficultyMultiplier);
         entityManager.SetComponentData(enemyInstance, new CreepDamageComponent
         {
             damage = enemyDamage,
@@ -253,6 +257,10 @@ public class EnemyManager : MonoBehaviour
         Entity enemy = inactiveEnemies.Dequeue();
         enemyCount--;
         SetEnemyStatus(enemy, true, ecb, entityManager);
+
+        GameObject visual = AnimationManager.Instance.TakeCreep();
+        ecb.AddComponent(enemy, new VisualReferenceComponent { gameObject = visual });
+
         return enemy;
     }
 

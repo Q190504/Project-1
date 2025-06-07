@@ -4,7 +4,7 @@ using UnityEngine;
 public class HealthRegenAuthoring : MonoBehaviour
 {
     public int ID;
-    public int healthRegenValue;
+    public int baseHealthRegenValue;
 
     public int currentLevel;
     public int increment;
@@ -17,7 +17,8 @@ public class HealthRegenAuthoring : MonoBehaviour
 
             AddComponent(entity, new HealthRegenComponent
             {
-                healthRegenValue = authoring.healthRegenValue,
+                baseHealthRegenValue = authoring.baseHealthRegenValue,
+                healthRegenValue = authoring.baseHealthRegenValue,
 
                 increment = authoring.increment,
             });
@@ -38,6 +39,6 @@ public class HealthRegenAuthoring : MonoBehaviour
 public struct HealthRegenComponent : IComponentData
 {
     public int healthRegenValue;
-
+    public int baseHealthRegenValue;
     public int increment;
 }

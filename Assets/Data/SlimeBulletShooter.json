@@ -77,7 +77,7 @@
       "passthroughDamageModifier": 0.9,
       "moveSpeed": 30,
       "existDuration": 12,
-      "slowModifier": 0.3,
+      "slowModifier": 0.1,
       "slowRadius": 1
     }
   ]
