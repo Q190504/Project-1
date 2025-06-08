@@ -219,7 +219,7 @@ public class EnemyManager : MonoBehaviour
 
         CreepHealthComponent enemyHealthComponent = entityManager.GetComponentData<CreepHealthComponent>(enemyInstance);
 
-        int enemyHP = (int)(enemyHealthComponent.baseMaxHealth * difficultyMultiplier);
+        int enemyHP = (int)(enemyHealthComponent.baseMaxHealth + difficultyMultiplier);
         entityManager.SetComponentData(enemyInstance, new CreepHealthComponent
         {
             currentHealth = enemyHP,
@@ -228,7 +228,7 @@ public class EnemyManager : MonoBehaviour
         });
 
         CreepDamageComponent enemyDamageComponent = entityManager.GetComponentData<CreepDamageComponent>(enemyInstance);
-        int enemyDamage = (int)(enemyDamageComponent.baseDamage * difficultyMultiplier);
+        int enemyDamage = (int)(enemyDamageComponent.baseDamage + difficultyMultiplier);
         entityManager.SetComponentData(enemyInstance, new CreepDamageComponent
         {
             damage = enemyDamage,
