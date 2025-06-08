@@ -36,7 +36,6 @@ public partial struct CreepAnimationSystem : ISystem
                     entityManager.GetComponentData<VisualReferenceComponent>(entity);
 
                 Animator animator = creepVisualReference.gameObject.GetComponent<Animator>();
-
                 creepVisualReference.gameObject.transform.position = transform.Position;
                 float speed = math.length(physicsVelocity.Linear);
                 animator.SetFloat("speed", speed);

@@ -406,7 +406,7 @@ MonoBehaviour:
   ID: 5
   baseHealthRegenValue: 4
   currentLevel: 0
-  increment: 10
+  increment: 4
 --- !u!1 &171113838
 GameObject:
   m_ObjectHideFlags: 0
@@ -3532,7 +3532,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 0
   currentLevel: 0
-  increment: 0.1
+  increment: 0.2
 --- !u!1 &1638301084
 GameObject:
   m_ObjectHideFlags: 0
@@ -4170,7 +4170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9645bd16c406ff042bd6a4d70f2690cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseMaxHealth: 250
+  baseMaxHealth: 300
 --- !u!114 &1711749704
 MonoBehaviour:
   m_ObjectHideFlags: 0

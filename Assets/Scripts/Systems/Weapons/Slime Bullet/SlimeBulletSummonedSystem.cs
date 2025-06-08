@@ -21,16 +21,20 @@ public partial struct SlimeBulletSummonedSystem : ISystem
 
         foreach (var (localTransform, slimeBulletComponent) in SystemAPI.Query<RefRW<LocalTransform>, RefRO<SlimeBulletComponent>>())
         {
-            if(slimeBulletComponent.ValueRO.isBeingSummoned)
+            if (slimeBulletComponent.ValueRO.isBeingSummoned)
             {
                 float3 playerPosition = entityManager.GetComponentData<LocalTransform>(player).Position;
                 float3 bulletPosition = localTransform.ValueRO.Position;
                 SlimeReclaimComponent slimeReclaimComponent = entityManager.GetComponentData<SlimeReclaimComponent>(player);
-                float3 directionToPlayer = math.abs(localTransform.ValueRO.Position - playerPosition);
+
+                float3 directionToPlayer = playerPosition - bulletPosition;
                 float distanceToPlayer = math.length(directionToPlayer);
 
-                float3 moveDirection = math.normalize(playerPosition - bulletPosition);
-                localTransform.ValueRW.Position += moveDirection * slimeReclaimComponent.bulletSpeedWhenSummoned * SystemAPI.Time.DeltaTime;
+                if (distanceToPlayer > 0.0001f)
+                {
+                    float3 moveDirection = directionToPlayer / distanceToPlayer;
+                    localTransform.ValueRW.Position += moveDirection * slimeReclaimComponent.bulletSpeedWhenSummoned * SystemAPI.Time.DeltaTime;
+                }
             }
         }
     }

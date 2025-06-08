@@ -1,9 +1,7 @@
-using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
 
 public class ProjectilesManager : MonoBehaviour
 {
